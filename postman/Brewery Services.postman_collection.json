@@ -1,0 +1,1305 @@
+{
+	"info": {
+		"_postman_id": "cdff1979-d1a5-4af8-83f2-f731531f0629",
+		"name": "Brewery Services",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Setup",
+			"item": [
+				{
+					"name": "http://localhost:8080/api/authorize?user=API2&password=api",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"let token = jsonData.token;\r",
+									"pm.environment.set(\"accessToken\", token);\r",
+									"\r",
+									"pm.test(\"Authentication Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:8080/api/authorize?user=API2&password=api",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"authorize"
+							],
+							"query": [
+								{
+									"key": "user",
+									"value": "API2"
+								},
+								{
+									"key": "password",
+									"value": "api"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Summary Data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Get Summary Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/summary",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"summary"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Style API",
+			"item": [
+				{
+					"name": "Create Style",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"let styleId = jsonData.id;\r",
+									"let styleSynchToken = jsonData.dbSynchToken;\r",
+									"pm.environment.set(\"styleId\", styleId);\r",
+									"pm.environment.set(\"styleSynchToken\", styleSynchToken);\r",
+									"\r",
+									"pm.test(\"Create Style Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.name).to.eql(\"QA Test Ale\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 101,\r\n  \"bjcpCategory\": \"1\",\r\n  \"dbSynch\": \"SYNCHED\",\r\n  \"dbSynchToken\": \"QATest2\",\r\n  \"description\": \"API Test2\",\r\n  \"name\": \"QA Test Ale\"\r\n}\r\n\r\n "
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/style",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"style"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Style",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Get Style Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.name).to.eql(\"QA Test Ale\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/style/{{styleId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"style",
+								"{{styleId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Styles",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Get Style Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/style",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"style"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Style",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"let styleId = jsonData.id;\r",
+									"let styleSynchToken = jsonData.dbSynchToken;\r",
+									"pm.environment.set(\"styleId\", styleId);\r",
+									"pm.environment.set(\"styleSynchToken\", styleSynchToken);\r",
+									"\r",
+									"pm.test(\"Update Style Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.description).to.eql(\"API Test Update\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": {{styleId}},\r\n  \"bjcpCategory\": \"1\",\r\n  \"dbSynch\": \"SYNCHED\",\r\n  \"dbSynchToken\": \"{{styleSynchToken}}\",\r\n  \"description\": \"API Test Update\",\r\n  \"name\": \"QA Test Ale\"\r\n}\r\n\r\n "
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/style",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"style"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Process API",
+			"item": [
+				{
+					"name": "Create Process",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Create Process Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(\"TST\");\r",
+									"    pm.expect(jsonData.name).to.eql(\"Test\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"TST\",\r\n  \"name\": \"Test\"\r\n}\r\n"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/process",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"process"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Process",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Get Process Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(\"TST\");\r",
+									"    pm.expect(jsonData.name).to.eql(\"Test\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/process/TST",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"process",
+								"TST"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Processes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Get Process Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/process",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"process"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Process",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Update Process Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(\"TST\");\r",
+									"    pm.expect(jsonData.name).to.eql(\"Test Update\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"TST\",\r\n  \"name\": \"Test Update\"\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/process",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"process"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Measure Type API",
+			"item": [
+				{
+					"name": "Create Measure Type",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Create Measure Type Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(\"TEST\");\r",
+									"    pm.expect(jsonData.name).to.eql(\"Test\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"TEST\",\r\n  \"name\": \"Test\"\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/measureType",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"measureType"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Measure Type",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Get Measure Type Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(\"TEST\");\r",
+									"    pm.expect(jsonData.name).to.eql(\"Test\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/measureType/TEST",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"measureType",
+								"TEST"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Measure Types",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Get All Measure Types Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/measureType",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"measureType"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Measure Type",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Update Measure Type Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.code).to.eql(\"TEST\");\r",
+									"    pm.expect(jsonData.name).to.eql(\"Test Update\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"TEST\",\r\n  \"name\": \"Test Update\"\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/measureType",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"measureType"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Batch API",
+			"item": [
+				{
+					"name": "Create Batch",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"let batchId = jsonData.id;\r",
+									"let batchSynchToken = jsonData.dbSynchToken;\r",
+									"pm.environment.set( \"batchId\", batchId );\r",
+									"pm.environment.set( \"batchSynchToken\", batchSynchToken );\r",
+									"\r",
+									"pm.test(\"Create Batch Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.name).to.eql(\"QA Test\");\r",
+									"    pm.expect(jsonData.description).to.eql(\"test IPA\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 0,\r\n    \"active\": false,\r\n    \"name\": \"QA Test\",\r\n    \"description\": \"test IPA\",\r\n    \"style\": {\r\n        \"id\": {{styleId}},\r\n        \"name\": \"QA Test Ale\",\r\n        \"description\": \"API Test2\",\r\n        \"bjcpCategory\": \"1\",\r\n        \"dbSynch\": \"SYNCHED\",\r\n        \"dbSynchToken\": \"{{styleSynchToken}}\"\r\n    },\r\n    \"startTime\": \"2019-11-29 13:05:01\",\r\n    \"dbSynch\": \"SYNCHED\",\r\n    \"dbSynchToken\": \"QATest1\"\r\n\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/batch",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"batch"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Batch",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Get Batch Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.name).to.eql(\"QA Test\");\r",
+									"    pm.expect(jsonData.description).to.eql(\"test IPA\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/batch/{{batchId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"batch",
+								"{{batchId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Batch",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Update Batch Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.name).to.eql(\"QA Test\");\r",
+									"    pm.expect(jsonData.description).to.eql(\"test IPA update\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": {{batchId}},\r\n    \"active\": false,\r\n    \"name\": \"QA Test\",\r\n    \"description\": \"test IPA update\",\r\n    \"style\": {\r\n        \"id\": {{styleId}},\r\n        \"name\": \"QA Test Ale\",\r\n        \"description\": \"API Test2\",\r\n        \"bjcpCategory\": \"1\",\r\n        \"dbSynch\": \"SYNCHED\",\r\n        \"dbSynchToken\": \"{{styleSynchToken}}\"\r\n    },\r\n    \"startTime\": \"2019-11-29 13:05:01\",\r\n    \"dbSynch\": \"SYNCHED\",\r\n    \"dbSynchToken\": \"QATest1\"\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/batch",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"batch"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Measurement API",
+			"item": [
+				{
+					"name": "Create Measurement",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"let measurementId = jsonData.id;\r",
+									"let measurementSynchToken = jsonData.dbSynchToken;\r",
+									"pm.environment.set( \"measurementId\", measurementId );\r",
+									"pm.environment.set( \"measurementSynchToken\", measurementSynchToken );\r",
+									"\r",
+									"pm.test(\"Create Measurement Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.valueNumber).to.eql(71);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"batch\": {\r\n    \"id\": {{batchId}},\r\n    \"dbSynchToken\": \"{{batchSynchToken}}\"\r\n  },\r\n  \"valueNumber\": 71,\r\n  \"measurementTime\": \"2019-11-29 13:05:01\",\r\n  \"valueText\": \"test\",\r\n  \"process\": {\r\n    \"code\": \"TST\"\r\n  },\r\n  \"type\": {\r\n    \"code\": \"TEST\",\r\n    \"name\": \"TEST\"\r\n  }\r\n}\r\n"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/measurement",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"measurement"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Measurement",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Get Measurement Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.valueNumber).to.eql(71);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/measurement/{{measurementId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"measurement",
+								"{{measurementId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Measurement",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Update Measurement Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.valueText).to.eql(\"test update\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"id\": {{measurementId}},\r\n   \"dbSynchToken\":\"{{measurementSynchToken}}\",\r\n  \"batch\": {\r\n    \"id\": {{batchId}},\r\n    \"dbSynchToken\":\"{{batchSynchToken}}\"\r\n  },\r\n  \"valueNumber\": 71,\r\n  \"measurementTime\": \"2019-11-29 13:05:01\",\r\n  \"valueText\": \"test update\",\r\n  \"process\": {\r\n    \"code\": \"TST\"\r\n  },\r\n  \"type\": {\r\n    \"code\": \"TEST\"\r\n  }\r\n}\r\n"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/measurement",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"measurement"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Sensor API",
+			"item": [
+				{
+					"name": "Create Sensor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"let sensorId = jsonData.id;\r",
+									"let sensorSynchToken = jsonData.dbSynchToken;\r",
+									"pm.environment.set( \"sensorId\", sensorId );\r",
+									"pm.environment.set( \"sensorSynchToken\", sensorSynchToken );\r",
+									"\r",
+									"pm.test(\"Create Sensor Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.name).to.eql(\"Test Sensor\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"enabled\": false,\r\n    \"name\": \"Test Sensor\",\r\n    \"url\": \"btspp://Test:1;authenticate=false;encrypt=false;master=false\",\r\n    \"userId\": \"\",\r\n    \"pin\": \"1234\",\r\n    \"communicationType\": \"Bluetooth\",\r\n    \"trigger\": \"Auto\",\r\n    \"dbSynch\": \"SYNCHED\",\r\n    \"dbSynchToken\": null,\r\n    \"batch\": {\r\n        \"id\": {{batchId}},\r\n        \"dbSynchToken\": \"{{batchSynchToken}}\"\r\n    },\r\n    \"process\": {\r\n        \"code\": \"TST\"\r\n    },\r\n    \"measureType\": {\r\n        \"code\": \"TEST\"\r\n    },\r\n    \"updateTime\": \"2021-12-20 20:02:31\"\r\n}\r\n"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/sensor",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"sensor"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Sensor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Create Sensor Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.name).to.eql(\"Test Sensor\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/sensor/{{sensorId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"sensor",
+								"{{sensorId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Sensor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Create Sensor Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.name).to.eql(\"Test Sensor Update\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": {{sensorId}},\r\n    \"enabled\": false,\r\n    \"name\": \"Test Sensor Update\",\r\n    \"url\": \"btspp://Test:1;authenticate=false;encrypt=false;master=false\",\r\n    \"userId\": \"None\",\r\n    \"pin\": \"12345\",\r\n    \"communicationType\": \"Bluetooth\",\r\n    \"trigger\": \"Auto\",\r\n    \"dbSynch\": \"SYNCHED\",\r\n    \"dbSynchToken\": \"{{sensorSynchToken}}\",\r\n    \"batch\": {\r\n        \"id\": {{batchId}},\r\n        \"dbSynchToken\": \"{{batchSynchToken}}\"\r\n    },\r\n    \"process\": {\r\n        \"code\": \"TST\"\r\n    },\r\n    \"measureType\": {\r\n        \"code\": \"TEST\"\r\n    },\r\n    \"updateTime\": \"2022-01-23 13:45:30\"\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/sensor",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"sensor"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cleanup",
+			"item": [
+				{
+					"name": "Delete Sensor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Create Sensor Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/sensor/synchToken/{{sensorSynchToken}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"sensor",
+								"synchToken",
+								"{{sensorSynchToken}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Measurement",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Delete Measurement Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/measurement/synchToken/{{measurementSynchToken}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"measurement",
+								"synchToken",
+								"{{measurementSynchToken}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Batch",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Delete Batch Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/batch/synchToken/{{batchSynchToken}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"batch",
+								"synchToken",
+								"{{batchSynchToken}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Measure Type",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Delete Measure Type Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/measureType/TEST",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"measureType",
+								"TEST"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Process",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Delete Process Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/process/TST",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"process",
+								"TST"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Style",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Delete Style Test\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/style/synchToken/{{styleSynchToken}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"style",
+								"synchToken",
+								"{{styleSynchToken}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accessToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

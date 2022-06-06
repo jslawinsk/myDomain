@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+    <title>Sensors</title>
+    <th:block th:include="layout/header"></th:block>
+</head>
+<body>
+<div class="container">
+	<h2>Sensors</h2>
+    <th:block th:include="layout/info"></th:block>
+    <div th:if="${#lists.isEmpty(sensors)}">
+    	<a th:href="${'/sensor/add/'}" class="btn btn-outline-dark btn-lg">Add Sensor
+			<img th:src="@{/images/add-24px.svg}"/>
+    	</a>
+    	<a th:if="${blueToothEnabled} == true" th:href="${'/sensor/scan/'}" class="btn btn-outline-dark btn-lg">Discover Bluetooth
+   			<img th:src="@{/images/bluetooth_searching-24px.svg}"/>
+    	</a>
+		<a th:if="${wiFiEnabled} == true" th:href="${'/sensor/scanwifi/'}" class="btn btn-outline-dark btn-lg">Scan NetWork
+			<img th:src="@{/images/wifi_black_24dp.svg}"/>
+		</a>
+    </div>
+    <div th:if="${not #lists.isEmpty(sensors)}">
+        <table class="table table-striped">
+            <tr>
+                <th>Id</th>
+                <th>Enabled</th>
+                <th>Name</th>
+                <th class="d-none d-lg-block">Interface</th>
+                <th>Batch Id</th>
+                <th>Process</th>                
+                <th class="d-none d-lg-block">Update Time</th>
+                <th>Sensor Type</th>
+                <th class="d-none d-lg-block">Synched</th>                
+                <th>
+					<a th:href="${'/sensor/add/'}" class="btn btn-outline-dark" title="Add Sensor" rel="tooltip">
+						<img th:src="@{/images/add-24px.svg}"/>
+					</a>
+                </th>
+                <th>
+					<a th:if="${blueToothEnabled} == true" th:href="${'/sensor/scan/'}" class="btn btn-outline-dark" title="Scan Bluetooth" rel="tooltip">
+						<img th:src="@{/images/bluetooth_searching-24px.svg}"/>
+					</a>
+					<a th:if="${wiFiEnabled} == true" th:href="${'/sensor/scanwifi/'}" class="btn btn-outline-dark" title="Scan NetWork" rel="tooltip">
+						<img th:src="@{/images/wifi_black_24dp.svg}"/>
+					</a>
+                </th>
+                <th></th>
+            </tr>
+            <tr th:each="sensor : ${sensors}">
+                <td th:text="${sensor.id}">Id</td>
+                <td th:text="${sensor.enabled}">Enabled</td>
+                <td th:text="${sensor.name}">Name</td>
+                <td th:text="${sensor.communicationType}" class="d-none d-lg-block">Interface</td>
+                <td th:text="${sensor.batch.id}">Batch Id</td>
+                <td th:text="${sensor.process.name}">Process Code</td>
+                <td th:text="${sensor.updateTime}" class="d-none d-lg-block">Time</td>
+                <td th:text="${sensor.measureType.name}">Type</td>
+                <td th:text="${sensor.dbSynch}" class="d-none d-lg-block">Synched</td>
+                <td><a th:href="${'/sensor/edit/' + sensor.id}" class="btn btn-default">
+					<img th:src="@{/images/edit-24px.svg}"/>
+                </a></td>
+				<td><a data-toggle="modal" data-target="#modal-warning" th:attr="data-target='#modal-warning'+${sensor.id}" class="btn btn-default" title="Delete" rel="tooltip">
+					<img th:src="@{/images/delete_forever-24px.svg}"/>
+				</a></td>    
+				<td>
+					<div class="modal modal-warning fade in" th:id="modal-warning+${sensor.id}">
+				 		<div class="modal-dialog">
+				 			<div class="modal-content">
+				 				<div class="modal-header">
+				 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				 					<span aria-hidden="true">×</span></button>
+				 					<h5 class="modal-title">Delete</h5>
+				 				</div>
+				 				<div class="modal-body">
+				 					<h3>
+				 						<p th:text="'Delete sensor: ' + ${sensor.name} + ' id: ' + ${sensor.id} + '?'"></p>
+				 					</h3>
+				 				</div> 
+				 				<div class="modal-footer"> 
+				 					<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
+				 					<a type="button" class="btn btn-danger" th:href="${'/sensor/delete/' + sensor.id}"><i class="fa fa-check"></i>&nbsp;Yes</a>
+				 				</div>
+							</div>
+				 		</div>
+				 	</div>
+				</td>
+                
+                
+            </tr>
+        </table>
+    </div>
+</div>
+</body>
+</html>

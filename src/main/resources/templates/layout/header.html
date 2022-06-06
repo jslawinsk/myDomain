@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8"/>
+    <link th:href="@{/webjars/bootstrap/4.4.1/css/bootstrap.min.css}"
+          rel="stylesheet" media="screen" />
+    
+    <link rel="stylesheet" th:href="@{/css/style.css}" href="../../static/css/style.css" />
+</head>
+<body>
+
+<div class="container">
+    <div th:fragment="header">
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+			<img th:src="@{/images/TopLogo.png}"/>
+        	<a class="navbar-brand" href="#" th:href="@{/}">My Domain</a>
+      		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation" href="#">
+        		<span class="navbar-toggler-icon"></span>
+      		</button>
+
+      		<div class="collapse navbar-collapse" id="navbarsExample04" sec:authorize="isAuthenticated()">
+        		<ul class="navbar-nav mr-auto" sec:authorize="hasRole('ADMIN')">
+          			<li class="nav-item active">
+            			<a class="nav-link" th:href="@{/sensor}">Sensors <span class="sr-only">(current)</span></a>
+          			</li>
+					<li class="nav-item">
+    					<a class="nav-link" th:href="@{/batch}">Batches</a>
+  					</li>
+					<li class="nav-item">
+    					<a class="nav-link" th:href="@{/category}">Categories</a>
+  					</li>
+					<li class="nav-item">
+    					<a class="nav-link" th:href="@{/process}">Processes</a>
+  					</li>
+					<li class="nav-item">
+    					<a class="nav-link" th:href="@{/measureType}">Measure Types</a>
+  					</li>
+					<li class="nav-item">
+    					<a class="nav-link" th:href="@{/user}">Users</a>
+  					</li>
+        		</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<div class="dropdown">
+						<a href="#" id="imageDropdown" data-toggle="dropdown">
+							<img th:src="@{/images/account_circle_white_24dp.svg}"/>
+						</a>						
+						<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+							<a class="dropdown-item" th:href="@{/profile/edit}">Profile</a>
+							<a class="dropdown-item" th:href="@{/profile/password}">Change Password</a>
+							<form method="post" th:action="@{/logout}">
+							  	<input type="hidden" name="name" value="value" /> 
+							  	<a class="dropdown-item" onclick="this.parentNode.submit();">Logout</a>
+							</form>  	
+						</div>
+					</div>					
+				</ul>        		
+      		</div>
+    	</nav>        
+        
+    </div>
+</div>
+
+<script th:src="@{/webjars/jquery/3.0.0/jquery.min.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script th:src="@{/webjars/bootstrap/4.4.1/js/bootstrap.min.js}"></script>
+
+<script th:src="@{/webjars/highcharts/8.0.0/highcharts.js}"></script>
+<script th:src="@{/webjars/highcharts/8.0.0/highcharts-more.js}"></script>
+<script th:src="@{/webjars/highcharts/8.0.0/modules/series-label.js}"></script>
+<script th:src="@{/webjars/highcharts/8.0.0/modules/solid-gauge.js}"></script>
+<script th:src="@{/webjars/highcharts/8.0.0/modules/exporting.js}"></script>
+<script th:src="@{/webjars/highcharts/8.0.0/modules/export-data.js}"></script>
+<script th:src="@{/webjars/highcharts/8.0.0/modules/accessibility.js}"></script>
+
+</body>
+</html>

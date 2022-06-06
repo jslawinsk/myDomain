@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Domain Application</title>
+    <th:block th:include="layout/header"></th:block>
+</head>
+<body>
+
+   	<div align="center">
+        <h2>Dashboard</h2>
+    </div>
+
+	<div class="row" style="margin-bottom:30px">
+	    <div class="col-lg-4 col-md-12" style="margin-top:20px" th:each="gaugeAttrs, stats : ${gaugeAttrs}">
+			<figure class="highcharts-figure">
+		    	<div th:id="'container' + ${stats.index}"></div>
+			</figure>
+	    </div>
+	</div>
+
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+    $(function () { 
+        Highcharts.setOptions({
+            lang: {
+                decimalPoint: '.',
+                thousandsSep: ','
+            }
+        });
+    });
+     
+     
+var gaugeAtrs = /*[[${gaugeAttrs}]]*/;
+
+for ( var i = 0; i < gaugeAtrs.length; i++) {
+	var chartNumber = i;
+if( gaugeAtrs[i].gaugeType == 'SOLID_GUAGE' ) {
+	var chartg; 
+  	chartg = "#container" + chartNumber;
+    $(chartg).highcharts({
+	    chart: {
+	        type: 'solidgauge'
+	    },	
+	    title: {
+	        text: gaugeAtrs[chartNumber].title
+	    },	
+	    pane: {
+	        center: ['50%', '85%'],
+	        size: '100%',
+	        startAngle: -90,
+	        endAngle: 90,
+	        background: {
+	            backgroundColor:
+	                Highcharts.defaultOptions.legend.backgroundColor || '#EEE',
+	            innerRadius: '60%',
+	            outerRadius: '100%',
+	            shape: 'arc'
+	        }
+	    },	
+	    exporting: {
+	        enabled: false
+	    },	
+	    tooltip: {
+	        enabled: false
+	    },
+	
+	    // the value axis
+	    yAxis: {
+	        min: gaugeAtrs[chartNumber].minValue,
+        	max: gaugeAtrs[chartNumber].maxValue,
+         	stops: gaugeAtrs[chartNumber].stops,
+	        lineWidth: 0,
+	        tickWidth: 0,
+	        minorTickInterval: null,
+	        tickAmount: 1,
+	        title: {
+	            text: gaugeAtrs[chartNumber].valueType,
+	            y: -70
+	        },
+	        labels: {
+	            y: 14
+	        }
+	    },
+	    credits: {
+	        enabled: false
+	    },
+	
+	    series: [{
+	        name: gaugeAtrs[chartNumber].valueType,
+	        data: [ gaugeAtrs[chartNumber].valueNumber ],
+	        dataLabels: {
+	            format:
+	                '<div style="text-align:center">' +
+	                '<span style="font-size:25px">{y}</span><br/>' +
+	                '<span style="font-size:12px;opacity:0.4">' + gaugeAtrs[chartNumber].valueType + '</span>' +
+	                '</div>'
+	        },
+	        tooltip: {
+	            valueSuffix: gaugeAtrs[chartNumber].valueType
+	        }
+	    }],
+	
+	    plotOptions: {
+	        solidgauge: {
+	            dataLabels: {
+	                y: 5,
+	                borderWidth: 0,
+	                useHTML: true
+	            }
+	        }
+	    }
+    
+	});
+}
+else{
+	var chartg; 
+  	chartg = "#container" + chartNumber;
+    $(chartg).highcharts({
+
+    chart: {
+        type: 'gauge',
+        plotBackgroundColor: null,
+        plotBackgroundImage: null,
+        plotBorderWidth: 0,
+        plotShadow: false
+    },
+
+    title: {
+        text: gaugeAtrs[chartNumber].title
+    },
+
+    pane: {
+        startAngle: gaugeAtrs[chartNumber].startAngle,
+        endAngle: gaugeAtrs[chartNumber].endAngle,
+        background: [{
+            backgroundColor: {
+                linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                stops: [
+                    [0, '#FFF'],
+                    [1, '#333']
+                ]
+            },
+            borderWidth: 0,
+            outerRadius: '109%'
+        }, {
+            backgroundColor: {
+                linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                stops: [
+                    [0, '#333'],
+                    [1, '#FFF']
+                ]
+            },
+            borderWidth: 1,
+            outerRadius: '107%'
+        }, {
+            // default background
+        }, {
+            backgroundColor: '#DDD',
+            borderWidth: 0,
+            outerRadius: '105%',
+            innerRadius: '103%'
+        }]
+    },
+
+    // the value axis
+    yAxis: {
+        min: gaugeAtrs[chartNumber].minValue,
+        max: gaugeAtrs[chartNumber].maxValue,
+
+        minorTickInterval: 'auto',
+        minorTickWidth: 1,
+        minorTickLength: 10,
+        minorTickPosition: 'inside',
+        minorTickColor: '#666',
+
+        tickPixelInterval: 30,
+        tickWidth: 2,
+        tickPosition: 'inside',
+        tickLength: 10,
+        tickColor: '#666',
+        labels: {
+            step: 2,
+            rotation: 'auto'
+        },
+        title: {
+            text: gaugeAtrs[chartNumber].valueType
+        },
+        plotBands: gaugeAtrs[chartNumber].plotBands
+    },
+    credits: {
+        enabled: false
+    },
+    series: [{
+        name: gaugeAtrs[chartNumber].valueType,
+        colorByPoint: false,
+        data: [ gaugeAtrs[chartNumber].valueNumber ],
+	    tooltip: {
+	        enabled: false
+	    }
+    }]
+},
+// Add some life
+function (chart) {
+/*    if (!chart.renderer.forExport) {
+        setInterval(function () {
+            var point = chart.series[0].points[0],
+                newVal,
+                inc = Math.round((Math.random() - 0.5) * 20);
+
+            newVal = point.y + inc;
+            if (newVal < 0 || newVal > 200) {
+                newVal = point.y - inc;
+            }
+
+            point.update(newVal);
+
+        }, 3000);
+    }
+*/    
+});
+} // if
+} // for
+
+    
+    /*]]>*/
+</script>
+
+</body>
+</html>

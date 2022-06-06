@@ -1,0 +1,54 @@
+install Java
+
+java -version
+df -h
+sudo dnf install java-latest-openjdk
+
+sudo apt-get update
+sudo apt-get install default-jdk
+java-version
+javac
+
+
+install brewery
+
+
+cd /usr/local
+sudo mkdir -m777 brewery
+java -jar breweryservices-0.0.1-SNAPSHOT.jar
+
+install Bluetooth
+
+java -XshowSettings:properties
+
+sudo cp libbluecove_arm.so /lib
+
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get autoremove
+sudo apt-get install bluetooth
+sudo apt-get install blueman
+sudo apt-get install bluez-utils
+sudo apt-get install bluez
+
+sudo /etc/init.d/bluetooth status
+sudo hcitool scan
+
+sudo apt-get install libbluetooth-dev
+
+sudo apt-get install ant
+
+sudo reboot
+
+
+cd /home/pi
+
+
+sudo mkdir -m777 temp
+cd temp
+
+cd bluecove-gpl-2.1.0
+
+
+ifconfig
+

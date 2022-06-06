@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+    <title>Categories</title>
+    <th:block th:include="layout/header"></th:block>
+</head>
+<body>
+<div class="container">
+	<h2>Categories</h2>
+    <th:block th:include="layout/info"></th:block>
+    <div th:if="${#lists.isEmpty(categories)}">
+    	<a th:href="@{/category/add}" class="btn btn-outline-dark btn-lg">
+			<img th:src="@{/images/add-24px.svg}"/>Category
+    	</a>
+    </div>
+    <div th:if="${not #lists.isEmpty(categories)}">
+        <table class="table table-striped">
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th class="d-none d-lg-block">BJCP Category</th>
+                <th>Description</th>
+                <th class="d-none d-lg-block">DB Synch</th>
+                <th></th>
+                <th>
+					<a th:href="@{/category/add}" class="btn btn-outline-dark">
+						<img th:src="@{/images/add-24px.svg}"/>
+					</a>
+                </th>
+                <th></th>
+            </tr>
+            <tr th:each="category : ${categories}">
+                <td th:text="${category.id}">Id</td>
+                <td th:text="${category.name}">Name</td>
+                <td th:text="${category.bjcpCategory}" class="d-none d-lg-block">BJCP Category</td>
+                <td th:text="${category.description}">Description</td>
+                <td th:text="${category.dbSynch}" class="d-none d-lg-block">Synched</td>
+                <td><a th:href="${'/category/edit/' + category.id}" class="btn btn-default">
+					<img th:src="@{/images/edit-24px.svg}"/>
+                </a></td>
+				<td><a data-toggle="modal" data-target="#modal-warning" th:attr="data-target='#modal-warning'+${category.id}" class="btn btn-default" title="Delete" rel="tooltip">
+					<img th:src="@{/images/delete_forever-24px.svg}"/>
+				</a></td>    
+				<td>
+					<div class="modal modal-warning fade in" th:id="modal-warning+${category.id}">
+				 		<div class="modal-dialog">
+				 			<div class="modal-content">
+				 				<div class="modal-header">
+				 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				 					<span aria-hidden="true">×</span></button>
+				 					<h5 class="modal-title">Delete</h5>
+				 				</div>
+				 				<div class="modal-body">
+				 					<h3>
+				 						<p th:text="'Delete category: ' + ${category.name} + ' id: ' + ${category.id} + '?'"></p>
+				 					</h3>
+				 				</div> 
+				 				<div class="modal-footer"> 
+				 					<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
+				 					<a type="button" class="btn btn-danger" th:href="${'/category/delete/' + category.id}"><i class="fa fa-check"></i>&nbsp;Yes</a>
+				 				</div>
+							</div>
+				 		</div>
+				 	</div>
+				</td>
+                
+            </tr>
+        </table>
+    </div>
+</div>
+</body>
+</html>

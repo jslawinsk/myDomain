@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+    <title>Measurements</title>
+    <th:block th:include="layout/header"></th:block>
+</head>
+<body>
+<div class="container">
+	<h2 th:inline="text" >
+   		[[${batch.name}]]
+   		Measurements
+	</h2>
+    <th:block th:include="layout/info"></th:block>
+    <div th:if="${#lists.isEmpty(measurements)}">
+    	<a th:href="${'/measurement/add/' + batch.id}" class="btn btn-outline-dark btn-lg">Add Measurement
+			<img th:src="@{/images/add-24px.svg}"/>
+    	</a>
+    </div>
+    <div th:if="${not #lists.isEmpty(measurements)}">
+        <table class="table table-striped">
+            <tr>
+                <th>Id</th>
+                <th>Value</th>
+                <th>Value Text</th>
+                <th class="d-none d-lg-block">Batch Id</th>
+                <th>Process</th>                
+                <th>Type</th>
+                <th>Time</th>
+                <th class="d-none d-lg-block">Synched</th>
+                <th></th>
+                <th>
+					<div>
+						<a th:href="${'/measurement/add/' + batch.id}" class="btn btn-outline-dark">
+							<img th:src="@{/images/add-24px.svg}"/>
+						</a>
+					</div>
+                </th>
+                <th></th>
+            </tr>
+            <tr th:each="measurement : ${measurements}">
+                <td th:text="${measurement.id}">Id</td>
+                <td th:text="${measurement.valueNumber}">Value</td>
+                <td th:text="${measurement.valueText}">valueText</td>
+                <td th:text="${measurement.batch.id}" class="d-none d-lg-block">Batch Id</td>
+                <td th:text="${measurement.process.code}">Process Code</td>
+                <td th:text="${measurement.type.code}">Type</td>
+                <td th:text="${measurement.measurementTime}">Time</td>
+                <td th:text="${measurement.dbSynch}" class="d-none d-lg-block">Synched</td>
+                <td><a th:href="${'/measurement/edit/' + measurement.id}" class="btn btn-default">
+					<img th:src="@{/images/edit-24px.svg}"/>
+                </a></td>
+				<td><a data-toggle="modal" data-target="#modal-warning" th:attr="data-target='#modal-warning'+${measurement.id}" class="btn btn-default" title="Delete" rel="tooltip">
+					<img th:src="@{/images/delete_forever-24px.svg}"/>
+				</a></td>    
+				<td>
+					<div class="modal modal-warning fade in" th:id="modal-warning+${measurement.id}">
+				 		<div class="modal-dialog">
+				 			<div class="modal-content">
+				 				<div class="modal-header">
+				 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				 					<span aria-hidden="true">×</span></button>
+				 					<h5 class="modal-title">Delete</h5>
+				 				</div>
+				 				<div class="modal-body">
+				 					<h3>
+				 						<p th:text="'Delete measurement ' + ${measurement.id} + '?'"></p>
+				 					</h3>
+				 				</div>
+				 				<div class="modal-footer">
+				 					<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
+				 					<a type="button" class="btn btn-danger" th:href="${'/measurement/delete/' + measurement.id}"><i class="fa fa-check"></i>&nbsp;Yes</a>
+				 				</div>
+							</div>
+				 		</div>
+				 	</div>
+				</td>
+            </tr>
+        </table>
+    </div>
+    
+	<nav aria-label="Pagination" th:if="${totalPages gt 0}">
+	    <ul class="pagination justify-content-center font-weight-medium">
+	        <li class="page-item" th:classappend="${currentPage eq 0} ? 'disabled'">
+	            <a class="page-link svg-icon"
+	            	th:href="${'/measurement/batch/' + batch.id + '?page=0' }"
+	               	aria-label="Start"
+	               	title="First Page" rel="tooltip">
+	            	<span>
+						<img th:src="@{/images/fast_rewind-24px.svg}"/>
+					</span>
+						
+	            </a>
+	        </li>
+	        <li class="page-item" th:classappend="${currentPage eq 0} ? 'disabled'">
+	            <a class="page-link"
+	            	th:href="${'/measurement/batch/' + batch.id + '?page=' + {currentPage lt 2 ? 0 : currentPage -1} }"
+	               	aria-label="Previous"
+	               	title="Previous Page" rel="tooltip">
+	            	<span>
+						<img th:src="@{/images/skip_previous-24px.svg}"/>
+					</span>
+	            </a>
+	        </li>
+	        <li class="page-item" th:classappend="${i eq currentPage + 1} ? 'active'"
+	            th:each="i : ${#numbers.sequence( currentPage + 1, totalPages > 10 + currentPage ? currentPage + 10 : totalPages, 1)}">
+	            <span>
+	            <a class="page-link" 
+	            	th:href="${'/measurement/batch/' + batch.id + '?page=' + {i-1} }"
+	            	th:text="${i}"
+	               	th:title="${'Page '+ i}"
+	               	rel="tooltip"></a>
+	         	</span>
+	        </li>	        
+	        <li class="page-item disabled" th:if="${ currentPage + 10 < totalPages }">
+	            <a class="page-link svg-icon" href="#">
+	            	<span>
+					<img th:src="@{/images/more_horiz-24px.svg}"/>
+					</span>
+	            </a>
+	        </li>	        
+	        <li class="page-item" th:classappend="${currentPage + 1 ge totalPages} ? 'disabled'">
+	            <a class="page-link svg-icon" 
+	            	th:href="${'/measurement/batch/' + batch.id + '?page=' + {currentPage + 1} }"
+	               	aria-label="Next"
+	               	title="Next Page" rel="tooltip">
+	            	<span>
+					<img th:src="@{/images/skip_next-24px.svg}"/>
+					</span>
+	            </a>
+	        </li>	        
+	        <li class="page-item" th:classappend="${currentPage + 1 ge totalPages} ? 'disabled'">
+	            <a class="page-link svg-icon"
+	            	th:href="${'/measurement/batch/' + batch.id + '?page=' + {totalPages - 1} }"
+	               	aria-label="End"
+	               	title="Last Page" rel="tooltip">
+	            	<span>
+					<img th:src="@{/images/fast_forward-24px.svg}"/>
+					</span>
+	            </a>
+	        </li>	        
+	    </ul>
+	</nav>    
+	
+	<a data-toggle="modal" data-target="#modal-warning" th:attr="data-target='#modal-warning'+${batch.id }" class="btn btn-default">
+    	Delete Duplicates
+		<img th:src="@{/images/delete_forever-24px.svg}"/>
+	</a>    
+    
+	<div class="modal modal-warning fade in" th:id="modal-warning+${batch.id }">
+ 		<div class="modal-dialog">
+ 			<div class="modal-content">
+ 				<div class="modal-header">
+ 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+ 					<span aria-hidden="true">×</span></button>
+ 					<h5 class="modal-title">Delete Duplicates</h5>
+ 				</div>
+ 				<div class="modal-body">
+ 					<h3>Are you sure want to delete consecutive sequential duplicate measurements?</h3>
+ 				</div>
+ 				<div class="modal-footer">
+ 					<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
+ 					<a type="button" class="btn btn-danger" th:href="${'/measurement/duplicatedelete/' + batch.id}"><i class="fa fa-check"></i>&nbsp;Yes</a>
+ 				</div>
+			</div>
+ 		</div>
+ 	</div>
+    
+    
+</div>
+</body>
+</html>
