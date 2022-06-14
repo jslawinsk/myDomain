@@ -116,7 +116,7 @@ public class DataService implements UserDetailsService {
 	}
     
 	//
-	//	Process table access methods
+	//	Domain table access methods
 	//
 	//
     public Domain getDomain( Long id ) {

@@ -11,50 +11,73 @@
 
 <div class="container">
     <div th:fragment="header">
+    
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-			<img th:src="@{/images/TopLogo.png}"/>
+		
+			<a th:href="@{/}">
+			<img class="py-2 ml-lg-2 mx-3" th:src="@{/images/TopLogo.png}"/>
+			</a>
         	<a class="navbar-brand" href="#" th:href="@{/}">My Domain</a>
+        	
       		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation" href="#">
         		<span class="navbar-toggler-icon"></span>
       		</button>
-
-      		<div class="collapse navbar-collapse" id="navbarsExample04" sec:authorize="isAuthenticated()">
-        		<ul class="navbar-nav mr-auto" sec:authorize="hasRole('ADMIN')">
-          			<li class="nav-item active">
-            			<a class="nav-link" th:href="@{/sensor}">Sensors <span class="sr-only">(current)</span></a>
-          			</li>
-					<li class="nav-item">
-    					<a class="nav-link" th:href="@{/batch}">Batches</a>
-  					</li>
-					<li class="nav-item">
-    					<a class="nav-link" th:href="@{/category}">Categories</a>
-  					</li>
-					<li class="nav-item">
-    					<a class="nav-link" th:href="@{/process}">Processes</a>
-  					</li>
-					<li class="nav-item">
-    					<a class="nav-link" th:href="@{/measureType}">Measure Types</a>
-  					</li>
-					<li class="nav-item">
-    					<a class="nav-link" th:href="@{/user}">Users</a>
-  					</li>
-        		</ul>
-				<ul class="nav navbar-nav navbar-right">
-					<div class="dropdown">
-						<a href="#" id="imageDropdown" data-toggle="dropdown">
-							<img th:src="@{/images/account_circle_white_24dp.svg}"/>
-						</a>						
-						<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-							<a class="dropdown-item" th:href="@{/profile/edit}">Profile</a>
-							<a class="dropdown-item" th:href="@{/profile/password}">Change Password</a>
-							<form method="post" th:action="@{/logout}">
-							  	<input type="hidden" name="name" value="value" /> 
-							  	<a class="dropdown-item" onclick="this.parentNode.submit();">Logout</a>
-							</form>  	
-						</div>
-					</div>					
-				</ul>        		
+      		
+      		
+      		<div class="collapse navbar-collapse ml-lg-0 ml-3" id="navbarsExample04" sec:authorize="isAuthenticated()">
+      		
+	      		<div class="flex-md-column">
+				    <div th:if="${not #lists.isEmpty(domains)}">
+			            <ul class="navbar-nav mb-1 mr-auto">
+							<li th:each="domain:${domains}" class="nav-link py-1 pr-3" >
+								<a th:text="${domain.name}" th:href="${'/domain/set/' + domain.id}" class="nav-link">
+                				</a>							
+							</li>
+							
+			            </ul>
+		 			</div>
+	
+	        		<ul class="navbar-nav mb-1 mr-auto" sec:authorize="hasRole('ADMIN')">
+	          			<li class="nav-item active">
+	            			<a class="nav-link" th:href="@{/sensor}">Sensors <span class="sr-only">(current)</span></a>
+	          			</li>
+						<li class="nav-item">
+	    					<a class="nav-link" th:href="@{/batch}">Batches</a>
+	  					</li>
+						<li class="nav-item">
+	    					<a class="nav-link" th:href="@{/category}">Categories</a>
+	  					</li>
+						<li class="nav-item">
+	    					<a class="nav-link" th:href="@{/process}">Processes</a>
+	  					</li>
+						<li class="nav-item">
+	    					<a class="nav-link" th:href="@{/measureType}">Measure Types</a>
+	  					</li>
+						<li class="nav-item">
+	    					<a class="nav-link" th:href="@{/domain}">Domains</a>
+	  					</li>
+						<li class="nav-item">
+	    					<a class="nav-link" th:href="@{/user}">Users</a>
+	  					</li>
+	        		</ul>
+				</div>
+				<div class="dropdown ml-auto">
+					<a href="#" id="imageDropdown" data-toggle="dropdown">
+						<img th:src="@{/images/account_circle_white_24dp.svg}"/>
+					</a>						
+					<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+						<a class="dropdown-item" th:href="@{/profile/edit}">Profile</a>
+						<a class="dropdown-item" th:href="@{/profile/password}">Change Password</a>
+						<form method="post" th:action="@{/logout}">
+						  	<input type="hidden" name="name" value="value" /> 
+						  	<a class="dropdown-item" onclick="this.parentNode.submit();">Logout</a>
+						</form>  	
+					</div>
+				</div>					
+				
+				      		
       		</div>
+      		
     	</nav>        
         
     </div>

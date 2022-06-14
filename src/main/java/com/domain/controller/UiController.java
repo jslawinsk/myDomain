@@ -4,6 +4,7 @@ import com.domain.core.BluetoothThread;
 import com.domain.dto.ChartAttributes;
 import com.domain.model.Batch;
 import com.domain.model.DbSync;
+import com.domain.model.Domain;
 import com.domain.model.Info;
 import com.domain.model.MeasureType;
 import com.domain.model.Measurement;
@@ -185,9 +186,23 @@ public class UiController {
         	}
         }
         model.addAttribute("gaugeAttrs", gauges );
+    	
+        List<Domain> domains = dataService.getAllDomains();
+        model.addAttribute("domains", domains );
+        
         return "index";
     }
 
+    //
+    //	Domain table UI routines
+    //
+    //
+    @RequestMapping(path = "/domain", method = RequestMethod.GET)
+    public String getAllDomains(Model model) {
+        model.addAttribute("domains",  dataService.getAllDomains() );
+        return "domains";
+    }
+    
     //
     //	Category table UI routines
     //
