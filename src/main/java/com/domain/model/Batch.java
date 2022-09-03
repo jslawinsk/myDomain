@@ -48,6 +48,10 @@ public class Batch {
     @JoinColumn
 	private Category category;
 
+	@ManyToOne
+    @JoinColumn
+	private Domain domain;
+	
 	@Column( name = "startTime" )
     @Temporal(TemporalType.TIMESTAMP)
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
@@ -61,21 +65,23 @@ public class Batch {
 		this.active = false;
 		this.dbSynch = DbSync.ADD; 
 	}
-	public Batch( boolean active, String name, String description, Category category, Date startTime) {
+	public Batch( boolean active, String name, String description, Category category, Domain domain, Date startTime) {
 		super();
 		this.active = active;
 		this.name = name;
 		this.description = description;
 		this.category = category;
+		this.domain = domain;
 		this.startTime = startTime;
 		this.dbSynch = DbSync.ADD; 
 	}
-	public Batch( boolean active, String name, String description, Category category, Date startTime, DbSync dbSynch, String dbSynchToken ) {
+	public Batch( boolean active, String name, String description, Category category, Domain domain, Date startTime, DbSync dbSynch, String dbSynchToken ) {
 		super();
 		this.active = active;
 		this.name = name;
 		this.description = description;
 		this.category = category;
+		this.domain = domain;
 		this.startTime = startTime;
     	this.dbSynch = dbSynch;
     	this.dbSynchToken = dbSynchToken;
@@ -114,6 +120,13 @@ public class Batch {
 		this.category = category;
 	}
 
+	public Domain getDomain() {
+		return domain;
+	}
+	public void setDomain(Domain domain) {
+		this.domain = domain;
+	}
+	
     public Date getStartTime() {
 		return startTime;
 	}
@@ -137,7 +150,8 @@ public class Batch {
 	
 	@Override
 	public String toString() {
-		return "Batch [active=" + active + ", name=" + name + ", id=" + id + ", description=" + description + ", category=" + category + ", startTime=" + startTime
+		return "Batch [active=" + active + ", name=" + name + ", id=" + id + ", description=" + description 
+				+ ", category=" + category + ", domain=" + domain + ", startTime=" + startTime
 				+ ", dbSynch=" + dbSynch + ", dbSynchToken=" + dbSynchToken
 				+ "]";
 	}

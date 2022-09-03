@@ -18,11 +18,11 @@
             <tr>
                 <th>Id</th>
                 <th>Name</th>
-                <th>Image</th>
-                <th>Position</th>
                 <th>Description</th>
                 <th class="d-none d-lg-block">Role Label</th>
+                <th>Image</th>
                 <th class="d-none d-lg-block">Category Label</th>
+                <th>Position</th>
                 <th class="d-none d-lg-block">DB Synch</th>
                 <th></th>
                 <th>
@@ -35,11 +35,11 @@
             <tr th:each="domain : ${domains}">
                 <td th:text="${domain.id}">Id</td>
                 <td th:text="${domain.name}">Name</td>
-                <td class="bg-secondary"><img class="py-2 ml-lg-2 mx-3" th:src="@{/images/}+${domain.image}"/></td>
-                <td th:text="${domain.position}">Position</td>
                 <td th:text="${domain.description}">Description</td>
                 <td th:text="${domain.roleLabel}" class="d-none d-lg-block">Role Label</td>
-                <td th:text="${domain.categoryLabel}">Category Label</td>
+                <td class="bg-secondary"><img class="py-2 ml-lg-2 mx-3" th:src="@{/images/}+${domain.image}"/></td>
+                <td th:text="${domain.categoryLabel}" class="d-none d-lg-block">Category Label</td>
+                <td th:text="${domain.position}">Position</td>
                 <td th:text="${domain.dbSynch}" class="d-none d-lg-block">Synched</td>
                 <td><a th:href="${'/domain/edit/' + domain.id}" class="btn btn-default">
 					<img th:src="@{/images/edit-24px.svg}"/>

@@ -93,10 +93,10 @@ public class Application implements CommandLineRunner {
 		//
 		if( createTestData ) {
 			Domain domain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
-			dataService.saveDomain(domain);
+			Domain domainBrewery = dataService.saveDomain(domain);
 
-			domain = new Domain( 0L, 1, "Greenhouse", "yard_white_36dp.svg", "Backyard Greenhouse", "Cataegory", "Greenhouse", DbSync.ADD, null);
-			dataService.saveDomain(domain);
+			Domain domain2 = new Domain( 0L, 1, "Greenhouse", "yard_white_36dp.svg", "Backyard Greenhouse", "Cataegory", "Greenhouse", DbSync.ADD, null);
+			dataService.saveDomain(domain2);
 			
 			Category testCategory = new Category( "IPA", "18a", "Hoppy" );
 			dataService.saveCategory( testCategory );
@@ -119,7 +119,7 @@ public class Application implements CommandLineRunner {
 			measureType = new MeasureType( "TMP", "Temperature", true, 0, 200, GraphTypes.GAUGE, DbSync.ADD  );
 			dataService.saveMeasureType( measureType );
 	
-			Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, new Date() );
+			Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, domainBrewery, new Date() );
 			dataService.saveBatch( testBatch );
 			
 			Measurement measurement = new Measurement( 70.3, "{\"target\":70.0}", testBatch, process, measureType, new Date() );
@@ -128,7 +128,7 @@ public class Application implements CommandLineRunner {
 			measurement = new Measurement( 70.5, "{\"target\":70.0}", testBatch, process, measureType, new Date() );
 			dataService.saveMeasurement( measurement );
 	
-			Batch testBatch2 = new Batch( false, "Joe's Stout", "Old School Stout", testCategory2, new Date() );
+			Batch testBatch2 = new Batch( false, "Joe's Stout", "Old School Stout", testCategory2, domainBrewery, new Date() );
 			dataService.saveBatch( testBatch2 );
 			
 			measurement = new Measurement( 60.5, "{\"target\":70.0}", testBatch2, process, measureType, new Date() );

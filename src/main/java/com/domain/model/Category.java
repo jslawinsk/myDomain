@@ -29,7 +29,7 @@ public class Category {
 	private String name;
 	
 	private String description;
-	private String bjcpCategory;
+	private String reference;
 	
 	@Enumerated( EnumType.STRING )
 	private DbSync dbSynch;
@@ -39,15 +39,15 @@ public class Category {
 		super();
 		this.dbSynch = DbSync.ADD; 
 	}
-    public Category( String name, String bjcpCategory, String description) {
+    public Category( String name, String reference, String description) {
     	this.name = name;
-    	this.bjcpCategory = bjcpCategory;
+    	this.reference = reference;
     	this.description = description;
 		this.dbSynch = DbSync.ADD; 
     }
-    public Category( String name, String bjcpCategory, String description, DbSync dbSynch, String dbSynchToken ) {
+    public Category( String name, String reference, String description, DbSync dbSynch, String dbSynchToken ) {
     	this.name = name;
-    	this.bjcpCategory = bjcpCategory;
+    	this.reference = reference;
     	this.description = description;
     	this.dbSynch = dbSynch;
     	this.dbSynchToken = dbSynchToken;
@@ -72,11 +72,11 @@ public class Category {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public String getBjcpCategory() {
-		return bjcpCategory;
+	public String getReference() {
+		return reference;
 	}
-	public void setBjcpCategory(String bjcpCategory) {
-		this.bjcpCategory = bjcpCategory;
+	public void setReference(String reference) {
+		this.reference = reference;
 	}
 
     public DbSync getDbSynch() {
@@ -95,7 +95,7 @@ public class Category {
 	
 	@Override
 	public String toString() {
-		return "Category [id=" + id + ", name=" + name + ", description=" + description + ", bjcpCategory=" + bjcpCategory 
+		return "Category [id=" + id + ", name=" + name + ", description=" + description + ", reference=" + reference 
 				+ ", dbSynch=" + dbSynch + ", dbSynchToken=" + dbSynchToken
 				+ "]";
 	}

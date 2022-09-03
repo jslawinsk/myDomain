@@ -203,6 +203,54 @@ public class UiController {
         return "domains";
     }
     
+    @RequestMapping(path = "/domain/add", method = RequestMethod.GET)
+    public String createDomain(Model model) {
+        model.addAttribute("domain", new Domain());
+        return "domainAdd";
+    }
+
+    @RequestMapping(path = "/domain", method = RequestMethod.POST)
+    public String saveDomain(Domain domain) {
+        LOG.info("UiController: Domain Post: " );   	
+    	dataService.saveDomain(domain);
+        return "redirect:/domain";
+    }
+    
+    @RequestMapping(path = "/domain/edit/{id}", method = RequestMethod.GET)
+    public String editDomain(Model model, @PathVariable(value = "id") Long id) {
+    	Domain domain = dataService.getDomain(id);
+        model.addAttribute("domain", domain );
+        return "domainEdit";
+    }
+    
+    @RequestMapping(path = "/domain/delete/{id}", method = RequestMethod.GET)
+    public String deleteDomain( RedirectAttributes redirectAttributes, @PathVariable(name = "id" ) Long id) {
+        Info info = new Info();
+        String message = "";
+        
+    	Long batchCount = dataService.getDomainBatchCount( id );
+        if( batchCount == 0L ) {
+	    	Domain domain = dataService.getDomain(id);
+	    	if( dataSynchEnabled && domain.getDbSynchToken() != null && domain.getDbSynchToken().length() > 0 ) {
+	    		message = message + "Domain " + id + " scheduled for deletion.";
+	    		domain.setDbSynch( DbSync.DELETE );
+	        	dataService.updateDomain( domain );
+	    	}
+	    	else {
+	    		message = message + "Domain " + id + " deleted.";
+	    		dataService.deleteDomain(id);
+	    	}
+    	}
+    	else {
+        	message = message + "Domain " + id + " has " + batchCount + " batch" + ((batchCount > 1L) ? "es" : "" ) + " configured. ";
+            message = message + "Associations must be removed before deleting domain.";
+    	}
+    	info.setMessage( message );
+        redirectAttributes.addFlashAttribute( "info", info );
+        return "redirect:/domain";
+    }
+    
+
     //
     //	Category table UI routines
     //

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+    <title>Add Domain</title>
+    <th:block th:include="layout/header"></th:block>
+</head>
+<body>
+<div class="container">
+    <h2 th:inline="text">Edit Domain: Id [[${domain.id}]]</h2>
+    <div>
+        <form class="form-horizontal" th:object="${domain}" th:action="@{/domain}" method="post">
+            <input type="hidden" class="form-control" th:field="*{id}"/>
+            <input type="hidden" class="form-control" th:field="*{dbSynchToken}"/>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Name:</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" th:field="*{name}" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Description:</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" th:field="*{description}" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Position:</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" th:field="*{position}" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Image:</label>
+                <div class="col-sm-10">
+	    			<select id="selectImage" class="form-control" th:field="*{image}" onchange="showImage()">
+	    				<option th:each="domainImage : ${T(com.domain.model.DomainImages).values()}" th:value="${domainImage.fileName}" th:text="${domainImage}"></option>
+	    			</select>
+               		<img id="displayImage" class="bg-secondary py-2 ml-lg-2 mx-3" th:src="@{/images/}+${domain.image}"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Category Label:</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" th:field="*{categoryLabel}" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Role Label:</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" th:field="*{roleLabel}" />
+                </div>
+            </div>
+			<div class="form-group">
+                <label class="col-sm-2 control-label">Synch Status:</label>
+                <div class="col-sm-10">
+	    			<select class="form-control" th:field="*{dbSynch}">
+	    				<option th:each="dbSync : ${T(com.domain.model.DbSync).values()}" th:value="${dbSync}" th:text="${dbSync}"></option>
+	    			</select>
+                </div>
+			</div>            
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Synch Token:</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" th:field="*{dbSynchToken}" />
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="col-sm-2">
+                    <button type="submit" class="btn btn-outline-dark">Save
+						<img th:src="@{/images/save_alt-24px.svg}"/>
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+</body>
+
+<script th:inline="javascript">
+	function showImage()
+	{
+		var imageFile = document.getElementById("selectImage");
+	 	document.getElementById( "displayImage" ).src = [[@{/images/}]]+imageFile.value;
+	}
+</script>	
+
+</html>

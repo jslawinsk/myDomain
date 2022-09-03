@@ -28,5 +28,7 @@ public interface BatchRepository extends JpaRepository<Batch, Long> {
 	@Query(value = "SELECT count(id) FROM domain.batch where category_id = ?1", nativeQuery = true)
 	public Long categoryCount( Long id );	 
 
+	@Query(value = "SELECT count(id) FROM domain.batch where domain_id = ?1", nativeQuery = true)
+	public Long domainCount( Long id );	 
 	
 }

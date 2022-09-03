@@ -18,7 +18,7 @@
             <tr>
                 <th>Id</th>
                 <th>Name</th>
-                <th class="d-none d-lg-block">BJCP Category</th>
+                <th class="d-none d-lg-block">Reference</th>
                 <th>Description</th>
                 <th class="d-none d-lg-block">DB Synch</th>
                 <th></th>
@@ -32,7 +32,7 @@
             <tr th:each="category : ${categories}">
                 <td th:text="${category.id}">Id</td>
                 <td th:text="${category.name}">Name</td>
-                <td th:text="${category.bjcpCategory}" class="d-none d-lg-block">BJCP Category</td>
+                <td th:text="${category.reference}" class="d-none d-lg-block">Reference</td>
                 <td th:text="${category.description}">Description</td>
                 <td th:text="${category.dbSynch}" class="d-none d-lg-block">Synched</td>
                 <td><a th:href="${'/category/edit/' + category.id}" class="btn btn-default">

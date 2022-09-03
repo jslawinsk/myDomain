@@ -112,7 +112,7 @@ public class RestApiController {
     		Category foundCategory = dataService.getCategory( categoryToUpdate.getDbSynchToken() );
     		if( foundCategory != null ) {
     			foundCategory.setName( categoryToUpdate.getName() );
-    			foundCategory.setBjcpCategory( categoryToUpdate.getBjcpCategory() );
+    			foundCategory.setReference( categoryToUpdate.getReference() );
     			foundCategory.setDescription( categoryToUpdate.getDescription() );
     			foundCategory.setDbSynch( categoryToUpdate.getDbSynch() );
 	        	category = dataService.updateCategory( foundCategory );

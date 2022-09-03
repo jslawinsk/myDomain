@@ -98,7 +98,7 @@ public class WebSecurityConfig{
     				.antMatchers( "/css/**", "/js/**", "/webjars/**", "/images/**", "/validate/**", "/password/**", "/passwordReset/**" ).permitAll()		
     				.and()
     			.authorizeRequests()
-    				.antMatchers( "/category/**", "/process/**", "/measureType/**", "/batch/**", "/measurement/**", "/sensor/**", "/user/**"  ).hasRole( "ADMIN" )
+    				.antMatchers( "/category/**", "/process/**", "/measureType/**", "/batch/**", "/measurement/**", "/sensor/**", "/domain/**", "/user/**"  ).hasRole( "ADMIN" )
     				.and()
     			.authorizeRequests()
     				.antMatchers( "/", "/profile/**" ).hasAnyRole( "ADMIN", "USER" )

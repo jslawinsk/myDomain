@@ -146,6 +146,7 @@ public class DataService implements UserDetailsService {
         		domain.setDbSynchToken( getSynchToken() );
         	}
             domainToSave = domainRepository.save( domain );
+            LOG.info("Saved Domain:" + domainToSave );
             return domainToSave;
         } catch (Exception e) {
             LOG.error("DataService: Exception: saveDomain: " + e.getMessage());
@@ -185,6 +186,12 @@ public class DataService implements UserDetailsService {
         } catch (Exception e) {
             LOG.error("DataService: Exception: deleteDomain: " + e.getMessage());
         }
+    }
+ 
+    public Long getDomainBatchCount( Long id ) {
+        Long count = batchRepository.domainCount( id );
+        LOG.info("getDomainBatchCount, id:" + id + " batches: " + count );
+        return count;
     }
     
 	//
@@ -237,7 +244,7 @@ public class DataService implements UserDetailsService {
     	Category foundCategory = categoryRepository.getOne( categoryToUpdate.getId() );
         try {
         	foundCategory.setName( categoryToUpdate.getName() );
-        	foundCategory.setBjcpCategory( categoryToUpdate.getBjcpCategory() );
+        	foundCategory.setReference( categoryToUpdate.getReference() );
         	foundCategory.setDescription( categoryToUpdate.getDescription() );
         	foundCategory.setDbSynch( categoryToUpdate.getDbSynch() );
         	foundCategory.setDbSynchToken( categoryToUpdate.getDbSynchToken() );
@@ -456,7 +463,8 @@ public class DataService implements UserDetailsService {
         LOG.info("Update Batch: " + batchToUpdate );
     	Batch foundBatch = batchRepository.getOne( batchToUpdate.getId() );
         try {
-            foundBatch.setCategory( batchToUpdate.getCategory() );        		
+            foundBatch.setCategory( batchToUpdate.getCategory() );     
+            foundBatch.setDomain( batchToUpdate.getDomain() );
         	foundBatch.setDbSynchToken( batchToUpdate.getDbSynchToken() );
         	foundBatch.setActive( batchToUpdate.isActive() );
         	foundBatch.setName( batchToUpdate.getName() );
