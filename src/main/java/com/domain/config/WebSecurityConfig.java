@@ -101,7 +101,7 @@ public class WebSecurityConfig{
     				.antMatchers( "/category/**", "/process/**", "/measureType/**", "/batch/**", "/measurement/**", "/sensor/**", "/domain/**", "/user/**"  ).hasRole( "ADMIN" )
     				.and()
     			.authorizeRequests()
-    				.antMatchers( "/", "/profile/**" ).hasAnyRole( "ADMIN", "USER" )
+    				.antMatchers( "/**", "/profile/**" ).hasAnyRole( "ADMIN", "USER" )
     				.and()
     			.formLogin()
     				.loginPage("/login")

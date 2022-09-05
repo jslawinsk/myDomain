@@ -44,6 +44,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.domain.model.Batch;
 import com.domain.model.DbSync;
+import com.domain.model.Domain;
 import com.domain.model.GraphTypes;
 import com.domain.model.MeasureType;
 import com.domain.model.Measurement;
@@ -103,8 +104,9 @@ class UiControllerTest {
 	@WithMockUser(roles = "ADMIN")
 	void getIndex() throws Exception
 	{
+		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
-		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, new Date() );
+		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date() );
 		testBatch.setId( 1L );
     	List<Batch> batches = new ArrayList<Batch>();
     	batches.add( testBatch );
@@ -447,8 +449,9 @@ class UiControllerTest {
 	@WithMockUser(roles = "ADMIN")
 	void saveBatch() throws Exception
 	{
+		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
-		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, new Date() );
+		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date() );
 
 		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/batch" )
 				.with(csrf())
@@ -502,8 +505,9 @@ class UiControllerTest {
     	List<MeasureType> measureTypes = new ArrayList<MeasureType>();
     	measureTypes.add( measureType );
 	
+		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
-		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, new Date() );
+		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date() );
 		
     	Process process = new Process( "FRM", "Fermentation" );
 		Measurement measurement = new Measurement( 70.3, "{\"target\":70.0}", testBatch, process, measureType, new Date() );
@@ -523,8 +527,9 @@ class UiControllerTest {
 	@WithMockUser(roles = "ADMIN")
 	void editBatch() throws Exception
 	{
+		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
-		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, new Date(), DbSync.SYNCHED, "testToken" );
+		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date(), DbSync.SYNCHED, "testToken" );
 		Mockito.when(dataService.getBatch( 1L )).thenReturn( testBatch );
 		Mockito.when(dataService.getBatchSensorCount( 1L )).thenReturn( 0L );
 
@@ -538,8 +543,9 @@ class UiControllerTest {
 	@WithMockUser(roles = "ADMIN")
 	void deleteBatch() throws Exception
 	{
+		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
-		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, new Date(), DbSync.SYNCHED, "TestToken" );
+		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date(), DbSync.SYNCHED, "TestToken" );
 		Mockito.when(dataService.getBatch( 1L )).thenReturn( testBatch );
 		Mockito.when(dataService.getBatchSensorCount( 1L )).thenReturn( 0L );
 
@@ -591,8 +597,9 @@ class UiControllerTest {
 	void saveMeasurement() throws Exception
 	{
     	MeasureType measureType = new MeasureType( "TMP", "Temperature", true, 20, 200, GraphTypes.GAUGE, DbSync.ADD  );
+		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
-		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, new Date() );
+		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date() );
 		testBatch.setId( 1L );
     	Process process = new Process( "FRM", "Fermentation" );
 		Measurement measurement = new Measurement( 70.3, "{\"target\":70.0}", testBatch, process, measureType, new Date() );
@@ -618,8 +625,9 @@ class UiControllerTest {
 	void updateMeasurement() throws Exception
 	{
     	MeasureType measureType = new MeasureType( "TMP", "Temperature", true, 20, 200, GraphTypes.GAUGE, DbSync.ADD  );
+		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
-		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, new Date() );
+		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date() );
 		testBatch.setId( 1L );
     	Process process = new Process( "FRM", "Fermentation" );
 		Measurement measurement = new Measurement( 70.3, "{\"target\":70.0}", testBatch, process, measureType, new Date() );
@@ -658,8 +666,9 @@ class UiControllerTest {
 	{
 		
     	MeasureType measureType = new MeasureType( "TMP", "Temperature", true, 0, 200, GraphTypes.GAUGE, DbSync.ADD  );
+		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
-		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, new Date() );
+		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date() );
     	Process process = new Process( "FRM", "Fermentation" );
 		Measurement measurement = new Measurement( 70.3, "{\"target\":70.0}", testBatch, process, measureType, new Date() );
     	List<Measurement> measurements = new ArrayList<Measurement>();
@@ -684,8 +693,9 @@ class UiControllerTest {
 	void editMeasurement() throws Exception
 	{
     	MeasureType measureType = new MeasureType( "TMP", "Temperature", true, 0, 200, GraphTypes.GAUGE, DbSync.ADD  );
+		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
-		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, new Date() );
+		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date() );
 		testBatch.setId( 1L );
     	Process process = new Process( "FRM", "Fermentation" );
 		Measurement measurement = new Measurement( 70.3, "{\"target\":70.0}", testBatch, process, measureType, new Date() );
@@ -704,8 +714,9 @@ class UiControllerTest {
 	void deleteMeasurement() throws Exception
 	{
     	MeasureType measureType = new MeasureType( "TMP", "Temperature", true, 0, 200, GraphTypes.GAUGE, DbSync.ADD  );
+		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
-		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, new Date() );
+		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date() );
 		testBatch.setId( 1L );
     	Process process = new Process( "FRM", "Fermentation" );
 		Measurement measurement = new Measurement( 70.3, "{\"target\":70.0}", testBatch, process, measureType, new Date() );

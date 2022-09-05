@@ -108,12 +108,22 @@ public class UiController {
     @Value("${dataSynch.enabled}")
     private boolean dataSynchEnabled;
     
-    @RequestMapping(path = "/")
-    public String index( Model model ) {
+    @RequestMapping(path = { "/", "/{domainId}" } )
+    public String index( Model model, @PathVariable(value = "domainId") Optional<Long> domainId ) {
 
+    	Long selectedDomain = 0L;
+    	if( domainId.isPresent() ) {
+    		selectedDomain = domainId.get();
+    	}
     	List<Measurement> measurements = new ArrayList<Measurement>();
-    	
-    	List<Batch> batches = dataService.getActiveBatches();
+
+    	List<Batch> batches;
+    	if( selectedDomain == 0 ) {
+    		batches = dataService.getActiveBatches();
+    	}
+    	else {
+    		batches = dataService.getActiveBatches( selectedDomain );
+    	}
     	for( Batch batch:batches) {
     		List<Measurement> batchMeasurements = dataService.getRecentMeasurement(  batch.getId() );
     		if( !batchMeasurements.isEmpty() ) {
@@ -474,6 +484,7 @@ public class UiController {
     	batch.setStartTime( new Date() );
         model.addAttribute("batch", batch );
         model.addAttribute("categories",  dataService.getAllCategories() );
+        model.addAttribute("domains",  dataService.getAllDomains() );        
         return "batchAdd";
     }
 
@@ -527,6 +538,7 @@ public class UiController {
     public String editBatch(Model model, @PathVariable(value = "id") Long id) {
         model.addAttribute("batch", dataService.getBatch(id) );
         model.addAttribute("categories",  dataService.getAllCategories() );
+        model.addAttribute("domains",  dataService.getAllDomains() );        
         return "batchEdit";
     }
 

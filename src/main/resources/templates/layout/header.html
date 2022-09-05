@@ -14,10 +14,10 @@
     
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 		
-			<a th:href="@{/}">
-			<img class="py-2 ml-lg-2 mx-3" th:src="@{/images/TopLogo.png}"/>
+			<a th:href="@{/0}">
+				<img class="py-2 ml-lg-2 mx-3" th:src="@{/images/TopLogo.png}"/>
 			</a>
-        	<a class="navbar-brand" href="#" th:href="@{/}">My Domain</a>
+        	<a class="navbar-brand" href="#" th:href="@{/0}">My Domain</a>
         	
       		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation" href="#">
         		<span class="navbar-toggler-icon"></span>
@@ -30,7 +30,10 @@
 				    <div th:if="${not #lists.isEmpty(domains)}">
 			            <ul class="navbar-nav mb-1 mr-auto">
 							<li th:each="domain:${domains}" class="nav-link py-1 pr-3" >
-								<a th:text="${domain.name}" th:href="${'/domain/set/' + domain.id}" class="nav-link">
+								<a th:if="${domain.image} != ''" th:href="${'/' + domain.id}" class="nav-link">
+									<img th:title="${domain.name}" class="py-2 ml-lg-2 mx-3" th:src="@{/images/}+${domain.image}"/>
+								</a>
+								<a th:if="${domain.image} == ''" th:text="${domain.name}" th:href="${'/' + domain.id}" class="nav-link">
                 				</a>							
 							</li>
 							

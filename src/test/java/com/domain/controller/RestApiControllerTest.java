@@ -33,6 +33,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.domain.model.Batch;
 import com.domain.model.DbSync;
+import com.domain.model.Domain;
 import com.domain.model.GraphTypes;
 import com.domain.model.MeasureType;
 import com.domain.model.Measurement;
@@ -71,10 +72,11 @@ class RestApiControllerTest {
 	@MockBean
 	JavaMailSender mailSender;
 	
+	private Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 	private Category testCategory = new Category( "IPA", "18a", "Hoppy" );
 	private Process process = new Process( "FRM", "Fermentation" );
 	private MeasureType measureType = new MeasureType( "TMP", "Temperature", true, 0, 200, GraphTypes.GAUGE, DbSync.ADD  );
-	private Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, new Date() );
+	private Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date() );
 	private Measurement measurement = new Measurement( 70.3, "{\"target\":70.0}", testBatch, process, measureType, new Date() );
 	private Sensor sensor = new Sensor();
 		
@@ -466,7 +468,7 @@ class RestApiControllerTest {
 	@WithMockUser( authorities = "API" )
 	void saveMeasurement() throws Exception
 	{
-		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, new Date() );
+		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date() );
 		testBatch.setId( 1L );
 		testBatch.setDbSynchToken( "test" );
 		Mockito.when( dataService.getBatch(  "test" ) ).thenReturn( testBatch );
@@ -490,7 +492,7 @@ class RestApiControllerTest {
 	{
     	MeasureType measureType = new MeasureType( "TMP", "Temperature", true, 20, 200, GraphTypes.GAUGE, DbSync.ADD  );
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
-		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, new Date() );
+		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date() );
 		testBatch.setId( 1L );
 		testBatch.setDbSynchToken( "test" );
     	Process process = new Process( "FRM", "Fermentation" );

@@ -31,6 +31,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.domain.model.Batch;
 import com.domain.model.DbSync;
+import com.domain.model.Domain;
 import com.domain.model.GraphTypes;
 import com.domain.model.MeasureType;
 import com.domain.model.Measurement;
@@ -83,10 +84,11 @@ class DataServiceTest {
 	@Autowired
 	DataService dataService;
     
+	private Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 	private Category testCategory = new Category( "IPA", "18a", "Hoppy", DbSync.SYNCHED, "TestToken" );
 	private Process process = new Process( "FRM", "Fermentation", false, DbSync.ADD );
 	private MeasureType measureType = new MeasureType( "TMP", "Temperature", true, 0, 200, GraphTypes.GAUGE, DbSync.ADD  );
-	private Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, new Date() );
+	private Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date() );
 	private Measurement measurement = new Measurement( 70.3, "{\"target\":70.0}", testBatch, process, measureType, new Date() );
 	private Sensor sensor = new Sensor( 2L, false, "test", "", "", "1234", "BLUETOOTH", "", null, process, measureType, new Date(), DbSync.UPDATE, "TestToken" );
 	
@@ -508,7 +510,7 @@ class DataServiceTest {
         Batch batch = dataService.saveBatch( testBatch );
         assertEquals( batch.getName(), "Joe's IPA");
         
-    	Batch batch2 = new Batch( false, "Test IPA", "Old School IPA", null, new Date(), DbSync.ADD, "" );
+    	Batch batch2 = new Batch( false, "Test IPA", "Old School IPA", null, testDomain, new Date(), DbSync.ADD, "" );
         Mockito.when(batchRepository.save( batch2 )).thenReturn( batch2 );
         batch = dataService.saveBatch( batch2 );
         assertEquals( batch.getName(), "Test IPA");
@@ -517,7 +519,7 @@ class DataServiceTest {
 	@Test
 	void saveBatchEx() throws Exception
 	{
-    	Batch batch2 = new Batch( false, null, null, null, new Date(), DbSync.ADD, "" );
+    	Batch batch2 = new Batch( false, null, null, null, testDomain, new Date(), DbSync.ADD, "" );
         Mockito.when(batchRepository.save( batch2 )).thenThrow( new IllegalArgumentException("Test") );
         Batch batch = dataService.saveBatch( batch2 );
         assertNull( batch.getName() );
@@ -533,7 +535,7 @@ class DataServiceTest {
         Batch batch = dataService.updateBatch( testBatch );
         assertEquals( batch.getName(), "Joe's IPA");
 
-    	Batch batch2 = new Batch( false, "Test IPA3", "Old School IPA", null, new Date(), DbSync.ADD, "" );
+    	Batch batch2 = new Batch( false, "Test IPA3", "Old School IPA", null, testDomain, new Date(), DbSync.ADD, "" );
     	batch2.setId(2L);
         Mockito.when(batchRepository.getOne( 2L )).thenReturn( batch2 );
         Mockito.when(batchRepository.save( batch2 )).thenReturn( batch2 );

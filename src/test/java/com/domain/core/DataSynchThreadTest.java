@@ -38,6 +38,7 @@ import org.springframework.web.client.support.RestGatewaySupport;
 import com.domain.core.DataSynchThread;
 import com.domain.model.Batch;
 import com.domain.model.DbSync;
+import com.domain.model.Domain;
 import com.domain.model.GraphTypes;
 import com.domain.model.MeasureType;
 import com.domain.model.Measurement;
@@ -109,6 +110,8 @@ class DataSynchThreadTest {
 	        .body( "ACK" )
         	); 		
 
+		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
+		
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
     	List<Category> categories = new ArrayList<Category>();
     	categories.add( testCategory );
@@ -170,16 +173,16 @@ class DataSynchThreadTest {
 		.body(objectMapper.writeValueAsString(measureType))
 		); 		
 
-		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, new Date() );
+		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date() );
     	List<Batch> batches = new ArrayList<Batch>();
     	batches.add( testBatch );
-		testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, new Date(), DbSync.UPDATE, "TestToken" );
+		testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date(), DbSync.UPDATE, "TestToken" );
     	batches.add( testBatch );
-		testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, new Date(), DbSync.UPDATE, "" );
+		testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date(), DbSync.UPDATE, "" );
     	batches.add( testBatch );
-		testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, new Date(), DbSync.DELETE, "TestToken" );
+		testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date(), DbSync.DELETE, "TestToken" );
     	batches.add( testBatch );
-		testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, new Date(), DbSync.DELETE, "" );
+		testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date(), DbSync.DELETE, "" );
     	batches.add( testBatch );
 		Mockito.when(dataService.getBatchesToSynchronize()).thenReturn( batches );
 

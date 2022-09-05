@@ -44,6 +44,7 @@ import org.springframework.web.client.support.RestGatewaySupport;
 import com.domain.core.DataSynchThread;
 import com.domain.model.Batch;
 import com.domain.model.DbSync;
+import com.domain.model.Domain;
 import com.domain.model.GraphTypes;
 import com.domain.model.MeasureType;
 import com.domain.model.Measurement;
@@ -190,11 +191,12 @@ public class DataSynchThread2Test {
 
 		MeasureType measureType = new MeasureType( "TMP", "Temperature", true, 0, 200, GraphTypes.GAUGE, DbSync.ADD  );
 		MeasureType measureType2 = new MeasureType( "PH", "PH", true, 0, 14, GraphTypes.SOLID_GUAGE, DbSync.ADD );
+		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
 		Process process = new Process( "FRM", "Fermentation", false, DbSync.ADD );
 		Process process2 = new Process( "SFRM", "Secondary Fermentation", false, DbSync.ADD );
-		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, new Date() );
-		Batch testBatch2 = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, new Date() );
+		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date() );
+		Batch testBatch2 = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date() );
 		 	
 		Measurement measurement = new Measurement( 70.3, "{\"target\":70.0}", testBatch, process, measureType, new Date() );
     	List<Measurement> measurements = new ArrayList<Measurement>();
