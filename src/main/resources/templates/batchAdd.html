@@ -8,7 +8,7 @@
 <div class="container">
     <h2>Add Batch</h2>
     <div>
-        <form class="form-horizontal" th:object="${batch}" th:action="@{/batch}" method="post">
+        <form class="form-horizontal" th:object="${batch}" th:action="${'/batch/' + selectedDomain}" method="post">
             <input type="hidden" class="form-control" th:field="*{id}"/>
             <input type="hidden" class="form-control" th:field="*{dbSynchToken}"/>
             

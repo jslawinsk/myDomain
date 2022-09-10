@@ -436,6 +436,10 @@ public class DataService implements UserDetailsService {
     	return batchRepository.findAll();
     }
 
+    public List<Batch> getAllBatches( Long domainId ) {
+    	return batchRepository.findBatchesForDomain( domainId );
+    }
+    
     public List<Batch> getActiveBatches() {
     	return batchRepository.findActiveBatches();
     }

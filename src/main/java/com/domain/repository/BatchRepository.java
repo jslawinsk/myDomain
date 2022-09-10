@@ -18,6 +18,9 @@ public interface BatchRepository extends JpaRepository<Batch, Long> {
 
 	 @Query( value = "SELECT * FROM domain.batch WHERE active = true AND domain_id = ?1", nativeQuery = true )
 	 List<Batch> findActiveBatchesForDomain( Long id );	
+
+	 @Query( value = "SELECT * FROM domain.batch WHERE domain_id = ?1", nativeQuery = true )
+	 List<Batch> findBatchesForDomain( Long id );	
 	 
 	 @Query( value = "SELECT * FROM domain.batch WHERE db_synch IN ( 'ADD', 'UPDATE', 'DELETE' )", nativeQuery = true )
 	 List<Batch> findBatchesToSynchronize( );	

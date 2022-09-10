@@ -8,7 +8,7 @@
 <div class="container">
     <h2>Edit Batch</h2>
     <div>
-        <form class="form-horizontal" th:object="${batch}" th:action="@{/batch/update}" method="post">
+        <form class="form-horizontal" th:object="${batch}" th:action="${'/batch/update/' + selectedDomain}" method="post">
             <input type="hidden" class="form-control" th:field="*{id}"/>
             
             <div class="form-group form-check">

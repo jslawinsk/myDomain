@@ -199,7 +199,8 @@ public class UiController {
     	
         List<Domain> domains = dataService.getAllDomains();
         model.addAttribute("domains", domains );
-        
+        model.addAttribute("selectedDomain", selectedDomain );
+      
         return "index";
     }
 
@@ -476,43 +477,55 @@ public class UiController {
     //	Batch table UI routines
     //
     //
-    @RequestMapping(path = "/batch/add", method = RequestMethod.GET)
-    public String createBatch(Model model) {
+    @RequestMapping( path = { "/batch/{domainId}"}, method = RequestMethod.GET)
+    public String getAllBatches(Model model, @PathVariable(value = "domainId") Long domainId ) {
+    	List<Batch> batches;
+    	if( domainId == 0 ) {
+    		batches = dataService.getAllBatches();
+    	}
+    	else {
+    		batches = dataService.getAllBatches( domainId );
+    	}
+    	
+        model.addAttribute("batches",  batches );
+        model.addAttribute("domains", dataService.getAllDomains() );
+        model.addAttribute("selectedDomain", domainId );
+        return "batches";
+    }
+    
+    @RequestMapping(path = "/batch/add/{domainId}", method = RequestMethod.GET)
+    public String createBatch(Model model, @PathVariable(value = "domainId") Long domainId ) {
     	Batch batch = new Batch();
     	batch.setId( 0L );
     	batch.setActive( false );
     	batch.setStartTime( new Date() );
         model.addAttribute("batch", batch );
         model.addAttribute("categories",  dataService.getAllCategories() );
-        model.addAttribute("domains",  dataService.getAllDomains() );        
+        model.addAttribute("domains", dataService.getAllDomains() );
+        model.addAttribute("selectedDomain", domainId );
         return "batchAdd";
     }
 
-    @RequestMapping(path = "/batch", method = RequestMethod.POST)
-    public String saveBatch( Batch batch ) {
+    @RequestMapping(path = "/batch/{domainId}", method = RequestMethod.POST)
+    public String saveBatch( Batch batch, @PathVariable(value = "domainId") Long domainId ) {
         LOG.info("UiController: saveBatch Batch: " + batch );   
     	dataService.saveBatch(batch);
-        return "redirect:/batch";
+        return "redirect:/batch/" + domainId;
     }
 
-    @RequestMapping(path = "/batch/update", method = RequestMethod.POST)
-    public String updateBatch( Batch batch ) {
+    @RequestMapping(path = "/batch/update/{domainId}", method = RequestMethod.POST)
+    public String updateBatch( Batch batch, @PathVariable(value = "domainId") Long domainId ) {
         LOG.info("UiController: updateBatch Batch: " + batch );   
         if( batch.getDbSynch() != DbSync.ADD ) {
         	batch.setDbSynch( DbSync.UPDATE );
         }
     	dataService.updateBatch( batch );
-        return "redirect:/batch";
+        return "redirect:/batch/" + domainId;
     }
     
-    @RequestMapping(path = "/batch", method = RequestMethod.GET)
-    public String getAllBatches(Model model) {
-        model.addAttribute("batches",  dataService.getAllBatches() );
-        return "batches";
-    }
-
-    @RequestMapping(path = "/batch/chart/{id}", method = RequestMethod.GET)
+    @RequestMapping(path = "/batch/chart/{id}/{domainId}", method = RequestMethod.GET)
     public String getBatchChart(Model model, @PathVariable(value = "id") long id,
+    		@PathVariable(value = "domainId") Long domainId,
     		@RequestParam("page") Optional<Integer> page     		
     		) {
     	
@@ -531,19 +544,22 @@ public class UiController {
         LOG.info("UiController: getBatchChart Guage: " + chartAttributes );        
         model.addAttribute("chartAttributes", chartAttributes );    	
         model.addAttribute("batch", dataService.getBatch(id) );
-        return "batchChart";
+        model.addAttribute("domains", dataService.getAllDomains() );
+        model.addAttribute("selectedDomain", domainId );
+       return "batchChart";
     }
     
-    @RequestMapping(path = "/batch/edit/{id}", method = RequestMethod.GET)
-    public String editBatch(Model model, @PathVariable(value = "id") Long id) {
+    @RequestMapping(path = "/batch/edit/{id}/{domainId}", method = RequestMethod.GET)
+    public String editBatch(Model model, @PathVariable(value = "id") Long id, @PathVariable(value = "domainId") Long domainId ) {
         model.addAttribute("batch", dataService.getBatch(id) );
         model.addAttribute("categories",  dataService.getAllCategories() );
         model.addAttribute("domains",  dataService.getAllDomains() );        
+        model.addAttribute("selectedDomain", domainId );
         return "batchEdit";
     }
 
-    @RequestMapping(path = "/batch/delete/{id}", method = RequestMethod.GET)
-    public String deleteBatch( RedirectAttributes redirectAttributes, @PathVariable(name = "id") Long id) {
+    @RequestMapping(path = "/batch/delete/{id}/{domainId}", method = RequestMethod.GET)
+    public String deleteBatch( RedirectAttributes redirectAttributes, @PathVariable(name = "id") Long id, @PathVariable(value = "domainId") Long domainId ) {
     	
         Info info = new Info();
         String message = "";
@@ -566,7 +582,7 @@ public class UiController {
     	}
         info.setMessage( message );
         redirectAttributes.addFlashAttribute( "info", info );
-        return "redirect:/batch";
+        return "redirect:/batch/" + domainId;
     }
 
     //
@@ -604,8 +620,9 @@ public class UiController {
         return "redirect:/measurement/batch/" + measurementS.getBatch().getId();
     }
     
-    @RequestMapping(path = "/measurement/batch/{id}", method = RequestMethod.GET)
+    @RequestMapping(path = "/measurement/batch/{id}/{domainId}", method = RequestMethod.GET)
     public String getMeasurementForBatch(Model model, @PathVariable(value = "id") long id,
+    		@PathVariable(value = "domainId") Long domainId,
     		@RequestParam("page") Optional<Integer> page     		
     		) {
     	int currentPage = page.orElse( 0 );
@@ -628,6 +645,8 @@ public class UiController {
         model.addAttribute("totalPages", totalPages );
         model.addAttribute("pageNumbers", pageNumbers );
         model.addAttribute("currentPage", currentPage );
+        model.addAttribute("domains",  dataService.getAllDomains() );        
+        model.addAttribute("selectedDomain", domainId );
         return "measurements";
     }
 

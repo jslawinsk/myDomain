@@ -439,7 +439,7 @@ class UiControllerTest {
 	@WithMockUser(roles = "ADMIN")
 	void createBatch() throws Exception
 	{
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/batch/add")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/batch/add/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<h2>Add Batch</h2>")));
@@ -453,19 +453,19 @@ class UiControllerTest {
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
 		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date() );
 
-		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/batch" )
+		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/batch/0" )
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_JSON)
 		        .content(objectMapper.writeValueAsString( testBatch ))		
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/batch"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/batch/0"));
 	}	
 
 	@Test
 	@WithMockUser(roles = "ADMIN")
 	void updateBatch() throws Exception
 	{
-		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/batch/update" )
+		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/batch/update/0" )
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED )
 	            .content(buildUrlEncodedFormEntity(
@@ -473,9 +473,9 @@ class UiControllerTest {
 		                )
 		            )		        
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/batch"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/batch/0"));
 		
-		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/batch/update" )
+		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/batch/update/0" )
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 	            .content(buildUrlEncodedFormEntity(
@@ -483,7 +483,7 @@ class UiControllerTest {
 		                )
 		            )		        
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/batch"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/batch/0"));
 	}	
 	
 	
@@ -491,7 +491,7 @@ class UiControllerTest {
 	@WithMockUser(roles = "ADMIN")
 	void getAllBatches() throws Exception
 	{
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/batch")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/batch/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<h2>Batches</h2>")));
@@ -517,7 +517,7 @@ class UiControllerTest {
 		Mockito.when(dataService.getMeasureTypesToGraph( )).thenReturn( measureTypes );
         Mockito.when(dataService.getMeasurementsByBatchType( 1L, "TMP" )).thenReturn( measurements );
 		
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/batch/chart/1")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/batch/chart/1/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("Highcharts.chart")));
@@ -533,7 +533,7 @@ class UiControllerTest {
 		Mockito.when(dataService.getBatch( 1L )).thenReturn( testBatch );
 		Mockito.when(dataService.getBatchSensorCount( 1L )).thenReturn( 0L );
 
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/batch/edit/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/batch/edit/1/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<h2>Edit Batch</h2>")));
@@ -549,34 +549,34 @@ class UiControllerTest {
 		Mockito.when(dataService.getBatch( 1L )).thenReturn( testBatch );
 		Mockito.when(dataService.getBatchSensorCount( 1L )).thenReturn( 0L );
 
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/batch/delete/1")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/batch/delete/1/0")
 				.with(csrf())
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/batch"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/batch/0"));
 		
 		testBatch.setDbSynchToken( "" );
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/batch/delete/1")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/batch/delete/1/0")
 				.with(csrf())
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/batch"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/batch/0"));
 
 		testBatch.setDbSynchToken( null );
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/batch/delete/1")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/batch/delete/1/0")
 				.with(csrf())
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/batch"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/batch/0"));
 
 		Mockito.when(dataService.getBatchSensorCount( 1L )).thenReturn( 1L );
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/batch/delete/1")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/batch/delete/1/0")
 				.with(csrf())
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/batch"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/batch/0"));
 
 		Mockito.when(dataService.getBatchSensorCount( 1L )).thenReturn( 10L );
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/batch/delete/1")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/batch/delete/1/0")
 				.with(csrf())
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/batch"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/batch/0"));
 	}		
 	
 	//
@@ -681,7 +681,7 @@ class UiControllerTest {
 		
 		Mockito.when(dataService.getBatch( 1L )).thenReturn( testBatch );
 		
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measurement/batch/1" )
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measurement/batch/1/0" )
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<title>Measurements</title>")))
