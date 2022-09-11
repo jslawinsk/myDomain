@@ -12,7 +12,7 @@
 	</h2>
     <th:block th:include="layout/info"></th:block>
     <div th:if="${#lists.isEmpty(measurements)}">
-    	<a th:href="${'/measurement/add/' + batch.id}" class="btn btn-outline-dark btn-lg">Add Measurement
+    	<a th:href="${'/measurement/add/' + batch.id + '/' + selectedDomain}" class="btn btn-outline-dark btn-lg">Add Measurement
 			<img th:src="@{/images/add-24px.svg}"/>
     	</a>
     </div>
@@ -30,7 +30,7 @@
                 <th></th>
                 <th>
 					<div>
-						<a th:href="${'/measurement/add/' + batch.id}" class="btn btn-outline-dark">
+						<a th:href="${'/measurement/add/' + batch.id + '/' + selectedDomain}" class="btn btn-outline-dark">
 							<img th:src="@{/images/add-24px.svg}"/>
 						</a>
 					</div>
@@ -46,7 +46,7 @@
                 <td th:text="${measurement.type.code}">Type</td>
                 <td th:text="${measurement.measurementTime}">Time</td>
                 <td th:text="${measurement.dbSynch}" class="d-none d-lg-block">Synched</td>
-                <td><a th:href="${'/measurement/edit/' + measurement.id}" class="btn btn-default">
+                <td><a th:href="${'/measurement/edit/' + measurement.id + '/' + selectedDomain}" class="btn btn-default">
 					<img th:src="@{/images/edit-24px.svg}"/>
                 </a></td>
 				<td><a data-toggle="modal" data-target="#modal-warning" th:attr="data-target='#modal-warning'+${measurement.id}" class="btn btn-default" title="Delete" rel="tooltip">
@@ -68,7 +68,7 @@
 				 				</div>
 				 				<div class="modal-footer">
 				 					<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
-				 					<a type="button" class="btn btn-danger" th:href="${'/measurement/delete/' + measurement.id}"><i class="fa fa-check"></i>&nbsp;Yes</a>
+				 					<a type="button" class="btn btn-danger" th:href="${'/measurement/delete/' + measurement.id + '/' + selectedDomain}"><i class="fa fa-check"></i>&nbsp;Yes</a>
 				 				</div>
 							</div>
 				 		</div>
@@ -82,7 +82,7 @@
 	    <ul class="pagination justify-content-center font-weight-medium">
 	        <li class="page-item" th:classappend="${currentPage eq 0} ? 'disabled'">
 	            <a class="page-link svg-icon"
-	            	th:href="${'/measurement/batch/' + batch.id + '?page=0' }"
+	            	th:href="${'/measurement/batch/' + batch.id + '/' + selectedDomain + '?page=0' }"
 	               	aria-label="Start"
 	               	title="First Page" rel="tooltip">
 	            	<span>
@@ -93,7 +93,7 @@
 	        </li>
 	        <li class="page-item" th:classappend="${currentPage eq 0} ? 'disabled'">
 	            <a class="page-link"
-	            	th:href="${'/measurement/batch/' + batch.id + '?page=' + {currentPage lt 2 ? 0 : currentPage -1} }"
+	            	th:href="${'/measurement/batch/' + batch.id + '/' + selectedDomain + '?page=' + {currentPage lt 2 ? 0 : currentPage -1} }"
 	               	aria-label="Previous"
 	               	title="Previous Page" rel="tooltip">
 	            	<span>
@@ -105,7 +105,7 @@
 	            th:each="i : ${#numbers.sequence( currentPage + 1, totalPages > 10 + currentPage ? currentPage + 10 : totalPages, 1)}">
 	            <span>
 	            <a class="page-link" 
-	            	th:href="${'/measurement/batch/' + batch.id + '?page=' + {i-1} }"
+	            	th:href="${'/measurement/batch/' + batch.id + '/' + selectedDomain + '?page=' + {i-1} }"
 	            	th:text="${i}"
 	               	th:title="${'Page '+ i}"
 	               	rel="tooltip"></a>
@@ -120,7 +120,7 @@
 	        </li>	        
 	        <li class="page-item" th:classappend="${currentPage + 1 ge totalPages} ? 'disabled'">
 	            <a class="page-link svg-icon" 
-	            	th:href="${'/measurement/batch/' + batch.id + '?page=' + {currentPage + 1} }"
+	            	th:href="${'/measurement/batch/' + batch.id + '/' + selectedDomain + '?page=' + {currentPage + 1} }"
 	               	aria-label="Next"
 	               	title="Next Page" rel="tooltip">
 	            	<span>
@@ -130,7 +130,7 @@
 	        </li>	        
 	        <li class="page-item" th:classappend="${currentPage + 1 ge totalPages} ? 'disabled'">
 	            <a class="page-link svg-icon"
-	            	th:href="${'/measurement/batch/' + batch.id + '?page=' + {totalPages - 1} }"
+	            	th:href="${'/measurement/batch/' + batch.id + '/' + selectedDomain + '?page=' + {totalPages - 1} }"
 	               	aria-label="End"
 	               	title="Last Page" rel="tooltip">
 	            	<span>
@@ -159,7 +159,7 @@
  				</div>
  				<div class="modal-footer">
  					<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
- 					<a type="button" class="btn btn-danger" th:href="${'/measurement/duplicatedelete/' + batch.id}"><i class="fa fa-check"></i>&nbsp;Yes</a>
+ 					<a type="button" class="btn btn-danger" th:href="${'/measurement/duplicatedelete/' + batch.id + '/' + selectedDomain}"><i class="fa fa-check"></i>&nbsp;Yes</a>
  				</div>
 			</div>
  		</div>

@@ -80,10 +80,10 @@ class UiController2Test {
 	@Test
 	@WithMockUser(roles = "ADMIN")
 	void testDeleteDuplicateMeasurements() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measurement/duplicatedelete/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measurement/duplicatedelete/1/0")
 				.with(csrf())
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/measurement/batch/1"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/measurement/batch/1/0"));
 	}
 
 }

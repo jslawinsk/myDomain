@@ -589,8 +589,8 @@ public class UiController {
     //	Measurement table UI routines
     //
     //
-    @RequestMapping(path = "/measurement/add/{id}", method = RequestMethod.GET)
-    public String createMeasurement( Model model, @PathVariable(name = "id") Long id) {
+    @RequestMapping(path = "/measurement/add/{id}/{domainId}", method = RequestMethod.GET)
+    public String createMeasurement( Model model, @PathVariable(name = "id") Long id, @PathVariable(value = "domainId") Long domainId ) {
     	Batch batch = dataService.getBatch( id );
     	Measurement measurement = new Measurement();
     	measurement.setId( 0L );
@@ -600,24 +600,26 @@ public class UiController {
         model.addAttribute("batches",  dataService.getAllBatches() );
         model.addAttribute("processes",  dataService.getAllProcesses() );
         model.addAttribute("measureTypes",  dataService.getAllMeasureTypes() );
+        model.addAttribute("domains",  dataService.getAllDomains() );        
+        model.addAttribute("selectedDomain", domainId );
         return "measurementAdd";
     }
 
-    @RequestMapping(path = "/measurement", method = RequestMethod.POST)
-    public String saveMeasurement( Measurement measurement ) {
+    @RequestMapping(path = "/measurement/{domainId}", method = RequestMethod.POST)
+    public String saveMeasurement( Measurement measurement, @PathVariable(value = "domainId") Long domainId ) {
         LOG.info("UiController: saveMeasurement Measurement: " + measurement );   
         Measurement measurementS = dataService.saveMeasurement( measurement );
-        return "redirect:/measurement/batch/" + measurementS.getBatch().getId();
+        return "redirect:/measurement/batch/" + measurementS.getBatch().getId() + '/' + domainId;
     }
     
-    @RequestMapping(path = "/measurement/update", method = RequestMethod.POST)
-    public String updateMeasurement( Measurement measurement ) {
+    @RequestMapping(path = "/measurement/update/{domainId}", method = RequestMethod.POST)
+    public String updateMeasurement( Measurement measurement, @PathVariable(value = "domainId") Long domainId ) {
         LOG.info("UiController: updateMeasurement Measurement: " + measurement );   
         if( measurement.getDbSynch() != DbSync.ADD ) {
         	measurement.setDbSynch( DbSync.UPDATE );
         }
         Measurement measurementS = dataService.updateMeasurement( measurement );
-        return "redirect:/measurement/batch/" + measurementS.getBatch().getId();
+        return "redirect:/measurement/batch/" + measurementS.getBatch().getId() + '/' + domainId;
     }
     
     @RequestMapping(path = "/measurement/batch/{id}/{domainId}", method = RequestMethod.GET)
@@ -650,17 +652,19 @@ public class UiController {
         return "measurements";
     }
 
-    @RequestMapping(path = "/measurement/edit/{id}", method = RequestMethod.GET)
-    public String editMeasurement(Model model, @PathVariable(value = "id") Long id) {
+    @RequestMapping(path = "/measurement/edit/{id}/{domainId}", method = RequestMethod.GET)
+    public String editMeasurement(Model model, @PathVariable(value = "id") Long id, @PathVariable(value = "domainId") Long domainId ) {
         model.addAttribute("measurement", dataService.getMeasurement(id) );
         model.addAttribute("batches",  dataService.getAllBatches() );
         model.addAttribute("processes",  dataService.getAllProcesses() );
         model.addAttribute("measureTypes",  dataService.getAllMeasureTypes() );
+        model.addAttribute("domains",  dataService.getAllDomains() );        
+        model.addAttribute("selectedDomain", domainId );
         return "measurementEdit";
     }
 
-    @RequestMapping(path = "/measurement/delete/{id}", method = RequestMethod.GET)
-    public String deleteMeasurement( RedirectAttributes redirectAttributes, @PathVariable(name = "id") Long id) {
+    @RequestMapping(path = "/measurement/delete/{id}/{domainId}", method = RequestMethod.GET)
+    public String deleteMeasurement( RedirectAttributes redirectAttributes, @PathVariable(name = "id") Long id, @PathVariable(value = "domainId") Long domainId ) {
         Info info = new Info();
         String message = "";
 
@@ -676,11 +680,11 @@ public class UiController {
     	}
         info.setMessage( message );
         redirectAttributes.addFlashAttribute( "info", info );
-        return "redirect:/measurement/batch/" + measurement.getBatch().getId();
+        return "redirect:/measurement/batch/" + measurement.getBatch().getId() + '/' + domainId;
     }
 
-    @RequestMapping(path = "/measurement/duplicatedelete/{id}", method = RequestMethod.GET)
-    public String deleteDuplicateMeasurements( RedirectAttributes redirectAttributes, @PathVariable(name = "id") Long id) {
+    @RequestMapping(path = "/measurement/duplicatedelete/{id}/{domainId}", method = RequestMethod.GET)
+    public String deleteDuplicateMeasurements( RedirectAttributes redirectAttributes, @PathVariable(name = "id") Long id, @PathVariable(value = "domainId") Long domainId ) {
         Info info = new Info();
         String message = "";
     	if( dataSynchEnabled ) {
@@ -693,7 +697,7 @@ public class UiController {
         redirectAttributes.addFlashAttribute( "info", info );
 
     	dataService.deleteDuplicateMeasurements( id );
-        return "redirect:/measurement/batch/" + id;
+        return "redirect:/measurement/batch/" + id + '/' + domainId;
     }
 
     //

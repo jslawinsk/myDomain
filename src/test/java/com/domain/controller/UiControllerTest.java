@@ -586,7 +586,7 @@ class UiControllerTest {
 	@WithMockUser(roles = "ADMIN")
 	void createMeasurement() throws Exception
 	{
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measurement/add/1")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measurement/add/1/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<h2>Add Measurement</h2>")));
@@ -607,7 +607,7 @@ class UiControllerTest {
 		LOG.info( "Test saveMeasurement Measurement: " + measurement );
 		Mockito.when(dataService.saveMeasurement( Mockito.any(Measurement.class) )).thenReturn( measurement );
 
-		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/measurement" )
+		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/measurement/0" )
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED )
 	            .content(buildUrlEncodedFormEntity(
@@ -616,7 +616,7 @@ class UiControllerTest {
 		                )
 		            )		        
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/measurement/batch/1"))
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/measurement/batch/1/0"))
 				;
 	}	
 
@@ -635,7 +635,7 @@ class UiControllerTest {
 		LOG.info( "Test updateMeasurement Measurement: " + measurement );
 		Mockito.when(dataService.updateMeasurement( Mockito.any(Measurement.class) )).thenReturn( measurement );
 
-		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/measurement/update" )
+		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/measurement/update/0" )
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED )
 	            .content(buildUrlEncodedFormEntity(
@@ -644,10 +644,10 @@ class UiControllerTest {
 		                )
 		            )		        
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/measurement/batch/1"))
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/measurement/batch/1/0"))
 				;
 
-		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/measurement/update" )
+		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/measurement/update/0" )
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED )
 	            .content(buildUrlEncodedFormEntity(
@@ -656,7 +656,7 @@ class UiControllerTest {
 		                )
 		            )		        
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/measurement/batch/1"))
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/measurement/batch/1/0"))
 				;
 	}	
 	
@@ -703,7 +703,7 @@ class UiControllerTest {
 		
         Mockito.when(dataService.getMeasurement( 1L )).thenReturn( measurement );
 		
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measurement/edit/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measurement/edit/1/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<h2>Edit Measurement</h2>")));
@@ -724,26 +724,26 @@ class UiControllerTest {
 		measurement.setDbSynchToken( "TestToken" );
         Mockito.when(dataService.getMeasurement( 1L )).thenReturn( measurement );
 		
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measurement/delete/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measurement/delete/1/0")
 				.with(csrf())
 	            .accept(MediaType.ALL))
-        		.andExpect( MockMvcResultMatchers.redirectedUrl("/measurement/batch/1"));
+        		.andExpect( MockMvcResultMatchers.redirectedUrl("/measurement/batch/1/0"));
 
 		measurement.setDbSynchToken( "" );
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measurement/delete/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measurement/delete/1/0")
 				.with(csrf())
 	            .accept(MediaType.ALL))
-        		.andExpect( MockMvcResultMatchers.redirectedUrl("/measurement/batch/1"));
+        		.andExpect( MockMvcResultMatchers.redirectedUrl("/measurement/batch/1/0"));
 	}		
 	
 	@Test
 	@WithMockUser(roles = "ADMIN")
 	void deleteDuplicateMeasurements() throws Exception
 	{
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measurement/duplicatedelete/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measurement/duplicatedelete/1/0")
 				.with(csrf())
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/measurement/batch/1"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/measurement/batch/1/0"));
 	}		
 	
 	
