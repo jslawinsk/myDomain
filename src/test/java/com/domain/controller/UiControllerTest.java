@@ -104,7 +104,7 @@ class UiControllerTest {
 	@WithMockUser(roles = "ADMIN")
 	void getIndex() throws Exception
 	{
-		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
+		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_48dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
 		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date() );
 		testBatch.setId( 1L );
@@ -449,7 +449,7 @@ class UiControllerTest {
 	@WithMockUser(roles = "ADMIN")
 	void saveBatch() throws Exception
 	{
-		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
+		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_48dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
 		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date() );
 
@@ -505,7 +505,7 @@ class UiControllerTest {
     	List<MeasureType> measureTypes = new ArrayList<MeasureType>();
     	measureTypes.add( measureType );
 	
-		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
+		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_48dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
 		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date() );
 		
@@ -527,7 +527,7 @@ class UiControllerTest {
 	@WithMockUser(roles = "ADMIN")
 	void editBatch() throws Exception
 	{
-		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
+		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_48dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
 		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date(), DbSync.SYNCHED, "testToken" );
 		Mockito.when(dataService.getBatch( 1L )).thenReturn( testBatch );
@@ -543,7 +543,7 @@ class UiControllerTest {
 	@WithMockUser(roles = "ADMIN")
 	void deleteBatch() throws Exception
 	{
-		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
+		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_48dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
 		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date(), DbSync.SYNCHED, "TestToken" );
 		Mockito.when(dataService.getBatch( 1L )).thenReturn( testBatch );
@@ -597,7 +597,7 @@ class UiControllerTest {
 	void saveMeasurement() throws Exception
 	{
     	MeasureType measureType = new MeasureType( "TMP", "Temperature", true, 20, 200, GraphTypes.GAUGE, DbSync.ADD  );
-		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
+		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_48dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
 		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date() );
 		testBatch.setId( 1L );
@@ -625,7 +625,7 @@ class UiControllerTest {
 	void updateMeasurement() throws Exception
 	{
     	MeasureType measureType = new MeasureType( "TMP", "Temperature", true, 20, 200, GraphTypes.GAUGE, DbSync.ADD  );
-		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
+		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_48dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
 		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date() );
 		testBatch.setId( 1L );
@@ -666,7 +666,7 @@ class UiControllerTest {
 	{
 		
     	MeasureType measureType = new MeasureType( "TMP", "Temperature", true, 0, 200, GraphTypes.GAUGE, DbSync.ADD  );
-		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
+		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_48dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
 		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date() );
     	Process process = new Process( "FRM", "Fermentation" );
@@ -693,7 +693,7 @@ class UiControllerTest {
 	void editMeasurement() throws Exception
 	{
     	MeasureType measureType = new MeasureType( "TMP", "Temperature", true, 0, 200, GraphTypes.GAUGE, DbSync.ADD  );
-		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
+		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_48dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
 		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date() );
 		testBatch.setId( 1L );
@@ -714,7 +714,7 @@ class UiControllerTest {
 	void deleteMeasurement() throws Exception
 	{
     	MeasureType measureType = new MeasureType( "TMP", "Temperature", true, 0, 200, GraphTypes.GAUGE, DbSync.ADD  );
-		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
+		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_48dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
 		Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, testDomain, new Date() );
 		testBatch.setId( 1L );

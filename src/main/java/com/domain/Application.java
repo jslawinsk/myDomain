@@ -92,10 +92,10 @@ public class Application implements CommandLineRunner {
 		// Populate test database
 		//
 		if( createTestData ) {
-			Domain domain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
+			Domain domain = new Domain( 0L, 0, "Brewery", "sports_bar_white_48dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 			Domain domainBrewery = dataService.saveDomain(domain);
 
-			Domain domain2 = new Domain( 0L, 1, "Greenhouse", "yard_white_36dp.svg", "Backyard Greenhouse", "Cataegory", "Greenhouse", DbSync.ADD, null);
+			Domain domain2 = new Domain( 0L, 1, "Greenhouse", "yard_white_48dp.svg", "Backyard Greenhouse", "Cataegory", "Greenhouse", DbSync.ADD, null);
 			Domain Greenhousedomain = dataService.saveDomain(domain2);
 			
 			Category testCategory = new Category( "IPA", "18a", "Hoppy" );

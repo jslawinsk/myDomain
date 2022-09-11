@@ -9,13 +9,13 @@
 	<h2>Sensors</h2>
     <th:block th:include="layout/info"></th:block>
     <div th:if="${#lists.isEmpty(sensors)}">
-    	<a th:href="${'/sensor/add/'}" class="btn btn-outline-dark btn-lg">Add Sensor
+    	<a th:href="${'/sensor/add/' + selectedDomain}" class="btn btn-outline-dark btn-lg">Add Sensor
 			<img th:src="@{/images/add-24px.svg}"/>
     	</a>
-    	<a th:if="${blueToothEnabled} == true" th:href="${'/sensor/scan/'}" class="btn btn-outline-dark btn-lg">Discover Bluetooth
+    	<a th:if="${blueToothEnabled} == true" th:href="${'/sensor/scan/' + selectedDomain}" class="btn btn-outline-dark btn-lg">Discover Bluetooth
    			<img th:src="@{/images/bluetooth_searching-24px.svg}"/>
     	</a>
-		<a th:if="${wiFiEnabled} == true" th:href="${'/sensor/scanwifi/'}" class="btn btn-outline-dark btn-lg">Scan NetWork
+		<a th:if="${wiFiEnabled} == true" th:href="${'/sensor/scanwifi/' + selectedDomain}" class="btn btn-outline-dark btn-lg">Scan NetWork
 			<img th:src="@{/images/wifi_black_24dp.svg}"/>
 		</a>
     </div>
@@ -32,15 +32,15 @@
                 <th>Sensor Type</th>
                 <th class="d-none d-lg-block">Synched</th>                
                 <th>
-					<a th:href="${'/sensor/add/'}" class="btn btn-outline-dark" title="Add Sensor" rel="tooltip">
+					<a th:href="${'/sensor/add/' + selectedDomain}" class="btn btn-outline-dark" title="Add Sensor" rel="tooltip">
 						<img th:src="@{/images/add-24px.svg}"/>
 					</a>
                 </th>
                 <th>
-					<a th:if="${blueToothEnabled} == true" th:href="${'/sensor/scan/'}" class="btn btn-outline-dark" title="Scan Bluetooth" rel="tooltip">
+					<a th:if="${blueToothEnabled} == true" th:href="${'/sensor/scan/' + selectedDomain}" class="btn btn-outline-dark" title="Scan Bluetooth" rel="tooltip">
 						<img th:src="@{/images/bluetooth_searching-24px.svg}"/>
 					</a>
-					<a th:if="${wiFiEnabled} == true" th:href="${'/sensor/scanwifi/'}" class="btn btn-outline-dark" title="Scan NetWork" rel="tooltip">
+					<a th:if="${wiFiEnabled} == true" th:href="${'/sensor/scanwifi/' + selectedDomain}" class="btn btn-outline-dark" title="Scan NetWork" rel="tooltip">
 						<img th:src="@{/images/wifi_black_24dp.svg}"/>
 					</a>
                 </th>
@@ -56,7 +56,7 @@
                 <td th:text="${sensor.updateTime}" class="d-none d-lg-block">Time</td>
                 <td th:text="${sensor.measureType.name}">Type</td>
                 <td th:text="${sensor.dbSynch}" class="d-none d-lg-block">Synched</td>
-                <td><a th:href="${'/sensor/edit/' + sensor.id}" class="btn btn-default">
+                <td><a th:href="${'/sensor/edit/' + sensor.id + '/' + selectedDomain}" class="btn btn-default">
 					<img th:src="@{/images/edit-24px.svg}"/>
                 </a></td>
 				<td><a data-toggle="modal" data-target="#modal-warning" th:attr="data-target='#modal-warning'+${sensor.id}" class="btn btn-default" title="Delete" rel="tooltip">
@@ -78,7 +78,7 @@
 				 				</div> 
 				 				<div class="modal-footer"> 
 				 					<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
-				 					<a type="button" class="btn btn-danger" th:href="${'/sensor/delete/' + sensor.id}"><i class="fa fa-check"></i>&nbsp;Yes</a>
+				 					<a type="button" class="btn btn-danger" th:href="${'/sensor/delete/' + sensor.id + '/' + selectedDomain}"><i class="fa fa-check"></i>&nbsp;Yes</a>
 				 				</div>
 							</div>
 				 		</div>

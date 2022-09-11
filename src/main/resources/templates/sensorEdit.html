@@ -8,7 +8,7 @@
 <div class="container">
     <h2>Edit Sensor</h2>
     <div>
-        <form class="form-horizontal" th:object="${sensor}" th:action="@{/sensor/update}" method="post">
+        <form class="form-horizontal" th:object="${sensor}" th:action="${'/sensor/update/' + selectedDomain}" method="post">
             <div class="form-group">
                 <div class="col-sm-10">
                     <input type="hidden" class="form-control" th:field="*{id}"/>
@@ -124,16 +124,16 @@
                     </button>
                 </div>
 				<div class="col-sm-10 float-right" id="bluetoothControls" style="display: none;" >
-		            <a th:href="${'/sensor/pair/' + sensor.id}" class="btn btn-outline-dark" title="Pair Bluetooth" rel="tooltip">
+		            <a th:href="${'/sensor/pair/' + sensor.id + '/' + selectedDomain}" class="btn btn-outline-dark" title="Pair Bluetooth" rel="tooltip">
 						<img th:src="@{/images/settings_bluetooth-24px.svg}"/>
 		            </a>
-		            <a th:href="${'/sensor/controlauto/' + sensor.id}" class="btn btn-outline-dark" title="Control Auto" rel="tooltip">
+		            <a th:href="${'/sensor/controlauto/' + sensor.id + '/' + selectedDomain}" class="btn btn-outline-dark" title="Control Auto" rel="tooltip">
 						<img th:src="@{/images/all_inclusive-24px.svg}"/>
 		            </a>
-		            <a th:href="${'/sensor/controlheat/' + sensor.id}" class="btn btn-outline-dark" title="Heat On" rel="tooltip">
+		            <a th:href="${'/sensor/controlheat/' + sensor.id + '/' + selectedDomain}" class="btn btn-outline-dark" title="Heat On" rel="tooltip">
 						<img th:src="@{/images/whatshot-24px.svg}"/>
 		            </a>
-		            <a th:href="${'/sensor/controlcool/' + sensor.id}" class="btn btn-outline-dark" title="Cool On" rel="tooltip">
+		            <a th:href="${'/sensor/controlcool/' + sensor.id + '/' + selectedDomain}" class="btn btn-outline-dark" title="Cool On" rel="tooltip">
 						<img th:src="@{/images/ac_unit-24px.svg}"/>
 		            </a>
 		        </div>

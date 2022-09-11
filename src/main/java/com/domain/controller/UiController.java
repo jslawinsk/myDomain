@@ -704,8 +704,8 @@ public class UiController {
     //	Sensor table UI routines
     //
     //
-    @RequestMapping(path = "/sensor/add", method = RequestMethod.GET)
-    public String createSensor( Model model ) {
+    @RequestMapping(path = "/sensor/add/{domainId}", method = RequestMethod.GET)
+    public String createSensor( Model model, @PathVariable(value = "domainId") Long domainId ) {
     	Sensor sensor = new Sensor();
     	sensor.setId( 0L );
     	sensor.setEnabled( false );
@@ -716,36 +716,40 @@ public class UiController {
         model.addAttribute("batches",  dataService.getAllBatches() );
         model.addAttribute("processes",  dataService.getAllProcesses() );
         model.addAttribute("measureTypes",  dataService.getAllMeasureTypes() );
+        model.addAttribute("domains",  dataService.getAllDomains() );        
+        model.addAttribute("selectedDomain", domainId );
         return "sensorAdd";
     }
     
-    @RequestMapping(path = "/sensor", method = RequestMethod.POST)
-    public String saveSensor( Sensor sensor ) {
+    @RequestMapping(path = "/sensor/{domainId}", method = RequestMethod.POST)
+    public String saveSensor( Sensor sensor, @PathVariable(value = "domainId") Long domainId ) {
         LOG.info("UiController: saveSensor: " + sensor );   
     	dataService.saveSensor( sensor );
-        return "redirect:/sensor/";
+        return "redirect:/sensor/" + domainId;
     }
     
-    @RequestMapping(path = "/sensor/update", method = RequestMethod.POST)
-    public String updateSensor( Sensor sensor ) {
+    @RequestMapping(path = "/sensor/update/{domainId}", method = RequestMethod.POST)
+    public String updateSensor( Sensor sensor, @PathVariable(value = "domainId") Long domainId ) {
         LOG.info("UiController: updateSensor: " + sensor );   
         if( sensor.getDbSynch() != DbSync.ADD ) {
         	sensor.setDbSynch( DbSync.UPDATE );
         }
     	dataService.updateSensor( sensor );
-        return "redirect:/sensor/";
+        return "redirect:/sensor/" + domainId;
     }
     
-    @RequestMapping(path = "/sensor", method = RequestMethod.GET)
-    public String getAllSensors( Model model ) {
+    @RequestMapping(path = "/sensor/{domainId}", method = RequestMethod.GET)
+    public String getAllSensors( Model model, @PathVariable(value = "domainId") Long domainId ) {
         model.addAttribute("sensors", dataService.getAllSensors() );
         model.addAttribute("blueToothEnabled", blueToothEnabled );
         model.addAttribute("wiFiEnabled", blueToothEnabled );
-        return "sensors";
+        model.addAttribute("domains",  dataService.getAllDomains() );        
+        model.addAttribute("selectedDomain", domainId );
+       return "sensors";
     }
 
-    @RequestMapping(path = "/sensor/scan", method = RequestMethod.GET)
-    public String discoverSensors( Model model )  {
+    @RequestMapping(path = "/sensor/scan/{domainId}", method = RequestMethod.GET)
+    public String discoverSensors( Model model, @PathVariable(value = "domainId") Long domainId )  {
         try {
 			model.addAttribute("sensors", blueToothService.discoverSensors() );
 		} catch( Exception e) {
@@ -764,11 +768,13 @@ public class UiController {
         model.addAttribute("batches",  dataService.getAllBatches() );
         model.addAttribute("processes",  dataService.getAllProcesses() );
         model.addAttribute("measureTypes",  dataService.getAllMeasureTypes() );
+        model.addAttribute("domains",  dataService.getAllDomains() );        
+        model.addAttribute("selectedDomain", domainId );
         return "sensorSelect";
     }
 
-    @RequestMapping(path = "/sensor/scanwifi", method = RequestMethod.GET)
-    public String discoverWifiSensors( Model model )  {
+    @RequestMapping(path = "/sensor/scanwifi/{domainId}", method = RequestMethod.GET)
+    public String discoverWifiSensors( Model model, @PathVariable(value = "domainId") Long domainId )  {
         try {
 			model.addAttribute("sensors", wifiService.discoverSensors( "" ) );
 		} catch ( Exception e ) {
@@ -787,11 +793,13 @@ public class UiController {
         model.addAttribute("batches",  dataService.getAllBatches() );
         model.addAttribute("processes",  dataService.getAllProcesses() );
         model.addAttribute("measureTypes",  dataService.getAllMeasureTypes() );
+        model.addAttribute("domains",  dataService.getAllDomains() );        
+        model.addAttribute("selectedDomain", domainId );
         return "sensorSelect";
     }
    
-    @RequestMapping(path = "/sensor/pair/{id}", method = RequestMethod.GET)
-    public String pairSensor(Model model, @PathVariable(value = "id") Long id) {
+    @RequestMapping(path = "/sensor/pair/{id}/{domainId}", method = RequestMethod.GET)
+    public String pairSensor(Model model, @PathVariable(value = "id") Long id, @PathVariable(value = "domainId") Long domainId ) {
         Sensor sensor = dataService.getSensor( id );
         model.addAttribute("title", sensor.getName() + " Pairing" );
         boolean result = false;
@@ -801,22 +809,26 @@ public class UiController {
 			LOG.error( "pairSensor: Exception", e );
 		}
         model.addAttribute("message",  "Pair " +  (result ? "successful" : "failed") );
+        model.addAttribute("domains",  dataService.getAllDomains() );        
+        model.addAttribute("selectedDomain", domainId );
         return "results";
     }
 
-    @RequestMapping(path = "/sensor/edit/{id}", method = RequestMethod.GET)
-    public String editSensor(Model model, @PathVariable(value = "id") Long id) {
+    @RequestMapping(path = "/sensor/edit/{id}/{domainId}", method = RequestMethod.GET)
+    public String editSensor(Model model, @PathVariable(value = "id") Long id, @PathVariable(value = "domainId") Long domainId ) {
         model.addAttribute("sensor", dataService.getSensor( id ) );
         model.addAttribute("batches",  dataService.getAllBatches() );
         model.addAttribute("processes",  dataService.getAllProcesses() );
         model.addAttribute("measureTypes",  dataService.getAllMeasureTypes() );
         model.addAttribute("blueToothEnabled", blueToothEnabled );
         model.addAttribute("wiFiEnabled", blueToothEnabled );
+        model.addAttribute("domains",  dataService.getAllDomains() );        
+        model.addAttribute("selectedDomain", domainId );
         return "sensorEdit";
     }
 
-    @RequestMapping(path = "/sensor/delete/{id}", method = RequestMethod.GET)
-    public String deleteSensor( RedirectAttributes redirectAttributes, @PathVariable(name = "id") Long id ) {
+    @RequestMapping(path = "/sensor/delete/{id}/{domainId}", method = RequestMethod.GET)
+    public String deleteSensor( RedirectAttributes redirectAttributes, @PathVariable(name = "id") Long id, @PathVariable(value = "domainId") Long domainId ) {
     	
         Info info = new Info();
         String message = "";
@@ -832,11 +844,11 @@ public class UiController {
     	}
         info.setMessage( message );
         redirectAttributes.addFlashAttribute( "info", info );
-        return "redirect:/sensor/";
+        return "redirect:/sensor/" + domainId;
     }
 
-    @RequestMapping(path = "/sensor/controlauto/{id}", method = RequestMethod.GET)
-    public String sensorControlAuto(Model model, @PathVariable(value = "id") Long id) {
+    @RequestMapping(path = "/sensor/controlauto/{id}/{domainId}", method = RequestMethod.GET)
+    public String sensorControlAuto(Model model, @PathVariable(value = "id") Long id, @PathVariable(value = "domainId") Long domainId) {
         Sensor sensor = dataService.getSensor( id );
         model.addAttribute("title", sensor.getName()  );
         Message message = new Message();
@@ -844,12 +856,13 @@ public class UiController {
         message.setData( "COMMAND:CONTROL:AUTO" );
         BluetoothThread.sendMessage( message );
         model.addAttribute("message",  "Command Auto Control sent "  );
+        model.addAttribute("domains",  dataService.getAllDomains() );        
+        model.addAttribute("selectedDomain", domainId );
         return "results";
     }
-
     
-    @RequestMapping(path = "/sensor/controlheat/{id}", method = RequestMethod.GET)
-    public String sensorControlHeat(Model model, @PathVariable(value = "id") Long id) {
+    @RequestMapping(path = "/sensor/controlheat/{id}/{domainId}", method = RequestMethod.GET)
+    public String sensorControlHeat(Model model, @PathVariable(value = "id") Long id, @PathVariable(value = "domainId") Long domainId ) {
         Sensor sensor = dataService.getSensor( id );
         model.addAttribute("title", sensor.getName()  );
         Message message = new Message();
@@ -857,11 +870,13 @@ public class UiController {
         message.setData( "COMMAND:CONTROL:HEAT_ON" );
         BluetoothThread.sendMessage( message );
         model.addAttribute("message",  "Command override Heat On sent "  );
+        model.addAttribute("domains",  dataService.getAllDomains() );        
+        model.addAttribute("selectedDomain", domainId );
         return "results";
     }
 
-    @RequestMapping(path = "/sensor/controlcool/{id}", method = RequestMethod.GET)
-    public String sensorControlCool(Model model, @PathVariable(value = "id") Long id) {
+    @RequestMapping(path = "/sensor/controlcool/{id}/{domainId}", method = RequestMethod.GET)
+    public String sensorControlCool(Model model, @PathVariable(value = "id") Long id, @PathVariable(value = "domainId") Long domainId ) {
         Sensor sensor = dataService.getSensor( id );
         model.addAttribute("title", sensor.getName()  );
         Message message = new Message();
@@ -869,6 +884,8 @@ public class UiController {
         message.setData( "COMMAND:CONTROL:COOL_ON" );
         BluetoothThread.sendMessage( message );
         model.addAttribute("message",  "Command override Cool On sent "  );
+        model.addAttribute("domains",  dataService.getAllDomains() );        
+        model.addAttribute("selectedDomain", domainId );
         return "results";
     }
     

@@ -110,7 +110,7 @@ class DataSynchThreadTest {
 	        .body( "ACK" )
         	); 		
 
-		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
+		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_48dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 		
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
     	List<Category> categories = new ArrayList<Category>();

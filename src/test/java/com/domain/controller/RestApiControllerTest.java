@@ -72,7 +72,7 @@ class RestApiControllerTest {
 	@MockBean
 	JavaMailSender mailSender;
 	
-	private Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
+	private Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_48dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 	private Category testCategory = new Category( "IPA", "18a", "Hoppy" );
 	private Process process = new Process( "FRM", "Fermentation" );
 	private MeasureType measureType = new MeasureType( "TMP", "Temperature", true, 0, 200, GraphTypes.GAUGE, DbSync.ADD  );

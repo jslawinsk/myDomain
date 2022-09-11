@@ -191,7 +191,7 @@ public class DataSynchThread2Test {
 
 		MeasureType measureType = new MeasureType( "TMP", "Temperature", true, 0, 200, GraphTypes.GAUGE, DbSync.ADD  );
 		MeasureType measureType2 = new MeasureType( "PH", "PH", true, 0, 14, GraphTypes.SOLID_GUAGE, DbSync.ADD );
-		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_36dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
+		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_48dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
 		Process process = new Process( "FRM", "Fermentation", false, DbSync.ADD );
 		Process process2 = new Process( "SFRM", "Secondary Fermentation", false, DbSync.ADD );
