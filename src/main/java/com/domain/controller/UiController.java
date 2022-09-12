@@ -208,34 +208,39 @@ public class UiController {
     //	Domain table UI routines
     //
     //
-    @RequestMapping(path = "/domain", method = RequestMethod.GET)
-    public String getAllDomains(Model model) {
-        model.addAttribute("domains",  dataService.getAllDomains() );
+    @RequestMapping(path = "/domain/{domainId}", method = RequestMethod.GET)
+    public String getAllDomains( Model model, @PathVariable(value = "domainId") Long domainId ) {
+        model.addAttribute("domains", dataService.getAllDomains() );
+        model.addAttribute("selectedDomain", domainId );
         return "domains";
     }
     
-    @RequestMapping(path = "/domain/add", method = RequestMethod.GET)
-    public String createDomain(Model model) {
+    @RequestMapping(path = "/domain/add/{domainId}", method = RequestMethod.GET)
+    public String createDomain( Model model, @PathVariable(value = "domainId") Long domainId ) {
         model.addAttribute("domain", new Domain());
+        model.addAttribute("domains", dataService.getAllDomains() );
+        model.addAttribute("selectedDomain", domainId );
         return "domainAdd";
     }
 
-    @RequestMapping(path = "/domain", method = RequestMethod.POST)
-    public String saveDomain(Domain domain) {
+    @RequestMapping(path = "/domain/{domainId}", method = RequestMethod.POST)
+    public String saveDomain( Domain domain, @PathVariable(value = "domainId") Long domainId ) {
         LOG.info("UiController: Domain Post: " );   	
     	dataService.saveDomain(domain);
-        return "redirect:/domain";
+        return "redirect:/domain/" + domainId;
     }
     
-    @RequestMapping(path = "/domain/edit/{id}", method = RequestMethod.GET)
-    public String editDomain(Model model, @PathVariable(value = "id") Long id) {
+    @RequestMapping(path = "/domain/edit/{id}/{domainId}", method = RequestMethod.GET)
+    public String editDomain( Model model, @PathVariable(value = "id") Long id, @PathVariable(value = "domainId") Long domainId ) {
     	Domain domain = dataService.getDomain(id);
         model.addAttribute("domain", domain );
+        model.addAttribute("domains", dataService.getAllDomains() );
+        model.addAttribute("selectedDomain", domainId );
         return "domainEdit";
     }
     
-    @RequestMapping(path = "/domain/delete/{id}", method = RequestMethod.GET)
-    public String deleteDomain( RedirectAttributes redirectAttributes, @PathVariable(name = "id" ) Long id) {
+    @RequestMapping(path = "/domain/delete/{id}/{domainId}", method = RequestMethod.GET)
+    public String deleteDomain( RedirectAttributes redirectAttributes, @PathVariable(name = "id" ) Long id, @PathVariable(value = "domainId") Long domainId ) {
         Info info = new Info();
         String message = "";
         
@@ -258,7 +263,7 @@ public class UiController {
     	}
     	info.setMessage( message );
         redirectAttributes.addFlashAttribute( "info", info );
-        return "redirect:/domain";
+        return "redirect:/domain/" + domainId;
     }
     
 

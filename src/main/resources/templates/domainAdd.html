@@ -8,7 +8,7 @@
 <div class="container">
     <h2>Add Domain</h2>
     <div>
-        <form class="form-horizontal" th:object="${domain}" th:action="@{/domain}" method="post">
+        <form class="form-horizontal" th:object="${domain}" th:action="${'/domain/' + selectedDomain}" method="post">
             <input type="hidden" class="form-control" th:field="*{id}"/>
             <input type="hidden" class="form-control" th:field="*{dbSynchToken}"/>
             <div class="form-group">

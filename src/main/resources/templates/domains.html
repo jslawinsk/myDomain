@@ -9,7 +9,7 @@
 	<h2>Domains</h2>
     <th:block th:include="layout/info"></th:block>
     <div th:if="${#lists.isEmpty(domains)}">
-    	<a th:href="@{/domain/add}" class="btn btn-outline-dark btn-lg">
+    	<a th:href="${'/domain/add/' + selectedDomain}" class="btn btn-outline-dark btn-lg">
 			<img th:src="@{/images/add-24px.svg}"/>Domain
     	</a>
     </div>
@@ -26,7 +26,7 @@
                 <th class="d-none d-lg-block">DB Synch</th>
                 <th></th>
                 <th>
-					<a th:href="@{/domain/add}" class="btn btn-outline-dark">
+					<a th:href="${'/domain/add/' + selectedDomain}" class="btn btn-outline-dark">
 						<img th:src="@{/images/add-24px.svg}"/>
 					</a>
                 </th>
@@ -41,7 +41,7 @@
                 <td th:text="${domain.categoryLabel}" class="d-none d-lg-block">Category Label</td>
                 <td th:text="${domain.position}">Position</td>
                 <td th:text="${domain.dbSynch}" class="d-none d-lg-block">Synched</td>
-                <td><a th:href="${'/domain/edit/' + domain.id}" class="btn btn-default">
+                <td><a th:href="${'/domain/edit/' + domain.id + '/' + selectedDomain}" class="btn btn-default">
 					<img th:src="@{/images/edit-24px.svg}"/>
                 </a></td>
 				<td><a data-toggle="modal" data-target="#modal-warning" th:attr="data-target='#modal-warning'+${domain.id}" class="btn btn-default" title="Delete" rel="tooltip">
@@ -63,7 +63,7 @@
 				 				</div> 
 				 				<div class="modal-footer"> 
 				 					<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
-				 					<a type="button" class="btn btn-danger" th:href="${'/domain/delete/' + domain.id}"><i class="fa fa-check"></i>&nbsp;Yes</a>
+				 					<a type="button" class="btn btn-danger" th:href="${'/domain/delete/' + domain.id + '/' + selectedDomain}"><i class="fa fa-check"></i>&nbsp;Yes</a>
 				 				</div>
 							</div>
 				 		</div>
