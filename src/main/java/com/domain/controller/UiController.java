@@ -1072,14 +1072,16 @@ public class UiController {
     //	User table UI routines
     //
     //
-    @RequestMapping(path = "/user/add", method = RequestMethod.GET)
-    public String createUser(Model model) {
+    @RequestMapping(path = "/user/add/{domainId}", method = RequestMethod.GET)
+    public String createUser( Model model, @PathVariable(value = "domainId") Long domainId ) {
         model.addAttribute("user", new User());
-        return "userAdd";
+        model.addAttribute("domains", dataService.getAllDomains() );
+        model.addAttribute("selectedDomain", domainId );
+       return "userAdd";
     }
 
-    @RequestMapping(path = "/user/add", method = RequestMethod.POST)
-    public String saveNewUser(User user) {
+    @RequestMapping(path = "/user/add/{domainId}", method = RequestMethod.POST)
+    public String saveNewUser( User user, @PathVariable(value = "domainId") Long domainId ) {
     	String pw = user.getPassword();
     	if( pw != null && pw.length() > 0 ) {
     		user.setPassword( passwordEncoder.encode( user.getPassword() ) );
@@ -1089,54 +1091,60 @@ public class UiController {
         		eventPublisher.publishEvent( new OnCreateUserEvent( user, serverUrl, "validate" ) );
         	}
     	}
-        return "redirect:/user";
+        return "redirect:/user/" + domainId;
     }
     
-    @RequestMapping(path = "/user", method = RequestMethod.POST)
-    public String saveUser(User user) {
+    @RequestMapping(path = "/user/{domainId}", method = RequestMethod.POST)
+    public String saveUser( User user, @PathVariable(value = "domainId") Long domainId ) {
         dataService.saveUser(user);
     	if( !user.isValidated() ) {
     	    String serverUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();    
     		eventPublisher.publishEvent( new OnCreateUserEvent( user, serverUrl, "validate" ) );
     	}
-        return "redirect:/user";
+        return "redirect:/user/" + domainId;
     }
     
-    @RequestMapping(path = "/user", method = RequestMethod.GET)
-    public String getAllUsers(Model model) {
+    @RequestMapping(path = "/user/{domainId}", method = RequestMethod.GET)
+    public String getAllUsers( Model model, @PathVariable(value = "domainId") Long domainId ) {
         model.addAttribute("users",  dataService.getAllUsers() );
+        model.addAttribute("domains", dataService.getAllDomains() );
+        model.addAttribute("selectedDomain", domainId );
         return "users";
     }
 
-    @RequestMapping(path = "/user/edit/{id}", method = RequestMethod.GET)
-    public String editUser(Model model, @PathVariable(value = "id") Long id) {
+    @RequestMapping(path = "/user/edit/{id}/{domainId}", method = RequestMethod.GET)
+    public String editUser( Model model, @PathVariable(value = "id") Long id, @PathVariable(value = "domainId") Long domainId ) {
     	User user = dataService.getUser(id);
         model.addAttribute("user", user );
+        model.addAttribute("domains", dataService.getAllDomains() );
+        model.addAttribute("selectedDomain", domainId );
         return "userEdit";
     }
 
-    @RequestMapping(path = "/user/password/{id}", method = RequestMethod.GET)
-    public String editUserPassword(Model model, @PathVariable(value = "id") Long id) {
+    @RequestMapping(path = "/user/password/{id}/{domainId}", method = RequestMethod.GET)
+    public String editUserPassword( Model model, @PathVariable(value = "id") Long id, @PathVariable(value = "domainId") Long domainId ) {
     	User user = dataService.getUser(id);
     	user.setPassword( "" );
         model.addAttribute("user", user );
+        model.addAttribute("domains", dataService.getAllDomains() );
+        model.addAttribute("selectedDomain", domainId );
         return "userPasswordEdit";
     }
 
-    @RequestMapping(path = "/user/password", method = RequestMethod.POST)
-    public String updateUserPw(User user) {
+    @RequestMapping(path = "/user/password/{domainId}", method = RequestMethod.POST)
+    public String updateUserPw( User user, @PathVariable(value = "domainId") Long domainId ) {
     	String pw = user.getPassword();
     	if( pw != null && pw.length() > 0 ) {
     		user.setPassword( passwordEncoder.encode( user.getPassword() ) );
         	dataService.saveUser(user);
     	}
-        return "redirect:/user";
+        return "redirect:/user/" + domainId;
     }
     
-    @RequestMapping(path = "/user/delete/{id}", method = RequestMethod.GET)
-    public String deleteUser(@PathVariable(name = "id") Long id) {
+    @RequestMapping(path = "/user/delete/{id}/{domainId}", method = RequestMethod.GET)
+    public String deleteUser( @PathVariable(name = "id") Long id, @PathVariable(value = "domainId") Long domainId ) {
     	dataService.deleteUser(id);
-        return "redirect:/user";
+        return "redirect:/user/" + domainId;
     }
     
 }

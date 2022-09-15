@@ -8,7 +8,7 @@
 <div class="container">
 	<h2>Users</h2>
     <div th:if="${#lists.isEmpty(users)}">
-    	<a th:href="@{/user/add}" class="btn btn-outline-dark btn-lg">
+    	<a th:href="${'/user/add/'+ selectedDomain}" class="btn btn-outline-dark btn-lg">
 			<img th:src="@{/images/add-24px.svg}"/>User
     	</a>
     </div>
@@ -23,7 +23,7 @@
                 <th class="d-none d-lg-block">DB Synch</th>
                 <th></th>
                 <th>
-					<a th:href="@{/user/add}" class="btn btn-outline-dark">
+					<a th:href="${'/user/add/'+ selectedDomain}" class="btn btn-outline-dark">
 						<img th:src="@{/images/add-24px.svg}"/>
 					</a>
                 </th>
@@ -35,7 +35,7 @@
                 <td th:text="${user.validated}" class="d-none d-lg-block">Validated</td>
                 <td></td>
                 <td th:text="${user.dbSynch}" class="d-none d-lg-block">Synched</td>
-                <td><a th:href="${'/user/edit/' + user.id}" class="btn btn-default">
+                <td><a th:href="${'/user/edit/' + user.id + '/' + selectedDomain}" class="btn btn-default">
 					<img th:src="@{/images/edit-24px.svg}"/>
                 </a></td>
                 
@@ -58,7 +58,7 @@
 				 				</div>
 				 				<div class="modal-footer">
 				 					<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
-				 					<a type="button" class="btn btn-danger" th:href="${'/user/delete/' + user.id}"><i class="fa fa-check"></i>&nbsp;Yes</a>
+				 					<a type="button" class="btn btn-danger" th:href="${'/user/delete/' + user.id + '/' + selectedDomain}"><i class="fa fa-check"></i>&nbsp;Yes</a>
 				 				</div>
 							</div>
 				 		</div>
