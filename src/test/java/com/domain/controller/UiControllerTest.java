@@ -754,7 +754,7 @@ class UiControllerTest {
 	@WithMockUser(roles = "ADMIN")
 	void createSensor() throws Exception
 	{
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/add")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/add/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<h2>Add Sensor</h2>")));
@@ -764,7 +764,7 @@ class UiControllerTest {
 	@WithMockUser(roles = "ADMIN")
 	void saveSensor() throws Exception
 	{
-		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/sensor" )
+		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/sensor/0" )
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED )
 	            .content(buildUrlEncodedFormEntity(
@@ -772,14 +772,14 @@ class UiControllerTest {
 		                )
 		            )		        
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/sensor/"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/sensor/0"));
 	}	
 
 	@Test
 	@WithMockUser(roles = "ADMIN")
 	void updateSensor() throws Exception
 	{
-		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/sensor/update" )
+		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/sensor/update/0" )
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED )
 	            .content(buildUrlEncodedFormEntity(
@@ -787,9 +787,9 @@ class UiControllerTest {
 		                )
 		            )		        
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/sensor/"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/sensor/0"));
 
-		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/sensor/update" )
+		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/sensor/update/0" )
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED )
 	            .content(buildUrlEncodedFormEntity(
@@ -797,14 +797,14 @@ class UiControllerTest {
 		                )
 		            )		        
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/sensor/"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/sensor/0"));
 	}	
 	
 	@Test
 	@WithMockUser(roles = "ADMIN")
 	void getAllSensors() throws Exception
 	{
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<h2>Sensors</h2>")));
@@ -819,13 +819,13 @@ class UiControllerTest {
     	sensors.add( sensor );			
 		Mockito.when( blueToothService.discoverSensors( )).thenReturn( sensors );
 		
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/scan")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/scan/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<h2>Edit Sensor</h2>")));
 
 		Mockito.when( blueToothService.discoverSensors( )).thenThrow( new IOException( "test") );
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/scan")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/scan/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<h2>Edit Sensor</h2>")));
@@ -841,13 +841,13 @@ class UiControllerTest {
     	sensors.add( sensor );			
 		Mockito.when( wifiService.discoverSensors( "" )).thenReturn( sensors );
 		
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/scanwifi")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/scanwifi/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<h2>Edit Sensor</h2>")));
 
 		Mockito.when( wifiService.discoverSensors( "" )).thenThrow( new SocketException( "test") );
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/scanwifi")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/scanwifi/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<h2>Edit Sensor</h2>")));
@@ -866,13 +866,13 @@ class UiControllerTest {
 		Mockito.when( blueToothService.pairSensor( sensor.getName(), sensor.getPin() )).thenReturn( true );
 		Mockito.when(dataService.getSensor( 1L )).thenReturn( sensor );
 		
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/pair/1")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/pair/1/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<title>Error</title>")));
 
 		Mockito.when( blueToothService.pairSensor( sensor.getName(), sensor.getPin() )).thenThrow( new IOException( "test") );
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/pair/1")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/pair/1/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<title>Error</title>")));
@@ -885,7 +885,7 @@ class UiControllerTest {
 		Sensor sensor = new Sensor();
 		Mockito.when(dataService.getSensor( 1L )).thenReturn( sensor );
 
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/edit/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/edit/1/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<h2>Edit Sensor</h2>")));
@@ -899,16 +899,16 @@ class UiControllerTest {
 		sensor.setDbSynchToken( "TestToken" );
 		Mockito.when(dataService.getSensor( 1L )).thenReturn( sensor );
 
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/delete/1")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/delete/1/0")
 				.with(csrf())
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/sensor/"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/sensor/0"));
 
 		sensor.setDbSynchToken( "" );
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/delete/1")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/delete/1/0")
 				.with(csrf())
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/sensor/"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/sensor/0"));
 	}		
 	
 	@Test
@@ -921,7 +921,7 @@ class UiControllerTest {
 		sensor.setId( 1L );
 		Mockito.when(dataService.getSensor( 1L )).thenReturn( sensor );
 		
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/controlauto/1")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/controlauto/1/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<title>Error</title>")));
@@ -937,7 +937,7 @@ class UiControllerTest {
 		sensor.setId( 1L );
 		Mockito.when(dataService.getSensor( 1L )).thenReturn( sensor );
 		
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/controlheat/1")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/controlheat/1/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<title>Error</title>")));
@@ -953,7 +953,7 @@ class UiControllerTest {
 		sensor.setId( 1L );
 		Mockito.when(dataService.getSensor( 1L )).thenReturn( sensor );
 		
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/controlcool/1")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/sensor/controlcool/1/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<title>Error</title>")));
@@ -1218,7 +1218,7 @@ class UiControllerTest {
 	@WithMockUser(roles = "ADMIN")
 	void createUser() throws Exception
 	{
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/user/add")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/user/add/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<h2>Edit User</h2>")));
@@ -1232,7 +1232,7 @@ class UiControllerTest {
 		user.setId( 1L );
 		LOG.info( "Test saveNewUser: " + user );
 		
-		mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:" + port + "/user/add")
+		mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:" + port + "/user/add/0")
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 	            .content(buildUrlEncodedFormEntity(
@@ -1241,7 +1241,7 @@ class UiControllerTest {
 	                )
 	            )
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/user"))
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/user/0"))
 				;
 		
 	}		
@@ -1277,19 +1277,19 @@ class UiControllerTest {
 		user.setId( 1L );
 		LOG.info( "Test saveUser: " + user );
 
-		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/user" )
+		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/user/0" )
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_JSON)
 		        .content(objectMapper.writeValueAsString( user ))		
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/user"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/user/0"));
 	}	
 	
 	@Test
 	@WithMockUser(roles = "ADMIN")
 	void getAllUsers() throws Exception
 	{
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/user")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/user/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<h2>Users</h2>")));
@@ -1303,7 +1303,7 @@ class UiControllerTest {
 		user.setId( 1L );
 		Mockito.when(dataService.getUser( 1L )).thenReturn( user );
 
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/user/edit/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/user/edit/1/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<h2>Edit User</h2>")));
@@ -1317,7 +1317,7 @@ class UiControllerTest {
 		user.setId( 1L );
 		Mockito.when(dataService.getUser( 1L )).thenReturn( user );
 
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/user/password/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/user/password/1/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<h2>Change Password for:")));
@@ -1331,7 +1331,7 @@ class UiControllerTest {
 		user.setId( 1L );
 		LOG.info( "Test saveNewUser: " + user );
 		
-		mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:" + port + "/user/password")
+		mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:" + port + "/user/password/0")
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 	            .content(buildUrlEncodedFormEntity(
@@ -1340,7 +1340,7 @@ class UiControllerTest {
 	                )
 	            )
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/user"))
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/user/0"))
 				;
 		
 	}			
@@ -1349,10 +1349,10 @@ class UiControllerTest {
 	@WithMockUser(roles = "ADMIN")
 	void deleteUser() throws Exception
 	{
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/user/delete/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/user/delete/1/0")
 				.with(csrf())
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/user"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/user/0"));
 	}		
 	
 	@Test
