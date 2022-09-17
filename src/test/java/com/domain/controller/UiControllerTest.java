@@ -1121,7 +1121,7 @@ class UiControllerTest {
 
 		Mockito.when(dataService.getUserByName( Mockito.any(String.class)) ).thenReturn( user );
 
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/profile/edit")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/profile/edit/0")
 				.contentType(MediaType.APPLICATION_JSON)
 		        .content(objectMapper.writeValueAsString( user ))		
 	            .accept(MediaType.ALL))
@@ -1133,7 +1133,7 @@ class UiControllerTest {
 	@WithMockUser(roles = "ADMIN", username = "test")
 	void saveProfile() throws Exception
 	{
-		mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:" + port + "/profile")
+		mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:" + port + "/profile/0")
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 	            .content(buildUrlEncodedFormEntity(
@@ -1157,7 +1157,7 @@ class UiControllerTest {
 
 		Mockito.when(dataService.getUserByName( Mockito.any(String.class)) ).thenReturn( user );
 
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/profile/password")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/profile/password/0")
 				.contentType(MediaType.APPLICATION_JSON)
 		        .content(objectMapper.writeValueAsString( user ))		
 	            .accept(MediaType.ALL))
@@ -1174,7 +1174,7 @@ class UiControllerTest {
 		user.setPassword( passwordEncoder.encode( "test" ));
 		Mockito.when(dataService.getUserByName( "test" )).thenReturn( user );
 		
-		mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:" + port + "/profile/password")
+		mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:" + port + "/profile/password/0")
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 	            .content(buildUrlEncodedFormEntity(
@@ -1183,10 +1183,10 @@ class UiControllerTest {
 	                )
 	            )		        
 	            .accept(MediaType.ALL) )
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/")
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/0")
 			);
 
-		mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:" + port + "/profile/password")
+		mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:" + port + "/profile/password/0")
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 	            .content(buildUrlEncodedFormEntity(

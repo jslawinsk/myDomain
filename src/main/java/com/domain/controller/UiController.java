@@ -988,18 +988,20 @@ public class UiController {
     //	User table Profile UI routines
     //
     //
-    @RequestMapping(path = "/profile/edit", method = RequestMethod.GET)
-    public String editProfile( Model model ) {
+    @RequestMapping(path = "/profile/edit/{domainId}", method = RequestMethod.GET)
+    public String editProfile( Model model, @PathVariable(value = "domainId") Long domainId ) {
     	
     	UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();    	
     	
     	User user = dataService.getUserByName( userDetails.getUsername() );
         model.addAttribute("user", user );
+        model.addAttribute("domains", dataService.getAllDomains() );
+        model.addAttribute("selectedDomain", domainId );
         return "profileEdit";
     }
     
-    @RequestMapping(path = "/profile", method = RequestMethod.POST)
-    public String saveProfile( Model model, User user, HttpServletRequest request ) {
+    @RequestMapping(path = "/profile/{domainId}", method = RequestMethod.POST)
+    public String saveProfile( Model model, User user, HttpServletRequest request, @PathVariable(value = "domainId") Long domainId ) {
 
     	UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();  
         Info info = new Info( "Profile Update", "Profile updated." );
@@ -1025,11 +1027,13 @@ public class UiController {
         	}
     	}
         model.addAttribute("info", info );
+        model.addAttribute("domains", dataService.getAllDomains() );
+        model.addAttribute("selectedDomain", domainId );
         return "info";
     }
     
-    @RequestMapping(path = "/profile/password", method = RequestMethod.GET)
-    public String profilePassword( Model model ) {
+    @RequestMapping(path = "/profile/password/{domainId}", method = RequestMethod.GET)
+    public String profilePassword( Model model, @PathVariable(value = "domainId") Long domainId ) {
     	
     	UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();    	
     	
@@ -1039,12 +1043,14 @@ public class UiController {
         
         Info info = new Info();
         model.addAttribute("info", info );
-        
+        model.addAttribute("domains", dataService.getAllDomains() );
+        model.addAttribute("selectedDomain", domainId );
+       
         return "profilePassword";
     }
     
-    @RequestMapping(path = "/profile/password", method = RequestMethod.POST)
-    public String profileUpdatePw( Model model, ProfilePassword profilePassword ) {
+    @RequestMapping(path = "/profile/password/{domainId}", method = RequestMethod.POST)
+    public String profileUpdatePw( Model model, ProfilePassword profilePassword, @PathVariable(value = "domainId") Long domainId ) {
     	
     	UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();    	
         Info info = new Info();
@@ -1062,10 +1068,12 @@ public class UiController {
 	        model.addAttribute("profilePassword", profilePassword );
 	        info.setMessage( "Password change failed, please enter current password." );
 	        model.addAttribute("info", info );
+	        model.addAttribute("domains", dataService.getAllDomains() );
+	        model.addAttribute("selectedDomain", domainId );
 	        return "profilePassword";
 		}
         model.addAttribute("info", info );
-        return "redirect:/";
+        return "redirect:/" + domainId;
     }
     
     //

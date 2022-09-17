@@ -69,8 +69,8 @@
 						<img th:src="@{/images/account_circle_white_24dp.svg}"/>
 					</a>						
 					<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-						<a class="dropdown-item" th:href="@{/profile/edit}">Profile</a>
-						<a class="dropdown-item" th:href="@{/profile/password}">Change Password</a>
+						<a class="dropdown-item" th:href="${'/profile/edit/' + selectedDomain}">Profile</a>
+						<a class="dropdown-item" th:href="${'/profile/password/' + selectedDomain}">Change Password</a>
 						<form method="post" th:action="@{/logout}">
 						  	<input type="hidden" name="name" value="value" /> 
 						  	<a class="dropdown-item" onclick="this.parentNode.submit();">Logout</a>
