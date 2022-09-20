@@ -1,6 +1,7 @@
 package com.domain.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -22,6 +23,9 @@ public class UserListener implements ApplicationListener<OnCreateUserEvent> {
 
     @Autowired
     private UserService userService;
+    
+    @Value("${spring.mail.username}")
+    private String mailUser;
 
     @Override
     public void onApplicationEvent(OnCreateUserEvent event) {
@@ -41,6 +45,7 @@ public class UserListener implements ApplicationListener<OnCreateUserEvent> {
         String message = "Please confirm:";
         //send email
         SimpleMailMessage email = new SimpleMailMessage();
+        email.setFrom( mailUser );
         email.setTo(recipientAddress);
         email.setSubject(subject);
         email.setText(message + "\r\n" + confirmationUrl);
