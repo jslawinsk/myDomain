@@ -14,15 +14,16 @@
     
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 		
-			<a th:href="@{/0}">
-				<img class="py-2 ml-lg-2 mx-3" th:src="@{/images/TopLogo.png}"/>
+			<a th:if="${selectedDomain == 0}" th:href="@{/0}">
+				<img class="py-2 ml-lg-2 mx-3 bg-secondary" th:src="@{/images/TopLogo.png}" title="My Domain"/>
 			</a>
-        	<a class="navbar-brand" href="#" th:href="@{/0}">My Domain</a>
+			<a th:if="${selectedDomain != 0}" th:href="@{/0}">
+				<img class="py-2 ml-lg-2 mx-3" th:src="@{/images/TopLogo.png}" title="My Domain"/>
+			</a>
         	
       		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation" href="#">
         		<span class="navbar-toggler-icon"></span>
       		</button>
-      		
       		
       		<div class="collapse navbar-collapse ml-lg-0 ml-3" id="navbarsExample04" sec:authorize="isAuthenticated()">
       		
@@ -30,10 +31,15 @@
 				    <div th:if="${not #lists.isEmpty(domains)}">
 			            <ul class="navbar-nav mb-1 mr-auto">
 							<li th:each="domain:${domains}" class="nav-link py-1 pr-3" >
-								<a th:if="${domain.image} != ''" th:href="${'/' + domain.id}" class="nav-link">
+								<a th:if="${domain.image != '' and domain.id == selectedDomain}" th:href="${'/' + domain.id}" class="nav-link">
+									<img th:title="${domain.name}" class="py-2 ml-lg-2 mx-3 bg-secondary" th:src="@{/images/}+${domain.image}"/>
+								</a>
+								<a th:if="${domain.image != '' and domain.id != selectedDomain}" th:href="${'/' + domain.id}" class="nav-link">
 									<img th:title="${domain.name}" class="py-2 ml-lg-2 mx-3" th:src="@{/images/}+${domain.image}"/>
 								</a>
-								<a th:if="${domain.image} == ''" th:text="${domain.name}" th:href="${'/' + domain.id}" class="nav-link">
+								<a th:if="${domain.image == '' and domain.id == selectedDomain}" th:text="${domain.name}" th:href="${'/' + domain.id}" class="nav-link bg-secondary">
+                				</a>							
+								<a th:if="${domain.image == '' and domain.id != selectedDomain}" th:text="${domain.name}" th:href="${'/' + domain.id}" class="nav-link">
                 				</a>							
 							</li>
 							
@@ -48,7 +54,7 @@
 	    					<a class="nav-link" th:href="${'/batch/' + selectedDomain}">Batches</a>
 	  					</li>
 						<li class="nav-item">
-	    					<a class="nav-link" th:href="@{/category}">Categories</a>
+	    					<a class="nav-link" th:href="${'/category/' + selectedDomain}">Categories</a>
 	  					</li>
 						<li class="nav-item">
 	    					<a class="nav-link" th:href="@{/process}">Processes</a>

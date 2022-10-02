@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.domain.model.Batch;
 import com.domain.model.DbSync;
 import com.domain.model.Domain;
+import com.domain.model.DomainCategory;
 import com.domain.model.MeasureType;
 import com.domain.model.Measurement;
 import com.domain.model.Process;
@@ -46,6 +47,7 @@ import com.domain.repository.ProcessRepository;
 import com.domain.repository.ResetTokenRepository;
 import com.domain.repository.SensorRepository;
 import com.domain.repository.CategoryRepository;
+import com.domain.repository.DomainCategoryRepository;
 import com.domain.repository.UserRepository;
 import com.domain.repository.VerificationTokenRepository;
 
@@ -61,59 +63,35 @@ public class DataService implements UserDetailsService {
     @Autowired
     private DomainRepository domainRepository;
     
+    @Autowired
+    private DomainCategoryRepository domainCategoryRepository;
+    
+	@Autowired
 	private CategoryRepository categoryRepository;
-	@Autowired
-	public void categoryRepository( CategoryRepository categoryRepository ) {
-		this.categoryRepository = categoryRepository;
-	}
 
+	@Autowired
 	private ProcessRepository processRepository;
-	@Autowired
-	public void  processRepository( ProcessRepository processRepository ) {
-		this.processRepository = processRepository;
-	}
 	
+	@Autowired
 	private MeasureTypeRepository measureTypeRepository;
-	@Autowired
-	public void  measureTypeRepository( MeasureTypeRepository measureTypeRepository ) {
-		this.measureTypeRepository = measureTypeRepository;
-	}
 	
+	@Autowired
 	private BatchRepository batchRepository;
-	@Autowired
-	public void batchRepository( BatchRepository batchRepository ) {
-		this.batchRepository = batchRepository;
-	}
 
+	@Autowired
 	private MeasurementRepository measurementRepository;
-	@Autowired
-	public void  measurementRepository( MeasurementRepository measurementRepository ) {
-		this.measurementRepository = measurementRepository;
-	}
 
+	@Autowired
 	private SensorRepository sensorRepository;
-	@Autowired
-	public void sensorRepository( SensorRepository sensorRepository ) {
-		this.sensorRepository = sensorRepository;
-	}
 
+    @Autowired
     private UserRepository userRepository;
-    @Autowired
-	public void userRepository( UserRepository userRepository ) {
-		this.userRepository = userRepository;
-	}
     
+    @Autowired
     private VerificationTokenRepository verificationTokenRepository;
-    @Autowired
-	public void verificationTokenRepository( VerificationTokenRepository verificationTokenRepository ) {
-		this.verificationTokenRepository = verificationTokenRepository;
-	}
     
-    private ResetTokenRepository resetTokenRepository;
     @Autowired
-	public void resetTokenRepository( ResetTokenRepository resetTokenRepository ) {
-		this.resetTokenRepository = resetTokenRepository;
-	}
+    private ResetTokenRepository resetTokenRepository;
     
 	//
 	//	Domain table access methods
@@ -195,6 +173,105 @@ public class DataService implements UserDetailsService {
     }
     
 	//
+	//	DomainCategory table access methods
+	//
+	//
+    public DomainCategory getDomainCategory( Long id ) {
+        LOG.info("Getting DomainCategory, id: " + id);
+        return domainCategoryRepository.getById(id);
+    }
+
+    public DomainCategory getDomainCategory( Long domainId, Long categoryId ) {
+        LOG.info("Getting DomainCategory, Id: " + domainId, " Category Id: " + categoryId );
+        return domainCategoryRepository.findDomainCategory( domainId, categoryId );
+    }
+    
+    public DomainCategory getDomainCategory( String dbSynchToken ) {
+        LOG.info("Getting DomainCategory, SynchToken: " + dbSynchToken );
+        try {
+        	DomainCategory domainCategory = domainCategoryRepository.findBySynchToken( dbSynchToken );
+	        LOG.info("getDomainCategory: " + domainCategory );
+	        return domainCategory;
+        }
+        catch( Exception e ) {
+        	LOG.error( "getDomainCategory: Execption",  e );
+        }
+        return null;
+    }
+    
+    public List<DomainCategory> getAllDomainCategories() {
+    	return domainCategoryRepository.findAll();
+    }
+
+    public List<Category> getCategoriesForDomain( Long id ) {
+    	ArrayList<Category> categories = new ArrayList<Category>();
+    	List<DomainCategory> domainCategories = domainCategoryRepository.findDomainCategoryiesByDomainId( id );
+    	
+    	for( DomainCategory domainCategory:domainCategories)  {
+    		categories.add( domainCategory.getCategory() );
+    	}
+    	return categories;
+    }
+    
+    public List<DomainCategory> getDomainCategoriesToSynchronize() {
+    	return domainCategoryRepository.findDomainCategoryiesToSynchronize();
+    }
+
+    public DomainCategory saveDomainCategory( DomainCategory domainCategory ) {
+    	DomainCategory domainCategoryToSave;
+        try {
+            LOG.info("Saving DomainCategory: " + domainCategory );
+        	if( domainCategory.getDbSynchToken() == null || domainCategory.getDbSynchToken().length() <= 0 ) {
+        		domainCategory.setDbSynchToken( getSynchToken() );
+        	}
+        	domainCategory.setUpdateTime( new Date() );
+        	domainCategoryToSave = domainCategoryRepository.save( domainCategory );
+            return domainCategoryToSave;
+        } catch (Exception e) {
+            LOG.error("DataService: Exception: saveDomainCategory: " + e.getMessage());
+        }
+        return new DomainCategory();
+    }
+
+    public DomainCategory updateDomainCategory( DomainCategory domainCategoryToUpdate ) {
+        LOG.info("Update DomainCategory: " + domainCategoryToUpdate );
+        DomainCategory foundDomainCategory = domainCategoryRepository.getById( domainCategoryToUpdate.getId() );
+        try {
+        	foundDomainCategory.setDomain( domainCategoryToUpdate.getDomain() );
+        	foundDomainCategory.setCategory( domainCategoryToUpdate.getCategory() );
+        	foundDomainCategory.setUpdateTime( new Date() );
+        	foundDomainCategory.setDbSynch( domainCategoryToUpdate.getDbSynch() );
+        	foundDomainCategory.setDbSynchToken( domainCategoryToUpdate.getDbSynchToken() );
+            return domainCategoryRepository.save( foundDomainCategory );
+        } catch (Exception e) {
+            LOG.error("DataService: Exception: updateDomainCategory: " + e.getMessage());
+        }
+        return foundDomainCategory;
+    }
+
+    public void deleteDomainCategory( Long id ) {
+        try {
+        	DomainCategory foundDomainCategory = domainCategoryRepository.getById( id );
+        	domainCategoryRepository.delete( foundDomainCategory );
+        } catch (Exception e) {
+            LOG.error("DataService: Exception: deleteDomainCategory: " + e.getMessage());
+        }
+    }
+
+    public Long getDomainCategoryDomainCount( Long id ) {
+        Long count = domainCategoryRepository.domainCount( id );
+        LOG.info("getDomainCategoryDomainCount, id:" + id + " domains: " + count );
+        return count;
+    }
+
+    public Long getDomainCategoryCategoryCount( Long id ) {
+        Long count = domainCategoryRepository.categoryCount( id );
+        LOG.info("getDomainCategoryCategoryCount, id:" + id + " categories: " + count );
+        return count;
+    }
+    
+    
+	//
 	//	Category table access methods
 	//
 	//
@@ -266,7 +343,13 @@ public class DataService implements UserDetailsService {
 
     public Long getCategoryBatchCount( Long id ) {
         Long count = batchRepository.categoryCount( id );
-        LOG.info("getCategoryBatchCount, id:" + id + " batches: " + count );
+        LOG.info("getCategoryBatchCount, id: " + id + " batches: " + count );
+        return count;
+    }
+    
+    public Long getCategoryBatchCount( Long categoryId, Long domainId ) {
+        Long count = batchRepository.categoryCount( categoryId, domainId );
+        LOG.info("getCategoryBatchCount, categoryId: " + categoryId + " domain Id: " + domainId + " batches: " + count );
         return count;
     }
     

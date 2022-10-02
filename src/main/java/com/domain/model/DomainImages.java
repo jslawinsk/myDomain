@@ -7,6 +7,7 @@ public enum DomainImages {
 	AGRICULTURE( "agriculture_white_48dp.svg" ),
 	COMPOST( "compost_white_48dp.svg" ),
     YARD( "yard_white_48dp.svg" ),
+    EGG( "egg_white_48dp.svg" ),
     FLOWER( "filter_vintage_white_48dp.svg" ),
     FLOWER2( "local_florist_white_48dp.svg" ),
     HIVE( "hive_white_48dp.svg" ),

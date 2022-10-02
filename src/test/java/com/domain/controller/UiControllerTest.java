@@ -143,7 +143,7 @@ class UiControllerTest {
 	@WithMockUser(roles = "ADMIN")
 	void getAllCategories() throws Exception
 	{
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/category")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/category/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<h2>Categories</h2>")));
@@ -153,7 +153,7 @@ class UiControllerTest {
 	@WithMockUser(roles = "ADMIN")
 	void getCategoryCreate() throws Exception
 	{
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/category/add")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/category/add/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<h2>Add Category</h2>")));
@@ -165,19 +165,19 @@ class UiControllerTest {
 	{
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
 
-		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/category" )
+		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/category/0" )
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_JSON)
 		        .content(objectMapper.writeValueAsString( testCategory ))		
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/category"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/category/0"));
 	}	
 
 	@Test
 	@WithMockUser(roles = "ADMIN")
 	void updateCategory() throws Exception
 	{
-		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/category/update" )
+		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/category/update/0" )
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 	            .content(buildUrlEncodedFormEntity(
@@ -185,7 +185,7 @@ class UiControllerTest {
 	                )
 	            )		        
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/category"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/category/0"));
 	}	
 	
 	@Test
@@ -195,7 +195,7 @@ class UiControllerTest {
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
 		Mockito.when(dataService.getCategory( 1L )).thenReturn( testCategory );
 
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/category/edit/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/category/edit/1/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<h2>Edit Category:")));
@@ -209,28 +209,28 @@ class UiControllerTest {
 		Mockito.when(dataService.getCategory( 1L )).thenReturn( testCategory );
 		Mockito.when(dataService.getCategoryBatchCount( 1L )).thenReturn( 0L );
 
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/category/delete/1")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/category/delete/1/0")
 				.with(csrf())
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/category"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/category/0"));
 
 		testCategory.setDbSynchToken( "" );
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/category/delete/1")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/category/delete/1/0")
 				.with(csrf())
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/category"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/category/0"));
 
 		Mockito.when(dataService.getCategoryBatchCount( 1L )).thenReturn( 1L );
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/category/delete/1")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/category/delete/1/0")
 				.with(csrf())
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/category"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/category/0"));
 
 		Mockito.when(dataService.getCategoryBatchCount( 1L )).thenReturn( 10L );
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/category/delete/1")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/category/delete/1/0")
 				.with(csrf())
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/category"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/category/0"));
 	}		
 	
 	//

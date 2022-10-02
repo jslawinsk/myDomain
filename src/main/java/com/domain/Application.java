@@ -26,6 +26,7 @@ import com.domain.core.WiFiThread;
 import com.domain.model.Batch;
 import com.domain.model.DbSync;
 import com.domain.model.Domain;
+import com.domain.model.DomainCategory;
 import com.domain.model.GraphTypes;
 import com.domain.model.MeasureType;
 import com.domain.model.Measurement;
@@ -103,7 +104,13 @@ public class Application implements CommandLineRunner {
 	
 			Category testCategory2 = new Category( "Stout", "21", "Malty" );
 			dataService.saveCategory( testCategory2 );
+			
+			DomainCategory domainCategory = new DomainCategory(domainBrewery, testCategory, new Date(), DbSync.ADD, null );
+			dataService.saveDomainCategory( domainCategory );
 
+			domainCategory = new DomainCategory(domainBrewery, testCategory2, new Date(), DbSync.ADD, null );
+			dataService.saveDomainCategory( domainCategory );
+			
 			Category testCategory3 = new Category( "Tomatoes", "Tomatoes", "" );
 			Category tomatoeCategory = dataService.saveCategory( testCategory3 );
 			

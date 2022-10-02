@@ -8,9 +8,13 @@
 <div class="container">
 	<h2>Categories</h2>
     <th:block th:include="layout/info"></th:block>
+
     <div th:if="${#lists.isEmpty(categories)}">
-    	<a th:href="@{/category/add}" class="btn btn-outline-dark btn-lg">
-			<img th:src="@{/images/add-24px.svg}"/>Category
+    	<a th:if="${selectedDomain != 0}" data-toggle="modal" data-target="#modal-linkCategory" class="btn btn-outline-dark btn-lg">
+			<img th:src="@{/images/add_link_black_24dp.svg}" title="Link Existing Category"/>
+    	</a>
+    	<a th:href="${'/category/add/' + selectedDomain}" class="btn btn-outline-dark btn-lg">
+			<img th:src="@{/images/add-24px.svg}" title="Create New Category"/>
     	</a>
     </div>
     <div th:if="${not #lists.isEmpty(categories)}">
@@ -21,10 +25,14 @@
                 <th class="d-none d-lg-block">Reference</th>
                 <th>Description</th>
                 <th class="d-none d-lg-block">DB Synch</th>
-                <th></th>
                 <th>
-					<a th:href="@{/category/add}" class="btn btn-outline-dark">
-						<img th:src="@{/images/add-24px.svg}"/>
+					<a th:if="${selectedDomain != 0}" data-toggle="modal" data-target="#modal-linkCategory" class="btn btn-outline-dark btn-lg">
+						<img th:src="@{/images/add_link_black_24dp.svg}" title="Link Existing Category"/>
+					</a>
+                </th>
+                <th>
+					<a th:href="${'/category/add/' + selectedDomain}" class="btn btn-outline-dark">
+						<img th:src="@{/images/add-24px.svg}" title="Create New Category"/>
 					</a>
                 </th>
                 <th></th>
@@ -35,20 +43,45 @@
                 <td th:text="${category.reference}" class="d-none d-lg-block">Reference</td>
                 <td th:text="${category.description}">Description</td>
                 <td th:text="${category.dbSynch}" class="d-none d-lg-block">Synched</td>
-                <td><a th:href="${'/category/edit/' + category.id}" class="btn btn-default">
+                <td><a th:href="${'/category/edit/' + category.id + '/' + selectedDomain}" class="btn btn-default">
 					<img th:src="@{/images/edit-24px.svg}"/>
                 </a></td>
-				<td><a data-toggle="modal" data-target="#modal-warning" th:attr="data-target='#modal-warning'+${category.id}" class="btn btn-default" title="Delete" rel="tooltip">
-					<img th:src="@{/images/delete_forever-24px.svg}"/>
-				</a></td>    
 				<td>
+					<a th:if="${selectedDomain == 0}" data-toggle="modal" data-target="#modal-warning" th:attr="data-target='#modal-warning'+${category.id}" class="btn btn-default" title="Delete" rel="tooltip">
+						<img th:src="@{/images/delete_forever-24px.svg}"/>
+					</a>
+					<a th:if="${selectedDomain != 0}" data-toggle="modal" th:attr="data-target='#modal-unlink'+${category.id}" class="btn btn-default" title="Unlink" rel="tooltip">
+						<img th:src="@{/images/link_off_black_24dp.svg}"/>
+					</a>
+				</td>    
+				<td>
+					<div class="modal fade in" th:id="modal-unlink+${category.id}">
+				 		<div class="modal-dialog">
+				 			<div class="modal-content">
+				 				<div class="modal-header">
+				 					<h5 class="modal-title">Unlink</h5>
+				 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				 					<span aria-hidden="true">×</span></button>
+				 				</div>
+				 				<div class="modal-body">
+				 					<h3>
+				 						<p th:text="'Unlink category: ' + ${category.name} + ' id: ' + ${category.id} + '?'"></p>
+				 					</h3>
+				 				</div> 
+				 				<div class="modal-footer"> 
+				 					<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
+				 					<a type="button" class="btn btn-danger" th:href="${'/category/unlink/' + category.id + '/' + selectedDomain}"><i class="fa fa-check"></i>&nbsp;Yes</a>
+				 				</div>
+							</div>
+				 		</div>
+				 	</div>
 					<div class="modal modal-warning fade in" th:id="modal-warning+${category.id}">
 				 		<div class="modal-dialog">
 				 			<div class="modal-content">
 				 				<div class="modal-header">
+				 					<h5 class="modal-title">Delete</h5>
 				 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 				 					<span aria-hidden="true">×</span></button>
-				 					<h5 class="modal-title">Delete</h5>
 				 				</div>
 				 				<div class="modal-body">
 				 					<h3>
@@ -57,7 +90,7 @@
 				 				</div> 
 				 				<div class="modal-footer"> 
 				 					<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
-				 					<a type="button" class="btn btn-danger" th:href="${'/category/delete/' + category.id}"><i class="fa fa-check"></i>&nbsp;Yes</a>
+				 					<a type="button" class="btn btn-danger" th:href="${'/category/delete/' + category.id + '/' + selectedDomain}"><i class="fa fa-check"></i>&nbsp;Yes</a>
 				 				</div>
 							</div>
 				 		</div>
@@ -67,6 +100,43 @@
             </tr>
         </table>
     </div>
+    
+	<div class="modal fade in" id="modal-linkCategory">
+ 		<div class="modal-dialog">
+ 			<div class="modal-content">
+ 				<div class="modal-header">
+ 					<h5 class="modal-title">Link Category</h5>
+ 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+ 					<span aria-hidden="true">×</span></button>
+ 				</div>
+ 				<div class="modal-body">
+ 					<h3>
+ 						<p th:text="'Select category to link.'"></p>
+ 				        <form class="form-horizontal" th:action="${'/category/link/' + selectedDomain}" method="post">
+ 				 			<div class="form-group">
+				                <div class="col-sm-10">
+					    			<select id="linkCategory" name="linkCategory">
+					    				<option th:each="category : ${categoryList}" th:value="${category.id}" th:text="${category.name}"></option>
+					    			</select>
+				                </div>
+							</div>            
+				            <div class="form-group">
+				                <div class="col-sm-2">
+				                    <button type="submit" class="btn btn-outline-dark">Link
+										<img th:src="@{/images/save_alt-24px.svg}"/>
+				                    </button>
+				                </div>
+				            </div>
+						</form>
+ 					</h3>
+ 				</div> 
+ 				<div class="modal-footer"> 
+ 					<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
+ 				</div>
+			</div>
+ 		</div>
+ 	</div>
+    
 </div>
 </body>
 </html>

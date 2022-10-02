@@ -5,6 +5,7 @@ import com.domain.dto.ChartAttributes;
 import com.domain.model.Batch;
 import com.domain.model.DbSync;
 import com.domain.model.Domain;
+import com.domain.model.DomainCategory;
 import com.domain.model.Info;
 import com.domain.model.MeasureType;
 import com.domain.model.Measurement;
@@ -245,7 +246,8 @@ public class UiController {
         String message = "";
         
     	Long batchCount = dataService.getDomainBatchCount( id );
-        if( batchCount == 0L ) {
+    	Long categoryCount = dataService.getDomainCategoryDomainCount( id );
+        if( batchCount == 0L && categoryCount == 0L) {
 	    	Domain domain = dataService.getDomain(id);
 	    	if( dataSynchEnabled && domain.getDbSynchToken() != null && domain.getDbSynchToken().length() > 0 ) {
 	    		message = message + "Domain " + id + " scheduled for deletion.";
@@ -258,7 +260,12 @@ public class UiController {
 	    	}
     	}
     	else {
-        	message = message + "Domain " + id + " has " + batchCount + " batch" + ((batchCount > 1L) ? "es" : "" ) + " configured. ";
+    		if( batchCount > 0L ) {
+    			message = message + "Domain " + id + " has " + batchCount + " batch" + ((batchCount > 1L) ? "es" : "" ) + " configured. ";
+    		}
+    		if( categoryCount > 0L ) {
+    			message = message + "Domain " + id + " has " + categoryCount + " categor" + ((categoryCount > 1L) ? "ies" : "y" ) + " configured. ";
+    		}
             message = message + "Associations must be removed before deleting domain.";
     	}
     	info.setMessage( message );
@@ -271,50 +278,120 @@ public class UiController {
     //	Category table UI routines
     //
     //
-    @RequestMapping(path = "/category/add", method = RequestMethod.GET)
-    public String createCategory(Model model) {
+    @RequestMapping(path = "/category/add/{domainId}", method = RequestMethod.GET)
+    public String createCategory( Model model, @PathVariable(value = "domainId") Long domainId ) {
         model.addAttribute("category", new Category());
+        model.addAttribute("domains", dataService.getAllDomains() );
+        model.addAttribute("selectedDomain", domainId );
         return "categoryAdd";
     }
 
-    @RequestMapping(path = "/category", method = RequestMethod.POST)
-    public String saveCategory(Category category) {
-        LOG.info("UiController: Category Post: " );   	
-    	dataService.saveCategory(category);
-        return "redirect:/category";
+    @RequestMapping(path = "/category/link/{domainId}", method = RequestMethod.POST)
+    public String linkCategory( RedirectAttributes redirectAttributes, @RequestParam("linkCategory") Long categoryId, Model model, @PathVariable(value = "domainId") Long domainId ) {
+
+        Info info = new Info();
+        String message = "";
+        LOG.info("UiController: Category Link: " + categoryId );   	
+        DomainCategory domainCategory = dataService.getDomainCategory(domainId, categoryId);
+        if( domainCategory == null ) {
+        	Domain domain = dataService.getDomain( domainId );
+        	Category category = dataService.getCategory( categoryId );
+			domainCategory = new DomainCategory( domain, category, new Date(), DbSync.ADD, null );
+			dataService.saveDomainCategory( domainCategory );
+        	message = "Category " + category.getName() + " linked to " + domain.getName();
+        }
+        else {
+        	message = "Category already linked";
+        }
+    	info.setMessage( message );
+        redirectAttributes.addFlashAttribute( "info", info );
+        return "redirect:/category/" + domainId;
     }
     
-    @RequestMapping(path = "/category/update", method = RequestMethod.POST)
-    public String updateCategory(Category category) {
+    @RequestMapping(path = "/category/unlink/{categoryId}/{domainId}", method = RequestMethod.GET)
+    public String unlinkCategory( RedirectAttributes redirectAttributes, Model model, @PathVariable(value = "categoryId") Long categoryId, @PathVariable(value = "domainId") Long domainId ) {
+        LOG.info("UiController: Category unLink: " + categoryId );   	
+        Info info = new Info();
+        String message = "";
+        
+    	Long batchCount = dataService.getCategoryBatchCount( categoryId, domainId );
+        if( batchCount == 0L ) {
+	        DomainCategory domainCategory = dataService.getDomainCategory(domainId, categoryId);
+	        if( domainCategory != null ) {
+		    	if( dataSynchEnabled && domainCategory.getDbSynchToken() != null && domainCategory.getDbSynchToken().length() > 0 ) {
+	        		message = message + "Category link" + categoryId + " scheduled for deletion.";
+	        		domainCategory.setDbSynch( DbSync.DELETE );
+		        	dataService.updateDomainCategory( domainCategory );
+		    	}
+		    	else {
+	        		message = message + "Category " + categoryId + " unLinked.";
+		        	dataService.deleteDomainCategory( domainCategory.getId() );
+		    	}
+	        }
+        }
+    	else {
+        	message = message + "Category " + categoryId + " has " + batchCount + " batch" + ((batchCount > 1L) ? "es" : "" ) + " configured. ";
+            message = message + "Associations must be removed before unlinking category.";
+    	}
+    	info.setMessage( message );
+        redirectAttributes.addFlashAttribute( "info", info );
+        return "redirect:/category/" + domainId;
+    }
+    
+    @RequestMapping(path = "/category/{domainId}", method = RequestMethod.POST)
+    public String saveCategory( Category category, @PathVariable(value = "domainId") Long domainId ) {
+        LOG.info("UiController: Category Post: " );   	
+        Category newCategory = dataService.saveCategory(category);
+        if( domainId != 0 ) {
+        	Domain domain = dataService.getDomain( domainId );
+        	DomainCategory domainCategory = new DomainCategory( domain, newCategory, new Date(), DbSync.ADD, null );
+			dataService.saveDomainCategory( domainCategory );
+        }
+        return "redirect:/category/" + domainId;
+    }
+    
+    @RequestMapping(path = "/category/update/{domainId}", method = RequestMethod.POST)
+    public String updateCategory( Category category, @PathVariable(value = "domainId") Long domainId ) {
         LOG.info("UiController: updateCategory: " + category );
         if( category.getDbSynch() != DbSync.ADD ) {
         	category.setDbSynch( DbSync.UPDATE );
         }
     	dataService.updateCategory( category );
-        return "redirect:/category";
+        return "redirect:/category/" + domainId;
     }
     
-    @RequestMapping(path = "/category", method = RequestMethod.GET)
-    public String getAllCategories(Model model) {
-        model.addAttribute("categories",  dataService.getAllCategories() );
+    @RequestMapping(path = "/category/{domainId}", method = RequestMethod.GET)
+    public String getAllCategories( Model model, @PathVariable(value = "domainId") Long domainId ) {
+    	if( domainId == 0L ) {
+    		model.addAttribute("categories",  dataService.getAllCategories() );
+    	}
+    	else {
+    		model.addAttribute("categories",  dataService.getCategoriesForDomain( domainId ) );
+    	}
+		model.addAttribute("categoryList",  dataService.getAllCategories() );
+        model.addAttribute("domains", dataService.getAllDomains() );
+        model.addAttribute("selectedDomain", domainId );
         return "categories";
     }
 
-    @RequestMapping(path = "/category/edit/{id}", method = RequestMethod.GET)
-    public String editCategory(Model model, @PathVariable(value = "id") Long id) {
+    @RequestMapping(path = "/category/edit/{id}/{domainId}", method = RequestMethod.GET)
+    public String editCategory( Model model, @PathVariable(value = "id") Long id, @PathVariable(value = "domainId") Long domainId ) {
 		Category category = dataService.getCategory(id);
         model.addAttribute("category", category );
+        model.addAttribute("domains", dataService.getAllDomains() );
+        model.addAttribute("selectedDomain", domainId );
         return "categoryEdit";
     }
 
-    @RequestMapping(path = "/category/delete/{id}", method = RequestMethod.GET)
-    public String deleteCategory( RedirectAttributes redirectAttributes, @PathVariable(name = "id" ) Long id) {
+    @RequestMapping(path = "/category/delete/{id}/{domainId}", method = RequestMethod.GET)
+    public String deleteCategory( RedirectAttributes redirectAttributes, @PathVariable(name = "id" ) Long id, @PathVariable(value = "domainId") Long domainId ) {
         Info info = new Info();
         String message = "";
         
     	Long batchCount = dataService.getCategoryBatchCount( id );
+    	Long domainCount = dataService.getDomainCategoryCategoryCount( id );
 		Category category = dataService.getCategory(id);
-        if( batchCount == 0L ) {
+        if( batchCount == 0L && domainCount == 0L ) {
 	    	if( dataSynchEnabled && category.getDbSynchToken() != null && category.getDbSynchToken().length() > 0 ) {
         		message = message + "Category " + id + " scheduled for deletion.";
         		category.setDbSynch( DbSync.DELETE );
@@ -326,12 +403,17 @@ public class UiController {
 	    	}
     	}
     	else {
-        	message = message + "Category " + id + " has " + batchCount + " batch" + ((batchCount > 1L) ? "es" : "" ) + " configured. ";
+    		if( batchCount != 0L ) {
+    			message = message + "Category " + id + " has " + batchCount + " batch" + ((batchCount > 1L) ? "es" : "" ) + " configured. ";
+    		}
+    		if( domainCount != 0L ) {
+    			message = message + "Category " + id + " has " + domainCount + " domain" + ((batchCount > 1L) ? "s" : "" ) + " configured. ";
+    		}
             message = message + "Associations must be removed before deleting category.";
     	}
     	info.setMessage( message );
         redirectAttributes.addFlashAttribute( "info", info );
-        return "redirect:/category";
+        return "redirect:/category/" + domainId;
     }
     
     //
