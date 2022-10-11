@@ -9,7 +9,10 @@
 	<h2>Processes</h2>
     <th:block th:include="layout/info"></th:block>
     <div th:if="${#lists.isEmpty(processes)}">
-    	<a th:href="@{/process/add}" class="btn btn-outline-dark btn-lg">Add Process
+     	<a th:if="${selectedDomain != 0}" data-toggle="modal" data-target="#modal-linkProcess" class="btn btn-outline-dark btn-lg">
+			<img th:src="@{/images/add_link_black_24dp.svg}" title="Link Existing Process"/>
+    	</a>
+    	<a th:href="${'/process/add/'+ selectedDomain}" class="btn btn-outline-dark btn-lg">Add Process
 			<img th:src="@{/images/add-24px.svg}"/>
     	</a>
     </div>
@@ -20,9 +23,13 @@
                 <th>Name</th>
                 <th>Voice Assist</th>
                 <th class="d-none d-lg-block">Synched</th>
-                <th></th>
                 <th>
-					<a th:href="@{/process/add}" class="btn btn-outline-dark">
+					<a th:if="${selectedDomain != 0}" data-toggle="modal" data-target="#modal-linkProcess" class="btn btn-outline-dark btn-lg">
+						<img th:src="@{/images/add_link_black_24dp.svg}" title="Link Existing Process"/>
+					</a>
+                </th>
+                <th>
+					<a th:href="${'/process/add/'+ selectedDomain}" class="btn btn-outline-dark">
 						<img th:src="@{/images/add-24px.svg}"/>
 					</a>
                 </th>
@@ -33,21 +40,46 @@
                 <td th:text="${process.name}">Name</td>
                 <td th:text="${process.voiceAssist}">voiceAssist</td>
                 <td th:text="${process.dbSynch}" class="d-none d-lg-block">Synched</td>
-                <td><a th:href="${'/process/edit/' + process.code}" class="btn btn-default">
+                <td><a th:href="${'/process/edit/' + process.code + '/' + selectedDomain}" class="btn btn-default">
 					<img th:src="@{/images/edit-24px.svg}"/>
                 </a></td>
                 
-				<td><a data-toggle="modal" data-target="#modal-warning" th:attr="data-target='#modal-warning'+${process.code}" class="btn btn-default" title="Delete" rel="tooltip">
-					<img th:src="@{/images/delete_forever-24px.svg}"/>
-				</a></td>    
 				<td>
+					<a th:if="${selectedDomain == 0}" data-toggle="modal" th:attr="data-target='#modal-warning'+${process.code}" class="btn btn-default" title="Delete" rel="tooltip">
+						<img th:src="@{/images/delete_forever-24px.svg}"/>
+					</a>
+					<a th:if="${selectedDomain != 0}" data-toggle="modal" th:attr="data-target='#modal-unlink'+${process.code}" class="btn btn-default" title="Unlink" rel="tooltip">
+						<img th:src="@{/images/link_off_black_24dp.svg}"/>
+					</a>
+				</td>    
+				<td>
+					<div class="modal fade in" th:id="modal-unlink+${process.code}">
+				 		<div class="modal-dialog">
+				 			<div class="modal-content">
+				 				<div class="modal-header">
+				 					<h5 class="modal-title">Unlink</h5>
+				 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				 					<span aria-hidden="true">×</span></button>
+				 				</div>
+				 				<div class="modal-body">
+				 					<h3>
+				 						<p th:text="'Unlink process: ' + ${process.name} + ' id: ' + ${process.code} + '?'"></p>
+				 					</h3>
+				 				</div> 
+				 				<div class="modal-footer"> 
+				 					<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
+				 					<a type="button" class="btn btn-danger" th:href="${'/process/unlink/' + process.code + '/' + selectedDomain}"><i class="fa fa-check"></i>&nbsp;Yes</a>
+				 				</div>
+							</div>
+				 		</div>
+				 	</div>
 					<div class="modal modal-warning fade in" th:id="modal-warning+${process.code}">
 				 		<div class="modal-dialog">
 				 			<div class="modal-content">
 				 				<div class="modal-header">
+				 					<h5 class="modal-title">Delete</h5>
 				 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 				 					<span aria-hidden="true">×</span></button>
-				 					<h5 class="modal-title">Delete</h5>
 				 				</div>
 				 				<div class="modal-body">
 				 					<h3>
@@ -56,7 +88,7 @@
 				 				</div> 
 				 				<div class="modal-footer"> 
 				 					<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
-				 					<a type="button" class="btn btn-danger" th:href="${'/process/delete/' + process.code}"><i class="fa fa-check"></i>&nbsp;Yes</a>
+				 					<a type="button" class="btn btn-danger" th:href="${'/process/delete/' + process.code + '/' + selectedDomain}"><i class="fa fa-check"></i>&nbsp;Yes</a>
 				 				</div>
 							</div>
 				 		</div>
@@ -65,6 +97,43 @@
             </tr>
         </table>
     </div>
+    
+	<div class="modal fade in" id="modal-linkProcess">
+ 		<div class="modal-dialog">
+ 			<div class="modal-content">
+ 				<div class="modal-header">
+ 					<h5 class="modal-title">Link Process</h5>
+ 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+ 					<span aria-hidden="true">×</span></button>
+ 				</div>
+ 				<div class="modal-body">
+ 					<h3>
+ 						<p th:text="'Select process to link.'"></p>
+ 				        <form class="form-horizontal" th:action="${'/process/link/' + selectedDomain}" method="post">
+ 				 			<div class="form-group">
+				                <div class="col-sm-10">
+					    			<select id="linkProcess" name="linkProcess">
+					    				<option th:each="process : ${processList}" th:value="${process.code}" th:text="${process.name}"></option>
+					    			</select>
+				                </div>
+							</div>            
+				            <div class="form-group">
+				                <div class="col-sm-2">
+				                    <button type="submit" class="btn btn-outline-dark">Link
+										<img th:src="@{/images/save_alt-24px.svg}"/>
+				                    </button>
+				                </div>
+				            </div>
+						</form>
+ 					</h3>
+ 				</div> 
+ 				<div class="modal-footer"> 
+ 					<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
+ 				</div>
+			</div>
+ 		</div>
+ 	</div>
+    
 </div>
 </body>
 </html>

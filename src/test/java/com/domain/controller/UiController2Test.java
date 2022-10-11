@@ -58,10 +58,10 @@ class UiController2Test {
 		Mockito.when(dataService.getProcess( "FRM" )).thenReturn( process );
 		Mockito.when(dataService.getProcessSensorCount( "FRM" )).thenReturn( 0L );
 		Mockito.when(dataService.getProcessMeasurementCount( "FRM" )).thenReturn( 0L );
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/process/delete/FRM")
+        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/process/delete/FRM/0")
 				.with(csrf())
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/process"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/process/0"));
     }
 
 	@Test

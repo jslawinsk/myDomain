@@ -6,6 +6,7 @@ import com.domain.model.Batch;
 import com.domain.model.DbSync;
 import com.domain.model.Domain;
 import com.domain.model.DomainCategory;
+import com.domain.model.DomainProcess;
 import com.domain.model.Info;
 import com.domain.model.MeasureType;
 import com.domain.model.Measurement;
@@ -407,7 +408,7 @@ public class UiController {
     			message = message + "Category " + id + " has " + batchCount + " batch" + ((batchCount > 1L) ? "es" : "" ) + " configured. ";
     		}
     		if( domainCount != 0L ) {
-    			message = message + "Category " + id + " has " + domainCount + " domain" + ((batchCount > 1L) ? "s" : "" ) + " configured. ";
+    			message = message + "Category " + id + " has " + domainCount + " domain" + ((domainCount > 1L) ? "s" : "" ) + " configured. ";
     		}
             message = message + "Associations must be removed before deleting category.";
     	}
@@ -420,49 +421,120 @@ public class UiController {
     //	Process table UI routines
     //
     //
-    @RequestMapping(path = "/process/add", method = RequestMethod.GET)
-    public String createProcess(Model model) {
+    @RequestMapping(path = "/process/add/{domainId}", method = RequestMethod.GET)
+    public String createProcess( Model model, @PathVariable(value = "domainId") Long domainId ) {
         model.addAttribute("process", new Process());
+        model.addAttribute("domains", dataService.getAllDomains() );
+        model.addAttribute("selectedDomain", domainId );
         return "processAdd";
     }
 
-    @RequestMapping(path = "/process", method = RequestMethod.POST)
-    public String saveProcess(Process process) {
+    @RequestMapping(path = "/process/link/{domainId}", method = RequestMethod.POST)
+    public String linkProcess( RedirectAttributes redirectAttributes, @RequestParam("linkProcess") String processCode, Model model, @PathVariable(value = "domainId") Long domainId ) {
+
+        Info info = new Info();
+        String message = "";
+        LOG.info("UiController: Process Link: " + processCode );   	
+        DomainProcess domainProcess = dataService.getDomainProcess(domainId, processCode);
+        if( domainProcess == null ) {
+        	Domain domain = dataService.getDomain( domainId );
+        	Process process = dataService.getProcess( processCode );
+        	domainProcess = new DomainProcess( domain, process, new Date(), DbSync.ADD, null );
+			dataService.saveDomainProcess( domainProcess );
+        	message = "Process " + process.getName() + " linked to " + domain.getName();
+        }
+        else {
+        	message = "Process already linked";
+        }
+    	info.setMessage( message );
+        redirectAttributes.addFlashAttribute( "info", info );
+        return "redirect:/process/" + domainId;
+    }
+    
+    @RequestMapping(path = "/process/unlink/{processCode}/{domainId}", method = RequestMethod.GET)
+    public String unlinkProcess( RedirectAttributes redirectAttributes, Model model, @PathVariable(value = "processCode") String processCode, @PathVariable(value = "domainId") Long domainId ) {
+        LOG.info("UiController: Process unLink: " + processCode );   	
+        Info info = new Info();
+        String message = "";
+        
+    	Long sensorCount = dataService.getProcessSensorCount( processCode );
+    	Long measurementCount = dataService.getProcessMeasurementCount( processCode );
+        if( sensorCount == 0L && measurementCount == 0L ) {
+	        DomainProcess domainProcess = dataService.getDomainProcess(domainId, processCode);
+	        if( domainProcess != null ) {
+		    	if( dataSynchEnabled && domainProcess.getDbSynchToken() != null && domainProcess.getDbSynchToken().length() > 0 ) {
+	        		message = message + "Process link" + processCode + " scheduled for deletion.";
+	        		domainProcess.setDbSynch( DbSync.DELETE );
+		        	dataService.updateDomainProcess( domainProcess );
+		    	}
+		    	else {
+	        		message = message + "Process " + processCode + " unLinked.";
+		        	dataService.deleteDomainProcess( domainProcess.getId() );
+		    	}
+	        }
+        }
+    	else {
+        	if( sensorCount > 0L ) {            
+        		message = message + "Process " + processCode + " has " + sensorCount + " sensor" + ((sensorCount > 1L) ? "s" : "" ) + " configured. ";
+        	}
+        	if( measurementCount > 0L ) {            
+        		message = message + "Process " + processCode + " has " + measurementCount + " measurement" + ((measurementCount > 1L) ? "s" : "" ) + " logged. ";
+        	}
+            message = message + "Associations must be removed before unlinking process.";
+    	}
+    	info.setMessage( message );
+        redirectAttributes.addFlashAttribute( "info", info );
+        return "redirect:/process/" + domainId;
+    }
+    
+    @RequestMapping(path = "/process/{domainId}", method = RequestMethod.POST)
+    public String saveProcess(Process process, @PathVariable(value = "domainId") Long domainId ) {
         LOG.info("UiController: saveProcess Process: " + process );   	
     	dataService.saveProcess(process);
-        return "redirect:/process";
+        return "redirect:/process/" + domainId;
     }
 
-    @RequestMapping(path = "/process/update", method = RequestMethod.POST)
-    public String updateProcess(Process process) {
+    @RequestMapping(path = "/process/update/{domainId}", method = RequestMethod.POST)
+    public String updateProcess( Process process, @PathVariable(value = "domainId") Long domainId ) {
         LOG.info("UiController: updateProcess: " + process );   	
         if( process.getDbSynch() != DbSync.ADD ) {
         	process.setDbSynch( DbSync.UPDATE );
         }
     	dataService.updateProcess( process );
-        return "redirect:/process";
+        return "redirect:/process/" + domainId;
     }
         
-    @RequestMapping(path = "/process", method = RequestMethod.GET)
-    public String getAllProcesses(Model model) {
-        model.addAttribute("processes",  dataService.getAllProcesses() );
+    @RequestMapping(path = "/process/{domainId}", method = RequestMethod.GET)
+    public String getAllProcesses( Model model, @PathVariable(value = "domainId") Long domainId ) {
+    	if( domainId == 0L ) {    	
+    		model.addAttribute("processes",  dataService.getAllProcesses() );
+    	}
+    	else {
+    		model.addAttribute("processes",  dataService.getProcessesForDomain( domainId ) );
+    	}
+		model.addAttribute("processList",  dataService.getAllProcesses() );
+        model.addAttribute("domains", dataService.getAllDomains() );
+        model.addAttribute("selectedDomain", domainId );
         return "processes";
     }
 
-    @RequestMapping(path = "/process/edit/{code}", method = RequestMethod.GET)
-    public String editProcess(Model model, @PathVariable(value = "code") String code ) {
+    @RequestMapping(path = "/process/edit/{code}/{domainId}", method = RequestMethod.GET)
+    public String editProcess( Model model, @PathVariable(value = "code") String code, @PathVariable(value = "domainId") Long domainId ) {
         model.addAttribute("process", dataService.getProcess( code ) );
+        model.addAttribute("domains", dataService.getAllDomains() );
+        model.addAttribute("selectedDomain", domainId );
         return "processEdit";
     }
 
-    @RequestMapping(path = "/process/delete/{code}", method = RequestMethod.GET)
-    public String deleteProcess( RedirectAttributes redirectAttributes, @PathVariable(name = "code") String code) {
+    @RequestMapping(path = "/process/delete/{code}/{domainId}", method = RequestMethod.GET)
+    public String deleteProcess( RedirectAttributes redirectAttributes, Model model, @PathVariable(name = "code") String code, @PathVariable(value = "domainId") Long domainId ) {
         Info info = new Info();
         String message = "";
 
     	Long sensorCount = dataService.getProcessSensorCount( code );
     	Long measurementCount = dataService.getProcessMeasurementCount( code );
-        if( sensorCount == 0L && measurementCount == 0L ) {
+    	Long domainCount = dataService.getDomainProcessProcessCount(code);
+       if( sensorCount == 0L && measurementCount == 0L && domainCount == 0L ) {
 	    	if( dataSynchEnabled ) {
         		message = message + "Process " + code + " scheduled for deletion.";
 	    		Process process = dataService.getProcess( code );
@@ -481,11 +553,16 @@ public class UiController {
         	if( measurementCount > 0L ) {            
         		message = message + "Process " + code + " has " + measurementCount + " measurement" + ((measurementCount > 1L) ? "s" : "" ) + " logged. ";
         	}
+    		if( domainCount != 0L ) {
+    			message = message + "Process " + code + " has " + domainCount + " domain" + ((domainCount > 1L) ? "s" : "" ) + " configured. ";
+    		}
             message = message + "Associations must be removed before deleting process.";
     	}
         info.setMessage( message );
         redirectAttributes.addFlashAttribute( "info", info );
-    	return "redirect:/process";
+        model.addAttribute("domains", dataService.getAllDomains() );
+        model.addAttribute("selectedDomain", domainId );
+    	return "redirect:/process/" + domainId;
     }
 
     //

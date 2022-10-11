@@ -30,6 +30,7 @@ import com.domain.model.Batch;
 import com.domain.model.DbSync;
 import com.domain.model.Domain;
 import com.domain.model.DomainCategory;
+import com.domain.model.DomainProcess;
 import com.domain.model.MeasureType;
 import com.domain.model.Measurement;
 import com.domain.model.Process;
@@ -48,6 +49,7 @@ import com.domain.repository.ResetTokenRepository;
 import com.domain.repository.SensorRepository;
 import com.domain.repository.CategoryRepository;
 import com.domain.repository.DomainCategoryRepository;
+import com.domain.repository.DomainProcessRepository;
 import com.domain.repository.UserRepository;
 import com.domain.repository.VerificationTokenRepository;
 
@@ -65,6 +67,9 @@ public class DataService implements UserDetailsService {
     
     @Autowired
     private DomainCategoryRepository domainCategoryRepository;
+    
+    @Autowired
+    private DomainProcessRepository domainProcessRepository;
     
 	@Autowired
 	private CategoryRepository categoryRepository;
@@ -270,6 +275,103 @@ public class DataService implements UserDetailsService {
         return count;
     }
     
+	//
+	//	DomainProcess table access methods
+	//
+	//
+    public DomainProcess getDomainProcess( Long id ) {
+        LOG.info("Getting DomainProcess, id: " + id);
+        return domainProcessRepository.getById(id);
+    }
+
+    public DomainProcess getDomainProcess( Long domainId, String processCode ) {
+        LOG.info("Getting DomainProcess, Id: " + domainId, " Process Id: " + processCode );
+        return domainProcessRepository.findDomainProcess( domainId, processCode );
+    }
+    
+    public DomainProcess getDomainProcess( String dbSynchToken ) {
+        LOG.info("Getting DomainProcess, SynchToken: " + dbSynchToken );
+        try {
+        	DomainProcess domainProcess = domainProcessRepository.findBySynchToken( dbSynchToken );
+	        LOG.info("getDomainProcess: " + domainProcess );
+	        return domainProcess;
+        }
+        catch( Exception e ) {
+        	LOG.error( "getDomainProcess: Execption",  e );
+        }
+        return null;
+    }
+    
+    public List<DomainProcess> getAllDomainProcesses() {
+    	return domainProcessRepository.findAll();
+    }
+
+    public List<Process> getProcessesForDomain( Long id ) {
+    	ArrayList<Process> processes = new ArrayList<Process>();
+    	List<DomainProcess> domainProcesses = domainProcessRepository.findDomainProcessesByDomainId( id );
+    	
+    	for( DomainProcess domainProcess:domainProcesses)  {
+    		processes.add( domainProcess.getProcess() );
+    	}
+    	return processes;
+    }
+    
+    public List<DomainProcess> getDomainProcessesToSynchronize() {
+    	return domainProcessRepository.findDomainProcessesToSynchronize();
+    }
+
+    public DomainProcess saveDomainProcess( DomainProcess domainProcess ) {
+    	DomainProcess domainProcessToSave;
+        try {
+            LOG.info("Saving DomainProcess: " + domainProcess );
+        	if( domainProcess.getDbSynchToken() == null || domainProcess.getDbSynchToken().length() <= 0 ) {
+        		domainProcess.setDbSynchToken( getSynchToken() );
+        	}
+        	domainProcess.setUpdateTime( new Date() );
+        	domainProcessToSave = domainProcessRepository.save( domainProcess );
+            return domainProcessToSave;
+        } catch (Exception e) {
+            LOG.error("DataService: Exception: saveDomainProcess: " + e.getMessage());
+        }
+        return new DomainProcess();
+    }
+
+    public DomainProcess updateDomainProcess( DomainProcess domainProcessToUpdate ) {
+        LOG.info("Update DomainProcess: " + domainProcessToUpdate );
+        DomainProcess foundDomainProcess = domainProcessRepository.getById( domainProcessToUpdate.getId() );
+        try {
+        	foundDomainProcess.setDomain( domainProcessToUpdate.getDomain() );
+        	foundDomainProcess.setProcess( domainProcessToUpdate.getProcess() );
+        	foundDomainProcess.setUpdateTime( new Date() );
+        	foundDomainProcess.setDbSynch( domainProcessToUpdate.getDbSynch() );
+        	foundDomainProcess.setDbSynchToken( domainProcessToUpdate.getDbSynchToken() );
+            return domainProcessRepository.save( domainProcessToUpdate );
+        } catch (Exception e) {
+            LOG.error("DataService: Exception: updateDomainProcess: " + e.getMessage());
+        }
+        return foundDomainProcess;
+    }
+
+    public void deleteDomainProcess( Long id ) {
+        try {
+        	DomainProcess foundDomainProcess = domainProcessRepository.getById( id );
+        	domainProcessRepository.delete( foundDomainProcess );
+        } catch (Exception e) {
+            LOG.error("DataService: Exception: deleteDomainProcess: " + e.getMessage());
+        }
+    }
+
+    public Long getDomainProcessDomainCount( Long id ) {
+        Long count = domainProcessRepository.domainCount( id );
+        LOG.info("getDomainProcessDomainCount, id:" + id + " domains: " + count );
+        return count;
+    }
+
+    public Long getDomainProcessProcessCount( String code ) {
+        Long count = domainProcessRepository.processCount( code );
+        LOG.info("getDomainProcessProcessCount, code:" + code + " processes: " + count );
+        return count;
+    }
     
 	//
 	//	Category table access methods

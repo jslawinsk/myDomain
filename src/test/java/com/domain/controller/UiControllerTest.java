@@ -240,7 +240,7 @@ class UiControllerTest {
 	@WithMockUser(roles = "ADMIN")
 	void createProcess() throws Exception
 	{
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/process/add")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/process/add/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<h2>Add Process</h2>")));
@@ -252,12 +252,12 @@ class UiControllerTest {
 	{
 		Process process = new Process( "FRM", "Fermentation" );
 
-		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/process" )
+		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/process/0" )
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_JSON)
 		        .content(objectMapper.writeValueAsString( process ))		
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/process"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/process/0"));
 	}	
 	
 	@Test
@@ -266,7 +266,7 @@ class UiControllerTest {
 	{
 		Process process = new Process( "FRM", "Fermentation" );
 
-		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/process/update" )
+		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/process/update/0" )
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 	            .content(buildUrlEncodedFormEntity(
@@ -274,14 +274,14 @@ class UiControllerTest {
 	                )
 	            )		        
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/process"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/process/0"));
 	}	
 	
 	@Test
 	@WithMockUser(roles = "ADMIN")
 	void getAllProcesses() throws Exception
 	{
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/process")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/process/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<h2>Processes</h2>")));
@@ -294,7 +294,7 @@ class UiControllerTest {
 		Process process = new Process( "FRM", "Fermentation" );
 		Mockito.when(dataService.getProcess( "FRM" )).thenReturn( process );
 
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/process/edit/FRM")
+        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/process/edit/FRM/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<h2>Edit Process</h2>")));
@@ -308,24 +308,24 @@ class UiControllerTest {
 		Mockito.when(dataService.getProcess( "FRM" )).thenReturn( process );
 		Mockito.when(dataService.getProcessSensorCount( "FRM" )).thenReturn( 0L );
 		Mockito.when(dataService.getProcessMeasurementCount( "FRM" )).thenReturn( 0L );
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/process/delete/FRM")
+        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/process/delete/FRM/0")
 				.with(csrf())
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/process"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/process/0"));
 
 		Mockito.when(dataService.getProcessSensorCount( "FRM" )).thenReturn( 1L );
 		Mockito.when(dataService.getProcessMeasurementCount( "FRM" )).thenReturn( 1L );
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/process/delete/FRM")
+        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/process/delete/FRM/0")
 				.with(csrf())
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/process"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/process/0"));
 
 		Mockito.when(dataService.getProcessSensorCount( "FRM" )).thenReturn( 10L );
 		Mockito.when(dataService.getProcessMeasurementCount( "FRM" )).thenReturn( 10L );
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/process/delete/FRM")
+        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/process/delete/FRM/0")
 				.with(csrf())
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/process"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/process/0"));
 	}		
 	
 	

@@ -27,6 +27,7 @@ import com.domain.model.Batch;
 import com.domain.model.DbSync;
 import com.domain.model.Domain;
 import com.domain.model.DomainCategory;
+import com.domain.model.DomainProcess;
 import com.domain.model.GraphTypes;
 import com.domain.model.MeasureType;
 import com.domain.model.Measurement;
@@ -117,8 +118,14 @@ public class Application implements CommandLineRunner {
 			Process process = new Process( "FRM", "Fermentation" );
 			dataService.saveProcess( process );
 			
+			DomainProcess domainProcess = new DomainProcess(domainBrewery, process, new Date(), DbSync.ADD, null );
+			dataService.saveDomainProcess( domainProcess );
+			
 			process = new Process( "MSH", "Mash" );
 			dataService.saveProcess( process );
+			
+			domainProcess = new DomainProcess(domainBrewery, process, new Date(), DbSync.ADD, null );
+			dataService.saveDomainProcess( domainProcess );			
 
 			Process process2 = new Process( "GRM", "Germination" );
 			dataService.saveProcess( process2 );

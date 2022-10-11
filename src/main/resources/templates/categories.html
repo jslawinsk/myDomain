@@ -47,7 +47,7 @@
 					<img th:src="@{/images/edit-24px.svg}"/>
                 </a></td>
 				<td>
-					<a th:if="${selectedDomain == 0}" data-toggle="modal" data-target="#modal-warning" th:attr="data-target='#modal-warning'+${category.id}" class="btn btn-default" title="Delete" rel="tooltip">
+					<a th:if="${selectedDomain == 0}" data-toggle="modal" th:attr="data-target='#modal-warning'+${category.id}" class="btn btn-default" title="Delete" rel="tooltip">
 						<img th:src="@{/images/delete_forever-24px.svg}"/>
 					</a>
 					<a th:if="${selectedDomain != 0}" data-toggle="modal" th:attr="data-target='#modal-unlink'+${category.id}" class="btn btn-default" title="Unlink" rel="tooltip">
