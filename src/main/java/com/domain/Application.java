@@ -27,6 +27,7 @@ import com.domain.model.Batch;
 import com.domain.model.DbSync;
 import com.domain.model.Domain;
 import com.domain.model.DomainCategory;
+import com.domain.model.DomainMeasureType;
 import com.domain.model.DomainProcess;
 import com.domain.model.GraphTypes;
 import com.domain.model.MeasureType;
@@ -98,7 +99,7 @@ public class Application implements CommandLineRunner {
 			Domain domainBrewery = dataService.saveDomain(domain);
 
 			Domain domain2 = new Domain( 0L, 1, "Greenhouse", "yard_white_48dp.svg", "Backyard Greenhouse", "Cataegory", "Greenhouse", DbSync.ADD, null);
-			Domain Greenhousedomain = dataService.saveDomain(domain2);
+			Domain greenhousedomain = dataService.saveDomain(domain2);
 			
 			Category testCategory = new Category( "IPA", "18a", "Hoppy" );
 			dataService.saveCategory( testCategory );
@@ -132,15 +133,26 @@ public class Application implements CommandLineRunner {
 			
 			MeasureType measureType = new MeasureType( "PH", "PH", true, 0, 14, GraphTypes.SOLID_GUAGE, DbSync.ADD );
 			dataService.saveMeasureType( measureType );
+
+			DomainMeasureType domainMeasureType = new DomainMeasureType(domainBrewery, measureType, new Date(), DbSync.ADD, null );
+			dataService.saveDomainMeasureType( domainMeasureType );
 			
 			measureType = new MeasureType( "TA", "Total Alcalinity" );
 			dataService.saveMeasureType( measureType );
+			domainMeasureType = new DomainMeasureType(domainBrewery, measureType, new Date(), DbSync.ADD, null );
+			dataService.saveDomainMeasureType( domainMeasureType );
 			
 			measureType = new MeasureType( "TMP", "Temperature", true, 0, 200, GraphTypes.GAUGE, DbSync.ADD  );
 			dataService.saveMeasureType( measureType );
+			domainMeasureType = new DomainMeasureType(domainBrewery, measureType, new Date(), DbSync.ADD, null );
+			dataService.saveDomainMeasureType( domainMeasureType );
+			domainMeasureType = new DomainMeasureType(greenhousedomain, measureType, new Date(), DbSync.ADD, null );
+			dataService.saveDomainMeasureType( domainMeasureType );
 
 			MeasureType measureType2 = new MeasureType( "MSTR", "Moisture", true, 0, 100, GraphTypes.GAUGE, DbSync.ADD );
 			dataService.saveMeasureType( measureType2 );
+			domainMeasureType = new DomainMeasureType(greenhousedomain, measureType2, new Date(), DbSync.ADD, null );
+			dataService.saveDomainMeasureType( domainMeasureType );
 			
 			Batch testBatch = new Batch( true, "Joe's IPA", "Old School IPA", testCategory, domainBrewery, new Date() );
 			dataService.saveBatch( testBatch );
@@ -157,7 +169,7 @@ public class Application implements CommandLineRunner {
 			measurement = new Measurement( 60.5, "{\"target\":70.0}", testBatch2, process, measureType, new Date() );
 			dataService.saveMeasurement( measurement );
 
-			Batch testBatch3 = new Batch( true, "Big Boy Tomatoes", "Large", tomatoeCategory, Greenhousedomain, new Date() );
+			Batch testBatch3 = new Batch( true, "Big Boy Tomatoes", "Large", tomatoeCategory, greenhousedomain, new Date() );
 			dataService.saveBatch( testBatch3 );
 			
 			Measurement measurement3 = new Measurement( 30.0, "{\"target\":30.0}", testBatch3, process2, measureType2, new Date() );

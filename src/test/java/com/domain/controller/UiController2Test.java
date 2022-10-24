@@ -71,10 +71,10 @@ class UiController2Test {
 		Mockito.when(dataService.getMeasureType( "TMP" )).thenReturn( measureType );
 		Mockito.when(dataService.getMeasureTypeSensorCount( "TMP" )).thenReturn( 0L );
 		Mockito.when(dataService.getMeasureTypeMeasurementCount( "TMP" )).thenReturn( 0L );
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measureType/delete/TMP")
+        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measureType/delete/TMP/0")
 				.with(csrf())
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/measureType"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/measureType/0"));
 	}
 
 	@Test

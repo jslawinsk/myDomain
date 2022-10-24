@@ -336,7 +336,7 @@ class UiControllerTest {
 	@WithMockUser(roles = "ADMIN")
 	void createMeasureType() throws Exception
 	{
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measureType/add")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measureType/add/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<h2>Edit Measure Type</h2>")));
@@ -348,19 +348,19 @@ class UiControllerTest {
 	{
 		MeasureType measureType = new MeasureType( "TMP", "Temperature", true, 0, 200, GraphTypes.GAUGE, DbSync.ADD  );
 
-		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/measureType" )
+		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/measureType/0" )
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_JSON)
 		        .content(objectMapper.writeValueAsString( measureType ))		
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/measureType"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/measureType/0"));
 	}	
 	
 	@Test
 	@WithMockUser(roles = "ADMIN")
 	void updateMeasureType() throws Exception
 	{
-		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/measureType/update" )
+		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/measureType/update/0" )
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED )
 	            .content(buildUrlEncodedFormEntity(
@@ -368,9 +368,9 @@ class UiControllerTest {
 		                )
 		            )		        
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/measureType"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/measureType/0"));
 
-		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/measureType/update" )
+		mockMvc.perform( MockMvcRequestBuilders.post("http://localhost:" + port + "/measureType/update/0" )
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED )
 	            .content(buildUrlEncodedFormEntity(
@@ -378,14 +378,14 @@ class UiControllerTest {
 		                )
 		            )		        
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/measureType"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/measureType/0"));
 	}	
 	
 	@Test
 	@WithMockUser(roles = "ADMIN")
 	void getAllMeasureTypes() throws Exception
 	{
-		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measureType")
+		mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measureType/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<h2>Measure Types</h2>")));
@@ -398,7 +398,7 @@ class UiControllerTest {
 		MeasureType measureType = new MeasureType( "TMP", "Temperature", true, 0, 200, GraphTypes.GAUGE, DbSync.ADD  );
 		Mockito.when(dataService.getMeasureType( "TMP" )).thenReturn( measureType );
 
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measureType/edit/TMP")
+        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measureType/edit/TMP/0")
 	            .accept(MediaType.ALL))
 	            .andExpect(status().isOk())
 	            .andExpect(content().string(containsString("<h2>Edit Measure Type</h2>")));
@@ -412,24 +412,24 @@ class UiControllerTest {
 		Mockito.when(dataService.getMeasureType( "TMP" )).thenReturn( measureType );
 		Mockito.when(dataService.getMeasureTypeSensorCount( "TMP" )).thenReturn( 0L );
 		Mockito.when(dataService.getMeasureTypeMeasurementCount( "TMP" )).thenReturn( 0L );
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measureType/delete/TMP")
+        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measureType/delete/TMP/0")
 				.with(csrf())
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/measureType"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/measureType/0"));
 
 		Mockito.when(dataService.getMeasureTypeSensorCount( "TMP" )).thenReturn( 1L );
 		Mockito.when(dataService.getMeasureTypeMeasurementCount( "TMP" )).thenReturn( 1L );
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measureType/delete/TMP")
+        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measureType/delete/TMP/0")
 				.with(csrf())
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/measureType"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/measureType/0"));
 
 		Mockito.when(dataService.getMeasureTypeSensorCount( "TMP" )).thenReturn( 10L );
 		Mockito.when(dataService.getMeasureTypeMeasurementCount( "TMP" )).thenReturn( 10L );
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measureType/delete/TMP")
+        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:" + port + "/measureType/delete/TMP/0")
 				.with(csrf())
 	            .accept(MediaType.ALL))
-				.andExpect( MockMvcResultMatchers.redirectedUrl("/measureType"));
+				.andExpect( MockMvcResultMatchers.redirectedUrl("/measureType/0"));
 	}		
 	
 	//

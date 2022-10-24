@@ -9,8 +9,11 @@
 	<h2>Measure Types</h2>
 	<th:block th:include="layout/info"></th:block>
     <div th:if="${#lists.isEmpty(measureTypes)}">
-    	<a th:href="@{/measureType/add}" class="btn btn-outline-dark btn-lg">Add Measurement Type
-			<img th:src="@{/images/add-24px.svg}"/>
+      	<a th:if="${selectedDomain != 0}" data-toggle="modal" data-target="#modal-linkMeasureType" class="btn btn-outline-dark btn-lg">
+			<img th:src="@{/images/add_link_black_24dp.svg}" title="Link Existing Measurement Type"/>
+    	</a>
+    	<a th:href="${'/measureType/add/' + selectedDomain}" class="btn btn-outline-dark btn-lg">
+			<img th:src="@{/images/add-24px.svg}" title="Add Measurement Type"/>
     	</a>
     </div>
     <div th:if="${not #lists.isEmpty(measureTypes)}">
@@ -25,9 +28,13 @@
                 <th class="d-none d-lg-block">Graph Data</th>
                 <th>Graph Type</th>
                 <th class="d-none d-lg-block">Synched</th>
-                <th></th>
                 <th>
-					<a th:href="@{/measureType/add}" class="btn btn-outline-dark">
+			      	<a th:if="${selectedDomain != 0}" data-toggle="modal" data-target="#modal-linkMeasureType" class="btn btn-outline-dark btn-lg">
+						<img th:src="@{/images/add_link_black_24dp.svg}" title="Link Existing Measurement Type"/>
+			    	</a>
+                </th>
+                <th>
+					<a th:href="${'/measureType/add/' + selectedDomain}" class="btn btn-outline-dark">
 						<img th:src="@{/images/add-24px.svg}"/>
 					</a>
                 </th>
@@ -43,13 +50,38 @@
                 <td th:text="${measureType.graphData}" class="d-none d-lg-block">graphData</td>
                 <td th:text="${measureType.graphType}">graphType</td>
                 <td th:text="${measureType.dbSynch}" class="d-none d-lg-block">Synched</td>
-                <td><a th:href="${'/measureType/edit/' + measureType.code}" class="btn btn-default">
+                <td><a th:href="${'/measureType/edit/' + measureType.code + '/' + selectedDomain}" class="btn btn-default">
 					<img th:src="@{/images/edit-24px.svg}"/>
                 </a></td>
-				<td><a data-toggle="modal" data-target="#modal-warning" th:attr="data-target='#modal-warning'+${measureType.code}" class="btn btn-default" title="Delete" rel="tooltip">
-					<img th:src="@{/images/delete_forever-24px.svg}"/>
-				</a></td>    
 				<td>
+					<a th:if="${selectedDomain == 0}" data-toggle="modal" data-target="#modal-warning" th:attr="data-target='#modal-warning'+${measureType.code}" class="btn btn-default" title="Delete" rel="tooltip">
+						<img th:src="@{/images/delete_forever-24px.svg}"/>
+					</a>
+					<a th:if="${selectedDomain != 0}" data-toggle="modal" th:attr="data-target='#modal-unlink'+${measureType.code}" class="btn btn-default" title="Unlink" rel="tooltip">
+						<img th:src="@{/images/link_off_black_24dp.svg}"/>
+					</a>
+				</td>    
+				<td>
+					<div class="modal fade in" th:id="modal-unlink+${measureType.code}">
+				 		<div class="modal-dialog">
+				 			<div class="modal-content">
+				 				<div class="modal-header">
+				 					<h5 class="modal-title">Unlink</h5>
+				 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				 					<span aria-hidden="true">×</span></button>
+				 				</div>
+				 				<div class="modal-body">
+				 					<h3>
+				 						<p th:text="'Unlink measureType: ' + ${measureType.name} + ' id: ' + ${measureType.code} + '?'"></p>
+				 					</h3>
+				 				</div> 
+				 				<div class="modal-footer"> 
+				 					<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
+				 					<a type="button" class="btn btn-danger" th:href="${'/measureType/unlink/' + measureType.code + '/' + selectedDomain}"><i class="fa fa-check"></i>&nbsp;Yes</a>
+				 				</div>
+							</div>
+				 		</div>
+				 	</div>
 					<div class="modal modal-warning fade in" th:id="modal-warning+${measureType.code}">
 				 		<div class="modal-dialog">
 				 			<div class="modal-content">
@@ -65,7 +97,7 @@
 				 				</div> 
 				 				<div class="modal-footer"> 
 				 					<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
-				 					<a type="button" class="btn btn-danger" th:href="${'/measureType/delete/' + measureType.code}"><i class="fa fa-check"></i>&nbsp;Yes</a>
+				 					<a type="button" class="btn btn-danger" th:href="${'/measureType/delete/' + measureType.code + '/' + selectedDomain}"><i class="fa fa-check"></i>&nbsp;Yes</a>
 				 				</div>
 							</div>
 				 		</div>
@@ -74,6 +106,43 @@
             </tr>
         </table>
     </div>
+    
+	<div class="modal fade in" id="modal-linkMeasureType">
+ 		<div class="modal-dialog">
+ 			<div class="modal-content">
+ 				<div class="modal-header">
+ 					<h5 class="modal-title">Link Measure Type</h5>
+ 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+ 					<span aria-hidden="true">×</span></button>
+ 				</div>
+ 				<div class="modal-body">
+ 					<h3>
+ 						<p th:text="'Select Measure Type to link.'"></p>
+ 				        <form class="form-horizontal" th:action="${'/measureType/link/' + selectedDomain}" method="post">
+ 				 			<div class="form-group">
+				                <div class="col-sm-10">
+					    			<select id="linkMeasureType" name="linkMeasureType">
+					    				<option th:each="measureType : ${measureTypeList}" th:value="${measureType.code}" th:text="${measureType.name}"></option>
+					    			</select>
+				                </div>
+							</div>            
+				            <div class="form-group">
+				                <div class="col-sm-2">
+				                    <button type="submit" class="btn btn-outline-dark">Link
+										<img th:src="@{/images/save_alt-24px.svg}"/>
+				                    </button>
+				                </div>
+				            </div>
+						</form>
+ 					</h3>
+ 				</div> 
+ 				<div class="modal-footer"> 
+ 					<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
+ 				</div>
+			</div>
+ 		</div>
+ 	</div>
+    
 </div>
 </body>
 </html>

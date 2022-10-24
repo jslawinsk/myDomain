@@ -6,6 +6,7 @@ import com.domain.model.Batch;
 import com.domain.model.DbSync;
 import com.domain.model.Domain;
 import com.domain.model.DomainCategory;
+import com.domain.model.DomainMeasureType;
 import com.domain.model.DomainProcess;
 import com.domain.model.Info;
 import com.domain.model.MeasureType;
@@ -457,31 +458,18 @@ public class UiController {
         Info info = new Info();
         String message = "";
         
-    	Long sensorCount = dataService.getProcessSensorCount( processCode );
-    	Long measurementCount = dataService.getProcessMeasurementCount( processCode );
-        if( sensorCount == 0L && measurementCount == 0L ) {
-	        DomainProcess domainProcess = dataService.getDomainProcess(domainId, processCode);
-	        if( domainProcess != null ) {
-		    	if( dataSynchEnabled && domainProcess.getDbSynchToken() != null && domainProcess.getDbSynchToken().length() > 0 ) {
-	        		message = message + "Process link" + processCode + " scheduled for deletion.";
-	        		domainProcess.setDbSynch( DbSync.DELETE );
-		        	dataService.updateDomainProcess( domainProcess );
-		    	}
-		    	else {
-	        		message = message + "Process " + processCode + " unLinked.";
-		        	dataService.deleteDomainProcess( domainProcess.getId() );
-		    	}
-	        }
+        DomainProcess domainProcess = dataService.getDomainProcess(domainId, processCode);
+        if( domainProcess != null ) {
+	    	if( dataSynchEnabled && domainProcess.getDbSynchToken() != null && domainProcess.getDbSynchToken().length() > 0 ) {
+        		message = message + "Process link" + processCode + " scheduled to be unlinked.";
+        		domainProcess.setDbSynch( DbSync.DELETE );
+	        	dataService.updateDomainProcess( domainProcess );
+	    	}
+	    	else {
+        		message = message + "Process " + processCode + " unLinked.";
+	        	dataService.deleteDomainProcess( domainProcess.getId() );
+	    	}
         }
-    	else {
-        	if( sensorCount > 0L ) {            
-        		message = message + "Process " + processCode + " has " + sensorCount + " sensor" + ((sensorCount > 1L) ? "s" : "" ) + " configured. ";
-        	}
-        	if( measurementCount > 0L ) {            
-        		message = message + "Process " + processCode + " has " + measurementCount + " measurement" + ((measurementCount > 1L) ? "s" : "" ) + " logged. ";
-        	}
-            message = message + "Associations must be removed before unlinking process.";
-    	}
     	info.setMessage( message );
         redirectAttributes.addFlashAttribute( "info", info );
         return "redirect:/process/" + domainId;
@@ -490,7 +478,12 @@ public class UiController {
     @RequestMapping(path = "/process/{domainId}", method = RequestMethod.POST)
     public String saveProcess(Process process, @PathVariable(value = "domainId") Long domainId ) {
         LOG.info("UiController: saveProcess Process: " + process );   	
-    	dataService.saveProcess(process);
+        Process newProcess = dataService.saveProcess(process);
+        if( domainId != 0 ) {
+        	Domain domain = dataService.getDomain( domainId );
+        	DomainProcess domainProcess = new DomainProcess( domain, newProcess, new Date(), DbSync.ADD, null );
+			dataService.saveDomainProcess( domainProcess );
+        }
         return "redirect:/process/" + domainId;
     }
 
@@ -560,8 +553,6 @@ public class UiController {
     	}
         info.setMessage( message );
         redirectAttributes.addFlashAttribute( "info", info );
-        model.addAttribute("domains", dataService.getAllDomains() );
-        model.addAttribute("selectedDomain", domainId );
     	return "redirect:/process/" + domainId;
     }
 
@@ -569,49 +560,112 @@ public class UiController {
     //	Measurement Type table UI routines
     //
     //
-    @RequestMapping(path = "/measureType/add", method = RequestMethod.GET)
-    public String createMeasureType(Model model) {
+    @RequestMapping(path = "/measureType/add/{domainId}", method = RequestMethod.GET)
+    public String createMeasureType(Model model, @PathVariable(value = "domainId") Long domainId ) {
         model.addAttribute("measureType", new MeasureType() );
+        model.addAttribute("domains", dataService.getAllDomains() );
+        model.addAttribute("selectedDomain", domainId );
         return "measureTypeAdd";
     }
+    
+    @RequestMapping(path = "/measureType/link/{domainId}", method = RequestMethod.POST)
+    public String linkMeasureType( RedirectAttributes redirectAttributes, @RequestParam("linkMeasureType") String code, Model model, @PathVariable(value = "domainId") Long domainId ) {
 
-    @RequestMapping(path = "/measureType", method = RequestMethod.POST)
-    public String saveMeasureType( MeasureType measureType ) {
+        Info info = new Info();
+        String message = "";
+        LOG.info("UiController: MeasureType Link: " + code );   	
+        DomainMeasureType domainMeasureType = dataService.getDomainMeasureType( domainId, code );
+        if( domainMeasureType == null ) {
+        	Domain domain = dataService.getDomain( domainId );
+        	MeasureType measureType = dataService.getMeasureType( code );
+        	domainMeasureType = new DomainMeasureType( domain, measureType, new Date(), DbSync.ADD, null );
+			dataService.saveDomainMeasureType( domainMeasureType );
+        	message = "MeasureType " + measureType.getName() + " linked to " + domain.getName();
+        }
+        else {
+        	message = "MeasureType already linked";
+        }
+    	info.setMessage( message );
+        redirectAttributes.addFlashAttribute( "info", info );
+        return "redirect:/measureType/" + domainId;
+    }
+    
+    @RequestMapping(path = "/measureType/unlink/{code}/{domainId}", method = RequestMethod.GET)
+    public String unlinkMeasureType( RedirectAttributes redirectAttributes, Model model, @PathVariable(value = "code") String code, @PathVariable(value = "domainId") Long domainId ) {
+        LOG.info("UiController: MeasureType unLink: " + code );   	
+        Info info = new Info();
+        String message = "";
+        
+        DomainMeasureType domainMeasureType = dataService.getDomainMeasureType( domainId, code );
+        if( domainMeasureType != null ) {
+	    	if( dataSynchEnabled && domainMeasureType.getDbSynchToken() != null && domainMeasureType.getDbSynchToken().length() > 0 ) {
+        		message = message + "MeasureType " + code + " scheduled to be unlinked.";
+        		domainMeasureType.setDbSynch( DbSync.DELETE );
+	        	dataService.updateDomainMeasureType( domainMeasureType );
+	    	}
+	    	else {
+        		message = message + "MeasureType " + code + " unLinked.";
+	        	dataService.deleteDomainMeasureType( domainMeasureType.getId() );
+	    	}
+        }
+    	info.setMessage( message );
+        redirectAttributes.addFlashAttribute( "info", info );
+        return "redirect:/measureType/" + domainId;
+    }
+    
+    @RequestMapping(path = "/measureType/{domainId}", method = RequestMethod.POST)
+    public String saveMeasureType( MeasureType measureType, @PathVariable(value = "domainId") Long domainId ) {
         LOG.info("UiController: saveMeasureType MeasureType: " + measureType );   	
-    	dataService.saveMeasureType(measureType);
-        return "redirect:/measureType";
+        MeasureType newMeasureType = dataService.saveMeasureType(measureType);
+        if( domainId != 0 ) {
+        	Domain domain = dataService.getDomain( domainId );
+        	DomainMeasureType domainMeasureType = new DomainMeasureType( domain, newMeasureType, new Date(), DbSync.ADD, null );
+			dataService.saveDomainMeasureType( domainMeasureType );
+        }
+        return "redirect:/measureType/" + domainId;
     }
 
-    @RequestMapping(path = "/measureType/update", method = RequestMethod.POST)
-    public String updateMeasureType( MeasureType measureType ) {
+    @RequestMapping(path = "/measureType/update/{domainId}", method = RequestMethod.POST)
+    public String updateMeasureType( MeasureType measureType, @PathVariable(value = "domainId") Long domainId ) {
         LOG.info("UiController: updateMeasureType MeasureType: " + measureType );   	
         if( measureType.getDbSynch() != DbSync.ADD ) {
         	measureType.setDbSynch( DbSync.UPDATE );
         }
     	dataService.updateMeasureType( measureType );
-        return "redirect:/measureType";
+        return "redirect:/measureType/" + domainId;
     }
     
-    @RequestMapping(path = "/measureType", method = RequestMethod.GET)
-    public String getAllMeasureTypes(Model model) {
-        model.addAttribute("measureTypes",  dataService.getAllMeasureTypes() );
+    @RequestMapping(path = "/measureType/{domainId}", method = RequestMethod.GET)
+    public String getAllMeasureTypes( Model model, @PathVariable(value = "domainId") Long domainId ) {
+    	if( domainId == 0L ) {    	
+            model.addAttribute("measureTypes",  dataService.getAllMeasureTypes() );
+    	}
+    	else {
+            model.addAttribute("measureTypes",  dataService.getMeasureTypesForDomain( domainId ) );
+    	}
+		model.addAttribute("measureTypeList",  dataService.getAllMeasureTypes() );
+		model.addAttribute("domains", dataService.getAllDomains() );
+        model.addAttribute("selectedDomain", domainId );
         return "measureTypes";
     }
 
-    @RequestMapping(path = "/measureType/edit/{code}", method = RequestMethod.GET)
-    public String editMeasureType(Model model, @PathVariable(value = "code") String code ) {
+    @RequestMapping(path = "/measureType/edit/{code}/{domainId}", method = RequestMethod.GET)
+    public String editMeasureType( Model model, @PathVariable(value = "code") String code, @PathVariable(value = "domainId") Long domainId ) {
         model.addAttribute("measureType", dataService.getMeasureType( code ) );
+        model.addAttribute("domains", dataService.getAllDomains() );
+        model.addAttribute("selectedDomain", domainId );
         return "measureTypeEdit";
     }
 
-    @RequestMapping(path = "/measureType/delete/{code}", method = RequestMethod.GET)
-    public String deleteMeasureType( RedirectAttributes redirectAttributes, @PathVariable(name = "code") String code ) {
+    @RequestMapping(path = "/measureType/delete/{code}/{domainId}", method = RequestMethod.GET)
+    public String deleteMeasureType( RedirectAttributes redirectAttributes, @PathVariable(name = "code") String code, @PathVariable(value = "domainId") Long domainId ) {
         Info info = new Info();
         String message = "";
 
     	Long sensorCount = dataService.getMeasureTypeSensorCount( code );
     	Long measurementCount = dataService.getMeasureTypeMeasurementCount( code );
-        if( sensorCount == 0L && measurementCount == 0L ) {
+    	Long domainCount = dataService.getDomainMeasureTypeMeasureTypeCount( code );
+        if( sensorCount == 0L && measurementCount == 0L && domainCount ==0L ) {
 	    	if( dataSynchEnabled ) {
         		message = message + "Measure Type " + code + " scheduled for deletion.";
         		MeasureType measureType = dataService.getMeasureType( code );
@@ -630,11 +684,14 @@ public class UiController {
         	if( measurementCount > 0L ) {            
         		message = message + "Measure Type " + code + " has " + measurementCount + " measurement" + ((measurementCount > 1L) ? "s" : "" ) + " logged. ";
         	}
+    		if( domainCount != 0L ) {
+    			message = message + "Measure Type " + code + " has " + domainCount + " domain" + ((domainCount > 1L) ? "s" : "" ) + " configured. ";
+    		}
             message = message + "Associations must be removed before deleting Measure Type.";
     	}
         info.setMessage( message );
         redirectAttributes.addFlashAttribute( "info", info );
-	    return "redirect:/measureType";
+	    return "redirect:/measureType/" + domainId;
     }
 
     //

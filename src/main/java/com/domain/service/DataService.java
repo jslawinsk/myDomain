@@ -30,6 +30,7 @@ import com.domain.model.Batch;
 import com.domain.model.DbSync;
 import com.domain.model.Domain;
 import com.domain.model.DomainCategory;
+import com.domain.model.DomainMeasureType;
 import com.domain.model.DomainProcess;
 import com.domain.model.MeasureType;
 import com.domain.model.Measurement;
@@ -49,6 +50,7 @@ import com.domain.repository.ResetTokenRepository;
 import com.domain.repository.SensorRepository;
 import com.domain.repository.CategoryRepository;
 import com.domain.repository.DomainCategoryRepository;
+import com.domain.repository.DomainMeasureTypeRepository;
 import com.domain.repository.DomainProcessRepository;
 import com.domain.repository.UserRepository;
 import com.domain.repository.VerificationTokenRepository;
@@ -70,6 +72,9 @@ public class DataService implements UserDetailsService {
     
     @Autowired
     private DomainProcessRepository domainProcessRepository;
+
+    @Autowired
+    private DomainMeasureTypeRepository domainMeasureTypeRepository;
     
 	@Autowired
 	private CategoryRepository categoryRepository;
@@ -317,7 +322,7 @@ public class DataService implements UserDetailsService {
     }
     
     public List<DomainProcess> getDomainProcessesToSynchronize() {
-    	return domainProcessRepository.findDomainProcessesToSynchronize();
+    	return domainProcessRepository.findToSynchronize();
     }
 
     public DomainProcess saveDomainProcess( DomainProcess domainProcess ) {
@@ -345,7 +350,7 @@ public class DataService implements UserDetailsService {
         	foundDomainProcess.setUpdateTime( new Date() );
         	foundDomainProcess.setDbSynch( domainProcessToUpdate.getDbSynch() );
         	foundDomainProcess.setDbSynchToken( domainProcessToUpdate.getDbSynchToken() );
-            return domainProcessRepository.save( domainProcessToUpdate );
+            return domainProcessRepository.save( foundDomainProcess );
         } catch (Exception e) {
             LOG.error("DataService: Exception: updateDomainProcess: " + e.getMessage());
         }
@@ -370,6 +375,104 @@ public class DataService implements UserDetailsService {
     public Long getDomainProcessProcessCount( String code ) {
         Long count = domainProcessRepository.processCount( code );
         LOG.info("getDomainProcessProcessCount, code:" + code + " processes: " + count );
+        return count;
+    }
+
+	//
+	//	DomainMeasureType table access methods
+	//
+	//
+    public DomainMeasureType getDomainDomainMeasureType( Long id ) {
+        LOG.info("Getting DomainMeasureType, id: " + id);
+        return domainMeasureTypeRepository.getById(id);
+    }
+
+    public DomainMeasureType getDomainMeasureType( Long domainId, String code ) {
+        LOG.info("Getting DomainMeasureType, Id: " + domainId, " Process code: " + code );
+        return domainMeasureTypeRepository.findDomainMeasureType( domainId, code );
+    }
+    
+    public DomainMeasureType getDomainMeasureType( String dbSynchToken ) {
+        LOG.info("Getting DomainMeasureType, SynchToken: " + dbSynchToken );
+        try {
+        	DomainMeasureType domainMeasureType = domainMeasureTypeRepository.findBySynchToken( dbSynchToken );
+	        LOG.info("getDomainMeasureType: " + domainMeasureType );
+	        return domainMeasureType;
+        }
+        catch( Exception e ) {
+        	LOG.error( "getDomainMeasureType: Execption",  e );
+        }
+        return null;
+    }
+    
+    public List<DomainMeasureType> getAllDomainMeasureTypes() {
+    	return domainMeasureTypeRepository.findAll();
+    }
+
+    public List<MeasureType> getMeasureTypesForDomain( Long id ) {
+    	ArrayList<MeasureType> measureTypes = new ArrayList<MeasureType>();
+    	List<DomainMeasureType> domainMeasureTypes = domainMeasureTypeRepository.findDomainMeasureTypes( id );
+    	
+    	for( DomainMeasureType domainMeasureType:domainMeasureTypes)  {
+    		measureTypes.add( domainMeasureType.getMeasureType() );
+    	}
+    	return measureTypes;
+    }
+    
+    public List<DomainProcess> getDomainMeasureTypeToSynchronize() {
+    	return domainProcessRepository.findToSynchronize();
+    }
+
+    public DomainMeasureType saveDomainMeasureType( DomainMeasureType domainMeasureType ) {
+    	DomainMeasureType domainMeasureTypeToSave;
+        try {
+            LOG.info("Saving DomainMeasureType: " + domainMeasureType );
+        	if( domainMeasureType.getDbSynchToken() == null || domainMeasureType.getDbSynchToken().length() <= 0 ) {
+        		domainMeasureType.setDbSynchToken( getSynchToken() );
+        	}
+        	domainMeasureType.setUpdateTime( new Date() );
+        	domainMeasureTypeToSave = domainMeasureTypeRepository.save( domainMeasureType );
+            return domainMeasureTypeToSave;
+        } catch (Exception e) {
+            LOG.error("DataService: Exception: saveDomainMeasureType: " + e.getMessage());
+        }
+        return new DomainMeasureType();
+    }
+
+    public DomainMeasureType updateDomainMeasureType( DomainMeasureType domainMeasureTypeToUpdate ) {
+        LOG.info("Update DomainMeasureType: " + domainMeasureTypeToUpdate );
+        DomainMeasureType foundDomainMeasureType = domainMeasureTypeRepository.getById( domainMeasureTypeToUpdate.getId() );
+        try {
+        	foundDomainMeasureType.setDomain( domainMeasureTypeToUpdate.getDomain() );
+        	foundDomainMeasureType.setMeasureType( domainMeasureTypeToUpdate.getMeasureType() );
+        	foundDomainMeasureType.setUpdateTime( new Date() );
+        	foundDomainMeasureType.setDbSynch( domainMeasureTypeToUpdate.getDbSynch() );
+        	foundDomainMeasureType.setDbSynchToken( domainMeasureTypeToUpdate.getDbSynchToken() );
+            return domainMeasureTypeRepository.save( foundDomainMeasureType );
+        } catch (Exception e) {
+            LOG.error("DataService: Exception: updateDomainMeasureType: " + e.getMessage());
+        }
+        return foundDomainMeasureType;
+    }
+
+    public void deleteDomainMeasureType( Long id ) {
+        try {
+        	DomainMeasureType foundDomainMeasureType = domainMeasureTypeRepository.getById( id );
+        	domainMeasureTypeRepository.delete( foundDomainMeasureType );
+        } catch (Exception e) {
+            LOG.error("DataService: Exception: deleteDomainMeasureType: " + e.getMessage());
+        }
+    }
+
+    public Long getDomainMeasureTypeDomainCount( Long id ) {
+        Long count = domainMeasureTypeRepository.domainCount( id );
+        LOG.info("getDomainMeasureTypeDomainCount, id:" + id + " domains: " + count );
+        return count;
+    }
+
+    public Long getDomainMeasureTypeMeasureTypeCount( String code ) {
+        Long count = domainMeasureTypeRepository.measureTypeCount( code );
+        LOG.info("getDomainMeasureTypeMeasureTypeCount, code:" + code + " measureTypes: " + count );
         return count;
     }
     

@@ -12,7 +12,7 @@ import com.domain.model.DomainProcess;
 public interface DomainProcessRepository extends JpaRepository<DomainProcess, Long> {
 	
 	 @Query( value = "SELECT * FROM domain.domain_process WHERE db_synch IN ( 'ADD', 'UPDATE', 'DELETE' )" , nativeQuery = true )
-	 List<DomainProcess> findDomainProcessesToSynchronize( );	
+	 List<DomainProcess> findToSynchronize( );	
 
 	 @Query( value = "SELECT * FROM domain.domain_process WHERE domain_id = ?1 and process_code = ?2" , nativeQuery = true )
 	 DomainProcess findDomainProcess( Long domainId, String processCode );	
