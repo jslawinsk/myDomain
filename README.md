@@ -1,26 +1,25 @@
-# Brewery-Services-spring-rest-api and Web UI Interface
+# Under Construction (Work In Progress)
 
-Brewery Services Spring REST API Project and Web UI interface. Allows to retrieve data from various types of sensors and present data. Measurement data may also be entered manually. The API also provide for restful calls to receive data. Optionally the bluetooth interface may be used to automatically log sensor data.
+# My Domain spring-rest-api and Web UI Interface
 
-Refer to the Wiki page for design and more details: https://github.com/jslawinsk/brewery-services/wiki
+This project is a refactored from the Brewery Services project to allow for other domains to log data (Greenhouse, Winery, Garden, House, Farm). Domains are defined by an admin user.
 
-## Notable Release Notes
+My Domain Services Spring REST API Project and Web UI interface. Allows to retrieve data from various types of sensors and present data. Measurement data may also be entered manually. The API also provide for restful calls to receive data. Optionally the Bluetooth or WiFi interfaces may be used to automatically log sensor data.
 
-August 21, 2021: User password encryption/hashing added to this release. Refer to Wiki Release Notes for migrating user passwords.
+Refer to the Brewery Services Wiki page for design and more details: https://github.com/jslawinsk/brewery-services/wiki
 
-Please refer to Wiki release notes to migrate from all earlier versions.
+## My Domain Dashboard
 
-## Brewery Services Dashboard
-
-The Dashboard will display measurements for all measurements for active batches. The measurement type table will determine the type of sensor gauge displayed.
-
-## Mobile Device
-
-<img src="https://github.com/jslawinsk/brewery-services/blob/master/documentation/MobileDashboard.png" width="200">
+The Dashboard will display measurements for all measurements for active batches. The measurement type table will determine the type of sensor gauge displayed. The domain icons may be used to filter the dashboard and data to be domain specific.
 
 ## PC
 
-<img src="https://github.com/jslawinsk/brewery-services/blob/master/documentation/PcDashboard.png" width="650">
+<img src="https://github.com/jslawinsk/myDomain/blob/master/documentation/PcDashboard.png" width="650">
+
+## Mobile Device
+
+<img src="https://github.com/jslawinsk/myDomain/blob/master/documentation/MobileDashboard.png" width="200">
+<img src="https://github.com/jslawinsk/myDomain/blob/master/documentation/MobileDashboard2.png" width="200">
 
 #### Tools Used:
 - Eclipse
