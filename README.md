@@ -14,12 +14,12 @@ The Dashboard will display measurements for all measurements for active batches.
 
 ## PC
 
-<img src="https://github.com/jslawinsk/myDomain/blob/master/documentation/PcDashboard.png" width="650">
+<img src="https://github.com/jslawinsk/myDomain/blob/main/documentation/PcDashboard.png" width="650">
 
 ## Mobile Device
 
-<img src="https://github.com/jslawinsk/myDomain/blob/master/documentation/MobileDashboard.png" width="200">
-<img src="https://github.com/jslawinsk/myDomain/blob/master/documentation/MobileDashboard2.png" width="200">
+<img src="https://github.com/jslawinsk/myDomain/blob/main/documentation/MobileDashboard.png" width="200">
+<img src="https://github.com/jslawinsk/myDomain/blob/main/documentation/MobileDashboard2.png" width="200">
 
 #### Tools Used:
 - Eclipse
