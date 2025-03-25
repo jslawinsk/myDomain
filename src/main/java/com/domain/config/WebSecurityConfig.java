@@ -39,14 +39,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 @EnableGlobalAuthentication
 public class WebSecurityConfig{
 	
-//	@Bean
-//	public BCryptPasswordEncoder passwordEncoder() {
-//		return new BCryptPasswordEncoder();
-//	};
-
-/*
     @Configuration
-    @Order( 2 )
+    @Order( 1 )
     public static class RestApiSecurityConfig {
         private Logger LOG = LoggerFactory.getLogger( RestApiSecurityConfig.class );
 
@@ -54,7 +48,10 @@ public class WebSecurityConfig{
         public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
     		LOG.info("configure: " + http.toString() );		
     		http
-    			.csrf().disable()
+    		.securityMatchers((matchers) -> matchers
+    				.requestMatchers( "/api/**" )
+            )    		
+			.csrf().disable()
     			.addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
     			.authorizeHttpRequests( auth -> auth
     				.requestMatchers(HttpMethod.POST, "/api/authorize/**").permitAll()
@@ -67,9 +64,9 @@ public class WebSecurityConfig{
     		return http.build();
     	}
     }
-*/
+	
     @Configuration
-    @Order( 1 )
+    @Order( 2 )
     public static class UiSecurityConfig {
         private Logger LOG = LoggerFactory.getLogger( UiSecurityConfig.class );
 

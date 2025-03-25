@@ -6,11 +6,11 @@ This project is a refactored from the Brewery Services project to allow for othe
 
 My Domain Services Spring REST API Project and Web UI interface. Allows to retrieve data from various types of sensors and present data. Measurement data may also be entered manually. The API also provide for restful calls to receive data. Optionally the Bluetooth or WiFi interfaces may be used to automatically log sensor data.
 
-Refer to the Brewery Services Wiki page for design and more details: https://github.com/jslawinsk/brewery-services/wiki
+Refer to the My Domain Wiki page for design and more details: https://github.com/jslawinsk/myDomain/wiki
 
 ## My Domain Dashboard
 
-The Dashboard will display measurements for all measurements for active batches. The measurement type table will determine the type of sensor gauge displayed. The domain icons may be used to filter the dashboard and data to be domain specific.
+The dashboard will display measurements for all measurements for active batches. The measurement type table will determine the type of sensor gauge displayed. The domain icons may be used to filter the dashboard and data to be domain specific.
 
 ## PC
 
