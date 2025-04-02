@@ -1,8 +1,8 @@
 package com.domain.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -14,10 +14,9 @@ import java.util.Optional;
 import jakarta.persistence.EntityNotFoundException;
 
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -27,7 +26,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import com.domain.model.Batch;
 import com.domain.model.DbSync;
@@ -54,8 +52,8 @@ import com.domain.repository.UserRepository;
 import com.domain.repository.VerificationTokenRepository;
 import com.domain.service.DataService;
 
-@RunWith( SpringRunner.class)
 @SpringBootTest( properties = { "blueTooth.enabled=false", "wiFi.enabled=false", "dataSynch.enabled=true" } )
+@AutoConfigureMockMvc
 class DataServiceTest {
 
 	

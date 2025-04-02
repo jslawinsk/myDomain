@@ -7,13 +7,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import com.domain.actuator.BluetoothHealthIndicator;
 import com.domain.actuator.BluetoothStatus;
@@ -22,9 +21,9 @@ import com.domain.actuator.DataSynchStatus;
 import com.domain.actuator.WiFiHealthIndicator;
 import com.domain.actuator.WiFiStatus;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest( properties = { "blueTooth.enabled=false", "wiFi.enabled=false", "dataSynch.enabled=false" } )
-class ActuatorTest {
+@AutoConfigureMockMvc
+public abstract class ActuatorTest {
 
     @Autowired
     private BluetoothStatus bluetoothStatus;

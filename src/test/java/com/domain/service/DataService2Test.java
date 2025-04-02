@@ -1,7 +1,7 @@
 package com.domain.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.net.InetAddress;
@@ -9,14 +9,13 @@ import java.net.UnknownHostException;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import com.domain.model.DbSync;
 import com.domain.model.Category;
@@ -24,12 +23,12 @@ import com.domain.repository.CategoryRepository;
 import com.domain.service.BlueToothService;
 import com.domain.service.DataService;
 
-@RunWith( SpringRunner.class)
 @SpringBootTest( 
 				properties = { "blueTooth.enabled=false", 
 								"wiFi.enabled=false",
 								"dataSynch.enabled=false" }
 			)
+@AutoConfigureMockMvc
 class DataService2Test {
 
 	@MockBean

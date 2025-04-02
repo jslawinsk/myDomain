@@ -1,22 +1,26 @@
 package com.domain;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.test.context.junit4.SpringRunner;
 
+import com.domain.core.DataSynchThread;
 import com.domain.service.DataService;
 import com.domain.util.PasswordListener;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest( properties = { "testdata.create=true", "testdata.createAdmin=true", "blueTooth.enabled=false", "wiFi.enabled=false", "dataSynch.enabled=false" } )
-class ApplicationTest {
+@AutoConfigureMockMvc 
+public class ApplicationTest {
+
+	public ApplicationTest() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
 	@MockBean
     private DataService dataService;
@@ -27,7 +31,7 @@ class ApplicationTest {
 	@MockBean
 	JavaMailSender mailSender;
 
-	@Ignore
+	@Disabled
 	@Test
 	void runTest() {
 		Application.main( new String[] {} );

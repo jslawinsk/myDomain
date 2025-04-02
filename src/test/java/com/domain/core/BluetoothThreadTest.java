@@ -13,15 +13,13 @@ import java.util.List;
 import javax.microedition.io.StreamConnection;
 
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import com.domain.core.BluetoothThread;
 import com.domain.model.Message;
 import com.domain.model.Sensor;
 import com.domain.model.SensorType;
@@ -31,8 +29,8 @@ import com.domain.util.BluetoothUtil;
 @SpringBootTest( properties = { "blueTooth.enabled=false", 
 		"blueTooth.scanSeconds=0", "wiFi.enabled=false"
 } )
-@RunWith( SpringRunner.class)
-public class BluetoothThreadTest {
+@AutoConfigureMockMvc
+class BluetoothThreadTest {
 
 	@MockBean
 	DataService dataService;

@@ -16,8 +16,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-
 import org.mockito.Mockito;
 import org.mockito.MockedStatic;
 import org.slf4j.Logger;
@@ -37,7 +35,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -61,7 +58,6 @@ import com.domain.service.DataService;
 import com.domain.service.WiFiService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@RunWith( SpringRunner.class)
 @SpringBootTest( webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 				properties = { "blueTooth.enabled=false", 
 								"wiFi.enabled=false",

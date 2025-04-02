@@ -437,7 +437,6 @@ public class RestApiController {
 		String secretKey = "mySecretKey";
 		List<GrantedAuthority> grantedAuthorities = AuthorityUtils
 				.commaSeparatedStringToAuthorityList( user.getRoles() );
-		
 		String token = Jwts
 				.builder()
 				.setId("softtekJWT")
@@ -450,7 +449,6 @@ public class RestApiController {
 				.setExpiration(new Date(System.currentTimeMillis() + 600000))
 				.signWith(SignatureAlgorithm.HS512,
 						secretKey.getBytes()).compact();
-
 		return "Bearer " + token;
 	}
     
