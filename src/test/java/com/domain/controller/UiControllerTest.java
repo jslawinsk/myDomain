@@ -21,6 +21,7 @@ import org.mockito.MockedStatic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.h2.H2ConsoleProperties;
 import org.springframework.boot.test.autoconfigure.properties.PropertyMapping;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,6 +33,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.test.context.TestPropertySource;
@@ -92,7 +94,10 @@ class UiControllerTest {
 	
 	@MockBean
 	JavaMailSender mailSender;
-
+	
+	@MockBean
+	H2ConsoleProperties h2ConsoleProperties;
+	
 	//
 	//	Index Dash board tests 
 	//
@@ -1328,7 +1333,7 @@ class UiControllerTest {
 		LOG.info( "Test saveNewUser: " + user );
 		
 		mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:" + port + "/user/password/0")
-				.with(csrf())
+				.with(csrf( ))
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 	            .content(buildUrlEncodedFormEntity(
 	                "username", user.getUsername(), 

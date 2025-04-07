@@ -11,7 +11,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Column;
 
 @Entity
-@Table(name = "user", schema="domain")
+@Table(name = "users", schema="domain")
 public class User {
 
     @Id

@@ -1,5 +1,7 @@
 package com.domain.config;
 
+import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console; 
+
 import java.security.SecureRandom;
 
 import javax.sql.DataSource;
@@ -85,24 +87,30 @@ public class WebSecurityConfig{
     		LOG.info("configure: " + http.toString() );		
     		http
     			.authorizeHttpRequests( auth -> auth 
+        			.requestMatchers(toH2Console()).permitAll()
     				.requestMatchers( "/css/**", "/js/**", "/webjars/**", "/images/**", "/validate/**", "/password/**", "/passwordReset/**" ).permitAll()	
     				.requestMatchers( "/category/**", "/process/**", "/measureType/**", "/batch/**", "/measurement/**", "/sensor/**", "/domain/**", "/user/**"  ).hasRole( "ADMIN" )
     				.requestMatchers( "/**", "/profile/**" ).hasAnyRole( "ADMIN", "USER" )
     			)
+    			.csrf(csrf -> csrf .ignoringRequestMatchers(toH2Console()))
+    			.headers(headers -> headers.frameOptions().sameOrigin())
     			.formLogin()
     				.loginPage("/login")
     				.permitAll()
     				.and()
     			.logout()
-    				.permitAll();
+    				.permitAll()
+    				;
     		http.cors();
     		return http.build();
     	}        
-        
+             
         @Bean
         public WebSecurityCustomizer webSecurityCustomizer() {
-            return (web) -> web.ignoring().requestMatchers( "/h2/**", "/swagger-ui**" );
+            return (web) -> web.ignoring().requestMatchers( "/swagger-ui**" );
         }    	
+        
+        
     }
     
 }

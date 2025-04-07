@@ -5,6 +5,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.h2.H2ConsoleProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -46,6 +47,9 @@ class UiController2Test {
 
 	@MockBean
 	JavaMailSender mailSender;
+	
+	@MockBean
+	H2ConsoleProperties h2ConsoleProperties;
 	
 	@Test
 	@WithMockUser(roles = "ADMIN")
