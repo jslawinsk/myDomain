@@ -6,7 +6,7 @@ COPY src src
 
 # Copy Maven wrapper
 COPY mvnw .
-RUM mvn -N wrapper:wrapper
+RUN mvn -N wrapper:wrapper
 # COPY .mvn .mvn
 
 # Set execution permission for the Maven wrapper
