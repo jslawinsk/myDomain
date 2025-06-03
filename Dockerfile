@@ -1,12 +1,12 @@
 # Importing JDK and copying required files
-FROM openjdk:17-jdk AS build
+FROM maven:3.8.4-openjdk-17 AS build
+# FROM openjdk:17-jdk AS build
 WORKDIR /app
 COPY pom.xml .
 COPY src src
 
 # Copy Maven wrapper
 COPY mvnw .
-RUN mvn -N wrapper:wrapper
 # COPY .mvn .mvn
 
 # Set execution permission for the Maven wrapper
