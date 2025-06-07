@@ -1361,8 +1361,9 @@ public class UiController {
     public String updateUserPw( User user, @PathVariable(value = "domainId") Long domainId ) {
     	String pw = user.getPassword();
     	if( pw != null && pw.length() > 0 ) {
-    		user.setPassword( passwordEncoder.encode( user.getPassword() ) );
-        	dataService.saveUser(user);
+        	User userToUpdate = dataService.getUser( user.getId() );
+            userToUpdate.setPassword( passwordEncoder.encode( user.getPassword() ) );
+        	dataService.saveUser( userToUpdate );
     	}
         return "redirect:/user/" + domainId;
     }

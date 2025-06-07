@@ -1330,12 +1330,14 @@ class UiControllerTest {
 	{
 		User user = new User( "test", "test@test.com", "test", DbSync.ADD, "TEST", true );
 		user.setId( 1L );
+		Mockito.when(dataService.getUser( 1L )).thenReturn( user );
 		LOG.info( "Test saveNewUser: " + user );
 		
 		mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:" + port + "/user/password/0")
 				.with(csrf( ))
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 	            .content(buildUrlEncodedFormEntity(
+		            "id", "1", 
 	                "username", user.getUsername(), 
 	                "password", user.getPassword()
 	                )

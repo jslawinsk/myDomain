@@ -56,7 +56,7 @@
                 <button type="submit" class="btn btn-outline-dark">Save
 					<img th:src="@{/images/save_alt-24px.svg}"/>
                 </button>
-				<a th:href="${'/user/password/' } + *{id}" class="btn btn-outline-dark">
+				<a th:href="${'/user/password/' + id + '/' + selectedDomain}" class="btn btn-outline-dark">
 					Password
 					<img th:src="@{/images/password_black_24dp.svg}"/>
             	</a>                
