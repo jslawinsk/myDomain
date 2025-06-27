@@ -87,12 +87,12 @@ public class WebSecurityConfig{
     		LOG.info("configure: " + http.toString() );		
     		http
     			.authorizeHttpRequests( auth -> auth 
-        			.requestMatchers(toH2Console()).permitAll()
+        			.requestMatchers( "/h2/**" ).permitAll()
     				.requestMatchers( "/css/**", "/js/**", "/webjars/**", "/images/**", "/validate/**", "/password/**", "/passwordReset/**" ).permitAll()	
     				.requestMatchers( "/category/**", "/process/**", "/measureType/**", "/batch/**", "/measurement/**", "/sensor/**", "/domain/**", "/user/**"  ).hasRole( "ADMIN" )
     				.requestMatchers( "/**", "/profile/**" ).hasAnyRole( "ADMIN", "USER" )
     			)
-    			.csrf(csrf -> csrf .ignoringRequestMatchers(toH2Console()))
+    			.csrf(csrf -> csrf .ignoringRequestMatchers( "/h2/**" ))
     			.headers(headers -> headers.frameOptions().sameOrigin())
     			.formLogin()
     				.loginPage("/login")
