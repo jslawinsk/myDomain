@@ -108,7 +108,7 @@ public class DataService implements UserDetailsService {
 	//
 	//
     public Domain getDomain( Long id ) {
-        LOG.info("Getting Domain, id:" + id);
+        LOG.info("Getting Domain, id: " + id);
     	Optional<Domain> optionalDomain = domainRepository.findById( id );
         if (optionalDomain.isPresent()) {
 	    	return optionalDomain.get();
@@ -117,6 +117,19 @@ public class DataService implements UserDetailsService {
         	return null;
         }								    	
     }
+    
+    public Domain getDomain( String name ) {
+        LOG.info("Getting Domain: " + name );
+    	Optional<Domain> optionalDomain = domainRepository.findDomainByName( name );
+        if (optionalDomain.isPresent()) {
+	    	return optionalDomain.get();
+        } else {
+	    	LOG.info( "Domain not found" );
+        	return null;
+        }								    	
+    }
+    
+    
     
     public List<Domain> getAllDomains() {
     	return domainRepository.findAll();
@@ -419,8 +432,8 @@ public class DataService implements UserDetailsService {
     	return measureTypes;
     }
     
-    public List<DomainProcess> getDomainMeasureTypeToSynchronize() {
-    	return domainProcessRepository.findToSynchronize();
+    public List<DomainMeasureType> getDomainMeasureTypeToSynchronize() {
+    	return domainMeasureTypeRepository.findToSynchronize();
     }
 
     public DomainMeasureType saveDomainMeasureType( DomainMeasureType domainMeasureType ) {

@@ -26,7 +26,6 @@
 	</properties>
 
 	<!-- The following repositories are required for a Raspberry Pi ARM build for Bluetooth -->
-
 	<repositories>
           <repository>
             <id>oss.sonatype.org</id>

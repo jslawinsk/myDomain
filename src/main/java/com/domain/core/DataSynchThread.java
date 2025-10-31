@@ -43,6 +43,10 @@ import org.springframework.web.client.RestTemplate;
 import com.domain.actuator.DataSynchStatus;
 import com.domain.model.Batch;
 import com.domain.model.DbSync;
+import com.domain.model.Domain;
+import com.domain.model.DomainCategory;
+import com.domain.model.DomainMeasureType;
+import com.domain.model.DomainProcess;
 import com.domain.model.MeasureType;
 import com.domain.model.Measurement;
 import com.domain.model.Message;
@@ -159,13 +163,35 @@ public class DataSynchThread implements Runnable {
 		        	// 1st Phase Process Adding New Data
 		        	//
 			        	//
+			        	//	Synchronize Domain Table for adding new data
+			        	//
+						List<Domain> domains = dataService.getDomainsToSynchronize();
+						for( Domain domain: domains ) {
+							if( domain.getDbSynch() == DbSync.ADD ) {
+								LOG.info( "Domain to Synchronize Add: " + domain );
+								HttpHeaders headers = new HttpHeaders();
+								headers.setContentType(MediaType.APPLICATION_JSON);
+								headers.setBearerAuth(token);
+							    HttpEntity<Domain> request = new HttpEntity<>(domain, headers);
+								
+							    URI uri = new URI( dataSynchUrl + "domain");
+							    ResponseEntity<String> result = restTemplate.postForEntity(uri, request, String.class);
+								LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
+							    if( result.getStatusCode() == HttpStatus.OK ) {
+							    	LOG.info( "Synchronize Category local update" );
+							    	domain.setDbSynch( DbSync.SYNCHED );
+							    	dataService.updateDomain( domain );
+							    }
+							}
+						}
+			        	
+			        	//
 			        	//	Synchronize Category Table for adding new data
 			        	//
 						List<Category> categories= dataService.getCategoriesToSynchronize();
 						for( Category category: categories ) {
-							LOG.info( "Category to Synchronize: " + category );
 							if( category.getDbSynch() == DbSync.ADD ) {
-								LOG.info( "Synchronize Add: " + category );
+								LOG.info( "Category to Synchronize Add: " + category );
 								HttpHeaders headers = new HttpHeaders();
 								headers.setContentType(MediaType.APPLICATION_JSON);
 								headers.setBearerAuth(token);
@@ -173,11 +199,34 @@ public class DataSynchThread implements Runnable {
 								
 							    URI uri = new URI( dataSynchUrl + "category");
 							    ResponseEntity<String> result = restTemplate.postForEntity(uri, request, String.class);
-								LOG.info( "Synchronize result: " + result.getStatusCodeValue() + " : "  + result.toString() );
+								LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
 							    if( result.getStatusCode() == HttpStatus.OK ) {
 							    	LOG.info( "Synchronize Category local update" );
 							    	category.setDbSynch( DbSync.SYNCHED );
 							    	dataService.updateCategory( category );
+							    }
+							}
+						}
+		
+			        	//
+			        	//	Synchronize Domain Category Table for adding new data
+			        	//
+						List<DomainCategory> domainCategories = dataService.getDomainCategoriesToSynchronize();
+						for( DomainCategory domainCategory: domainCategories ) {
+							if( domainCategory.getDbSynch() == DbSync.ADD ) {
+								LOG.info( "Domain Category to Synchronize Add: " + domainCategory );
+								HttpHeaders headers = new HttpHeaders();
+								headers.setContentType(MediaType.APPLICATION_JSON);
+								headers.setBearerAuth(token);
+							    HttpEntity<DomainCategory> request = new HttpEntity<>(domainCategory, headers);
+								
+							    URI uri = new URI( dataSynchUrl + "domainCategory");
+							    ResponseEntity<String> result = restTemplate.postForEntity(uri, request, String.class);
+								LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
+							    if( result.getStatusCode() == HttpStatus.OK ) {
+							    	LOG.info( "Synchronize DomainCategory local update" );
+							    	domainCategory.setDbSynch( DbSync.SYNCHED );
+							    	dataService.updateDomainCategory( domainCategory );
 							    }
 							}
 						}
@@ -196,7 +245,7 @@ public class DataSynchThread implements Runnable {
 								
 							    URI uri = new URI( dataSynchUrl + "process");
 							    ResponseEntity<String> result = restTemplate.postForEntity(uri, request, String.class);
-								LOG.info( "Synchronize result: " + result.getStatusCodeValue() + " : "  + result.toString() );
+								LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
 							    if( result.getStatusCode() == HttpStatus.OK ) {
 							    	LOG.info( "Synchronize Process local update" );
 									process.setDbSynch( DbSync.SYNCHED );
@@ -204,7 +253,30 @@ public class DataSynchThread implements Runnable {
 							    }
 							}
 						}
-		
+
+			        	//
+			        	//	Synchronize Domain Process Table for adding new data
+			        	//
+						List<DomainProcess> domainProcesses = dataService.getDomainProcessesToSynchronize();
+						for( DomainProcess domainProcess: domainProcesses ) {
+							if( domainProcess.getDbSynch() == DbSync.ADD ) {
+								LOG.info( "Synchronize Add DomainProcess: " + domainProcess );
+								HttpHeaders headers = new HttpHeaders();
+								headers.setContentType(MediaType.APPLICATION_JSON);		
+								headers.setBearerAuth(token);
+							    HttpEntity<DomainProcess> request = new HttpEntity<>(domainProcess, headers);
+								
+							    URI uri = new URI( dataSynchUrl + "domainProcess");
+							    ResponseEntity<String> result = restTemplate.postForEntity(uri, request, String.class);
+								LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
+							    if( result.getStatusCode() == HttpStatus.OK ) {
+							    	LOG.info( "Synchronize DomainProcess local update" );
+							    	domainProcess.setDbSynch( DbSync.SYNCHED );
+							    	dataService.updateDomainProcess( domainProcess );
+							    }
+							}
+						}
+								
 			        	//
 			        	//	Synchronize Measure Types Table for adding new data
 			        	//
@@ -219,7 +291,7 @@ public class DataSynchThread implements Runnable {
 								
 							    URI uri = new URI( dataSynchUrl + "measureType");
 							    ResponseEntity<String> result = restTemplate.postForEntity(uri, request, String.class);
-								LOG.info( "Synchronize result: " + result.getStatusCodeValue() + " : "  + result.toString() );
+								LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
 							    if( result.getStatusCode() == HttpStatus.OK ) {
 							    	LOG.info( "Synchronize MeasureType local update" );
 									measureType.setDbSynch( DbSync.SYNCHED );
@@ -227,7 +299,30 @@ public class DataSynchThread implements Runnable {
 							    }
 							}
 						}
-		
+
+			        	//
+			        	//	Synchronize Domain Measure Types Table for adding new data
+			        	//
+						List<DomainMeasureType> domainMeasureTypes = dataService.getDomainMeasureTypeToSynchronize();
+						for( DomainMeasureType domainMeasureType: domainMeasureTypes ) {
+							if( domainMeasureType.getDbSynch() == DbSync.ADD ) {
+								LOG.info( "Synchronize Add DomainMeasureType: " + domainMeasureType );
+								HttpHeaders headers = new HttpHeaders();
+								headers.setContentType(MediaType.APPLICATION_JSON);		
+								headers.setBearerAuth(token);
+							    HttpEntity<DomainMeasureType> request = new HttpEntity<>(domainMeasureType, headers);
+								
+							    URI uri = new URI( dataSynchUrl + "domainMeasureType");
+							    ResponseEntity<String> result = restTemplate.postForEntity(uri, request, String.class);
+								LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
+							    if( result.getStatusCode() == HttpStatus.OK ) {
+							    	LOG.info( "Synchronize DomainMeasureType local update" );
+							    	domainMeasureType.setDbSynch( DbSync.SYNCHED );
+							    	dataService.updateDomainMeasureType( domainMeasureType );
+							    }
+							}
+						}
+						
 			        	//
 			        	//	Synchronize Batch Table for adding new data
 			        	//
@@ -240,11 +335,10 @@ public class DataSynchThread implements Runnable {
 								headers.setBearerAuth(token);
 								
 							    HttpEntity<Batch> request = new HttpEntity<>(batch, headers);
-								
 							    URI uri = new URI( dataSynchUrl + "batch");
 							     
 							    ResponseEntity<String> result = restTemplate.postForEntity(uri, request, String.class);
-								LOG.info( "Synchronize result: " + result.getStatusCodeValue() + " : "  + result.toString() );
+								LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
 							    if( result.getStatusCode() == HttpStatus.OK ) {
 							    	LOG.info( "Synchronize Batch local update" );
 									batch.setDbSynch( DbSync.SYNCHED );
@@ -268,11 +362,10 @@ public class DataSynchThread implements Runnable {
 								sensor.setEnabled( false );
 								
 							    HttpEntity<Sensor> request = new HttpEntity<>(sensor, headers);
-								
 							    URI uri = new URI( dataSynchUrl + "sensor");
 							     
 							    ResponseEntity<String> result = restTemplate.postForEntity(uri, request, String.class);
-								LOG.info( "Synchronize result: " + result.getStatusCodeValue() + " : "  + result.toString() );
+								LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
 							    if( result.getStatusCode() == HttpStatus.OK ) {
 							    	LOG.info( "Synchronize Sensor local update" );
 									sensor.setEnabled( enabled );
@@ -318,7 +411,7 @@ public class DataSynchThread implements Runnable {
 								    URI uri = new URI( dataSynchUrl + "measurement");
 								     
 								    ResponseEntity<String> result = restTemplate.postForEntity(uri, request, String.class);
-									LOG.info( "Synchronize result: " + result.getStatusCodeValue() + " : "  + result.toString() );
+									LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
 								    if( result.getStatusCode() == HttpStatus.OK ) {
 								    	if( deleteSynched ) {
 									    	LOG.info( "Synchronize Measurement local delete" );
@@ -349,6 +442,35 @@ public class DataSynchThread implements Runnable {
 		        	// 2nd Phase Process Updating Existing Data
 		        	//
 			        	//
+			        	//	Synchronize Domain Table for updating data
+			        	//
+						for( Domain domain: domains ) {
+							if( domain.getDbSynch() == DbSync.UPDATE ) {
+								LOG.info( "Synchronize Update Domain: " + domain );
+								if( domain.getDbSynchToken() != null && domain.getDbSynchToken().length() > 0 ) {
+									HttpHeaders headers = new HttpHeaders();
+									headers.setContentType(MediaType.APPLICATION_JSON);
+									headers.setBearerAuth(token);
+								    HttpEntity<Domain> request = new HttpEntity<>(domain, headers);
+									
+								    URI uri = new URI( dataSynchUrl + "domain");
+								    ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.PUT, request, String.class );
+									LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
+								    if( result.getStatusCode() == HttpStatus.OK ) {
+								    	LOG.info( "Synchronize Domain local update" );
+								    	domain.setDbSynch( DbSync.SYNCHED );
+								    	dataService.updateDomain( domain );
+								    }
+								}
+								else{
+									LOG.error( "ERROR: Synchronize Update Domain: Invalid DbSynchToken: " + domain );
+									dataSynchStatus.setUp( false ); 
+									statusMessage = statusMessage +  " Synchronize Update Category: Invalid DbSynchToken: " + domain;
+								}
+							}
+						}
+						
+			        	//
 			        	//	Synchronize Category Table for updating data
 			        	//
 						for( Category category: categories ) {
@@ -362,7 +484,7 @@ public class DataSynchThread implements Runnable {
 									
 								    URI uri = new URI( dataSynchUrl + "category");
 								    ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.PUT, request, String.class );
-									LOG.info( "Synchronize result: " + result.getStatusCodeValue() + " : "  + result.toString() );
+									LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
 								    if( result.getStatusCode() == HttpStatus.OK ) {
 								    	LOG.info( "Synchronize Category local update" );
 								    	category.setDbSynch( DbSync.SYNCHED );
@@ -373,6 +495,35 @@ public class DataSynchThread implements Runnable {
 									LOG.error( "ERROR: Synchronize Update Category: Invalid DbSynchToken: " + category );
 									dataSynchStatus.setUp( false ); 
 									statusMessage = statusMessage +  " Synchronize Update Category: Invalid DbSynchToken: " + category;
+								}
+							}
+						}
+						
+			        	//
+			        	//	Synchronize Domain Category Table for updating data
+			        	//
+						for( DomainCategory domainCategory: domainCategories ) {
+							if( domainCategory.getDbSynch() == DbSync.UPDATE ) {
+								LOG.info( "Synchronize Update DomainCategory: " + domainCategory );
+								if( domainCategory.getDbSynchToken() != null && domainCategory.getDbSynchToken().length() > 0 ) {
+									HttpHeaders headers = new HttpHeaders();
+									headers.setContentType(MediaType.APPLICATION_JSON);
+									headers.setBearerAuth(token);
+								    HttpEntity<DomainCategory> request = new HttpEntity<>(domainCategory, headers);
+									
+								    URI uri = new URI( dataSynchUrl + "domainCategory");
+								    ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.PUT, request, String.class );
+									LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
+								    if( result.getStatusCode() == HttpStatus.OK ) {
+								    	LOG.info( "Synchronize DomainCategory local update" );
+								    	domainCategory.setDbSynch( DbSync.SYNCHED );
+								    	dataService.updateDomainCategory( domainCategory );
+								    }
+								}
+								else{
+									LOG.error( "ERROR: Synchronize Update DomainCategory: Invalid DbSynchToken: " + domainCategory );
+									dataSynchStatus.setUp( false ); 
+									statusMessage = statusMessage +  " Synchronize Update DomainCategory: Invalid DbSynchToken: " + domainCategory;
 								}
 							}
 						}
@@ -390,11 +541,33 @@ public class DataSynchThread implements Runnable {
 								
 							    URI uri = new URI( dataSynchUrl + "process");
 							    ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.PUT, request, String.class );
-								LOG.info( "Synchronize result: " + result.getStatusCodeValue() + " : "  + result.toString() );
+								LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
 							    if( result.getStatusCode() == HttpStatus.OK ) {
 							    	LOG.info( "Synchronize Process local update" );
 									process.setDbSynch( DbSync.SYNCHED );
 							    	dataService.updateProcess( process );
+							    }
+							}
+						}
+						
+			        	//
+			        	//	Synchronize Domain Process Table for updating data
+			        	//
+						for( DomainProcess domainProcess: domainProcesses ) {
+							if( domainProcess.getDbSynch() == DbSync.UPDATE ) {
+								LOG.info( "Synchronize Update DomainProcess: " + domainProcess );
+								HttpHeaders headers = new HttpHeaders();
+								headers.setContentType(MediaType.APPLICATION_JSON);		
+								headers.setBearerAuth(token);
+							    HttpEntity<DomainProcess> request = new HttpEntity<>(domainProcess, headers);
+								
+							    URI uri = new URI( dataSynchUrl + "domainProcess");
+							    ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.PUT, request, String.class );
+								LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
+							    if( result.getStatusCode() == HttpStatus.OK ) {
+							    	LOG.info( "Synchronize DomainProcess local update" );
+							    	domainProcess.setDbSynch( DbSync.SYNCHED );
+							    	dataService.updateDomainProcess( domainProcess );
 							    }
 							}
 						}
@@ -412,11 +585,33 @@ public class DataSynchThread implements Runnable {
 								
 							    URI uri = new URI( dataSynchUrl + "measureType");
 							    ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.PUT, request, String.class );
-								LOG.info( "Synchronize result: " + result.getStatusCodeValue() + " : "  + result.toString() );
+								LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
 							    if( result.getStatusCode() == HttpStatus.OK ) {
 							    	LOG.info( "Synchronize MeasureType local update" );
 									measureType.setDbSynch( DbSync.SYNCHED );
 							    	dataService.updateMeasureType( measureType );
+							    }
+							}
+						}
+
+			        	//
+			        	//	Synchronize Domain Measure Types Table for updating data
+			        	//
+						for( DomainMeasureType domainMeasureType: domainMeasureTypes ) {
+							if( domainMeasureType.getDbSynch() == DbSync.UPDATE ) {
+								LOG.info( "Synchronize Update DomainMeasureType: " + domainMeasureType );
+								HttpHeaders headers = new HttpHeaders();
+								headers.setContentType(MediaType.APPLICATION_JSON);		
+								headers.setBearerAuth(token);
+							    HttpEntity<DomainMeasureType> request = new HttpEntity<>(domainMeasureType, headers);
+								
+							    URI uri = new URI( dataSynchUrl + "domainMeasureType");
+							    ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.PUT, request, String.class );
+								LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
+							    if( result.getStatusCode() == HttpStatus.OK ) {
+							    	LOG.info( "Synchronize DomainMeasureType local update" );
+							    	domainMeasureType.setDbSynch( DbSync.SYNCHED );
+							    	dataService.updateDomainMeasureType( domainMeasureType );
 							    }
 							}
 						}
@@ -435,7 +630,7 @@ public class DataSynchThread implements Runnable {
 									
 								    URI uri = new URI( dataSynchUrl + "batch");
 								    ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.PUT, request, String.class );
-									LOG.info( "Synchronize result: " + result.getStatusCodeValue() + " : "  + result.toString() );
+									LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
 								    if( result.getStatusCode() == HttpStatus.OK ) {
 								    	LOG.info( "Synchronize Batch local update" );
 										batch.setDbSynch( DbSync.SYNCHED );
@@ -464,7 +659,7 @@ public class DataSynchThread implements Runnable {
 									
 								    URI uri = new URI( dataSynchUrl + "measurement");
 								    ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.PUT, request, String.class );
-									LOG.info( "Synchronize result: " + result.getStatusCodeValue() + " : "  + result.toString() );
+									LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
 								    if( result.getStatusCode() == HttpStatus.OK ) {
 								    	LOG.info( "Synchronize Measurement local update" );
 										measurement.setDbSynch( DbSync.SYNCHED );
@@ -495,7 +690,7 @@ public class DataSynchThread implements Runnable {
 									
 								    URI uri = new URI( dataSynchUrl + "sensor");
 								    ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.PUT, request, String.class );
-									LOG.info( "Synchronize result: " + result.getStatusCodeValue() + " : "  + result.toString() );
+									LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
 								    if( result.getStatusCode() == HttpStatus.OK ) {
 								    	LOG.info( "Synchronize Sensor local update" );
 										sensor.setEnabled( enabled );
@@ -527,7 +722,7 @@ public class DataSynchThread implements Runnable {
 									
 								    URI uri = new URI( dataSynchUrl + "sensor/synchToken/" + sensor.getDbSynchToken() );
 								    ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.DELETE, request, String.class );
-									LOG.info( "Synchronize result: " + result.getStatusCodeValue() + " : "  + result.toString() );
+									LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
 								    if( result.getStatusCode() == HttpStatus.OK ) {
 								    	LOG.info( "Synchronize Sensor local delete" );
 								    	dataService.deleteSensor( sensor.getId() );;
@@ -554,7 +749,7 @@ public class DataSynchThread implements Runnable {
 									
 								    URI uri = new URI( dataSynchUrl + "measurement/synchToken/" + measurement.getDbSynchToken() );
 								    ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.DELETE, request, String.class );
-									LOG.info( "Synchronize result: " + result.getStatusCodeValue() + " : "  + result.toString() );
+									LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
 								    if( result.getStatusCode() == HttpStatus.OK ) {
 								    	LOG.info( "Synchronize Measurement local delete" );
 								    	dataService.deleteMeasurement( measurement.getId() );
@@ -581,7 +776,7 @@ public class DataSynchThread implements Runnable {
 									
 								    URI uri = new URI( dataSynchUrl + "batch/synchToken/" + batch.getDbSynchToken() );
 								    ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.DELETE, request, String.class );
-									LOG.info( "Synchronize result: " + result.getStatusCodeValue() + " : "  + result.toString() );
+									LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
 								    if( result.getStatusCode() == HttpStatus.OK ) {
 								    	LOG.info( "Synchronize Batch local delete" );
 										batch.setDbSynch( DbSync.SYNCHED );
@@ -597,6 +792,26 @@ public class DataSynchThread implements Runnable {
 						}
 
 			        	//
+			        	//	Synchronize Domain Measure Types Table for deleting data
+			        	//
+						for( DomainMeasureType domainMeasureType: domainMeasureTypes ) {
+							if( domainMeasureType.getDbSynch() == DbSync.DELETE ) {
+								LOG.info( "Synchronize Delete MeasureType: " + domainMeasureType );
+								HttpHeaders headers = new HttpHeaders();
+								headers.setBearerAuth(token);
+							    HttpEntity<DomainMeasureType> request = new HttpEntity<>( headers );
+								
+							    URI uri = new URI( dataSynchUrl + "domainMeasureType/" + domainMeasureType.getId() );
+							    ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.DELETE, request, String.class );
+								LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
+							    if( result.getStatusCode() == HttpStatus.OK ) {
+							    	LOG.info( "Synchronize DomainMeasureType local delete" );
+							    	dataService.deleteDomainMeasureType( domainMeasureType.getId() );
+							    }
+							}
+						}
+						
+			        	//
 			        	//	Synchronize Measure Types Table for deleting data
 			        	//
 						for( MeasureType measureType: measureTypes ) {
@@ -608,7 +823,7 @@ public class DataSynchThread implements Runnable {
 								
 							    URI uri = new URI( dataSynchUrl + "measureType/" + measureType.getCode() );
 							    ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.DELETE, request, String.class );
-								LOG.info( "Synchronize result: " + result.getStatusCodeValue() + " : "  + result.toString() );
+								LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
 							    if( result.getStatusCode() == HttpStatus.OK ) {
 							    	LOG.info( "Synchronize MeasureType local delete" );
 							    	dataService.deleteMeasureType( measureType.getCode() );
@@ -616,6 +831,26 @@ public class DataSynchThread implements Runnable {
 							}
 						}
 						
+						//
+			        	//	Synchronize Domain Process Table for deleting data
+			        	//
+						for( DomainProcess domainProcess: domainProcesses ) {
+							if( domainProcess.getDbSynch() == DbSync.DELETE ) {
+								LOG.info( "Synchronize Delete DomainProcess: " + domainProcess );
+								HttpHeaders headers = new HttpHeaders();
+								headers.setBearerAuth(token);
+							    HttpEntity<Process> request = new HttpEntity<>( headers );
+								
+							    URI uri = new URI( dataSynchUrl + "domainProcess/" + domainProcess.getId() );
+							    ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.DELETE, request, String.class );
+								LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
+							    if( result.getStatusCode() == HttpStatus.OK ) {
+							    	LOG.info( "Synchronize DomainProcess local delete" );
+							    	dataService.deleteDomainProcess( domainProcess.getId() );
+							    }
+							}
+						}
+			        	
 						//
 			        	//	Synchronize Process Table for deleting data
 			        	//
@@ -671,10 +906,37 @@ public class DataSynchThread implements Runnable {
 								HttpHeaders headers = new HttpHeaders();
 								headers.setBearerAuth(token);
 							    HttpEntity<MeasureType[]> request = new HttpEntity<>( headers );
-								
-							    URI uri = new URI( dataSynchUrl + "measureType");
+
+							    //
+							    //	Pull Domain Configuration
+							    //
+							    URI uri = new URI( dataSynchUrl + "domain");
 							    ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.GET, request, String.class );;
-								LOG.info( "Pull MeasureType result: " + result.getStatusCodeValue() );
+								LOG.info( "Pull Domain result: " + result.getStatusCode() );
+							    if( result.getStatusCode() == HttpStatus.OK ) {
+							    	final ObjectMapper objectMapper = new ObjectMapper();
+							    	Domain[] domainsRemote = objectMapper.readValue( result.getBody(), Domain[].class);
+									for( Domain domain: domainsRemote ) {
+								    	LOG.info( "Pull Domain: " + domain );
+								    	domain.setDbSynch( DbSync.SYNCHED );
+								    	Domain temDomain = dataService.getDomain( domain.getName() );
+								        if( temDomain !=null ) {
+									    	LOG.info( "Pull Update MeasureType: " );
+									    	dataService.updateDomain( temDomain );
+								        } else {
+									    	LOG.info( "Pull Save MeasureType: " );
+									    	dataService.saveDomain( temDomain );
+								        }								    	
+									}
+							    }
+							    
+							    
+							    //
+							    //	Pull MeasureType Configuration
+							    //
+							    uri = new URI( dataSynchUrl + "measureType");
+							    result = restTemplate.exchange(uri, HttpMethod.GET, request, String.class );;
+								LOG.info( "Pull MeasureType result: " + result.getStatusCode() );
 							    if( result.getStatusCode() == HttpStatus.OK ) {
 							    	final ObjectMapper objectMapper = new ObjectMapper();
 							    	MeasureType[] measureTypesRemote = objectMapper.readValue( result.getBody(), MeasureType[].class);

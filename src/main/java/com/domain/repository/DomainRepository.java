@@ -1,6 +1,7 @@
 package com.domain.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,5 +14,9 @@ public interface DomainRepository extends JpaRepository<Domain, Long> {
 	
 	 @Query( value = "SELECT * FROM domain.domain WHERE db_synch IN ( 'ADD', 'UPDATE', 'DELETE' )" , nativeQuery = true )
 	 List<Domain> findDomainsToSynchronize( );	
+	 
+	 @Query( value = "SELECT * FROM domain.domain WHERE name = ?" , nativeQuery = true )
+	 Optional<Domain> findDomainByName( String name );	
+	 
 	
 }
