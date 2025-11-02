@@ -953,13 +953,36 @@ public class DataSynchThread implements Runnable {
 								        }								    	
 									}
 							    }
-							    
+
+							    //
+							    //	Pull Domain MeasureType Configuration
+							    //
+							    uri = new URI( dataSynchUrl + "domainMeasureType");
+							    result = restTemplate.exchange(uri, HttpMethod.GET, request, String.class );;
+								LOG.info( "Pull MeasureType result: " + result.getStatusCode() );
+							    if( result.getStatusCode() == HttpStatus.OK ) {
+							    	final ObjectMapper objectMapper = new ObjectMapper();
+							    	DomainMeasureType[] domainMeasureTypesRemote = objectMapper.readValue( result.getBody(), DomainMeasureType[].class);
+									for( DomainMeasureType domainMeasureType: domainMeasureTypesRemote ) {
+								    	LOG.info( "Pull DomainMeasureType: " + domainMeasureType );
+								    	domainMeasureType.setDbSynch( DbSync.SYNCHED );
+								    	DomainMeasureType tempDomainMeasureType = dataService.getDomainMeasureType( domainMeasureType.getDomain().getId(), domainMeasureType.getMeasureType().getCode() );
+								        if( tempDomainMeasureType !=null ) {
+									    	LOG.info( "Pull Update DomainMeasureType: " );
+									    	dataService.updateDomainMeasureType( tempDomainMeasureType );
+								        } else {
+									    	LOG.info( "Pull Save DomainMeasureType: " );
+									    	dataService.saveDomainMeasureType( tempDomainMeasureType );
+								        }								    	
+									}
+							    }
+							    							    
 								headers = new HttpHeaders();
 								headers.setBearerAuth(token);
 							    HttpEntity<Process[]> request2 = new HttpEntity<>( headers );
 							    uri = new URI( dataSynchUrl + "process");
 							    result = restTemplate.exchange(uri, HttpMethod.GET, request2, String.class );
-								LOG.info( "Pull Process result: " + result.getStatusCodeValue() );
+								LOG.info( "Pull Process result: " + result.getStatusCode() );
 							    if( result.getStatusCode() == HttpStatus.OK ) {
 							    	final ObjectMapper objectMapper = new ObjectMapper();
 							    	Process[] processesRemote = objectMapper.readValue( result.getBody(), Process[].class);
@@ -983,7 +1006,7 @@ public class DataSynchThread implements Runnable {
 							    HttpEntity<Category[]> request3 = new HttpEntity<>( headers );
 							    uri = new URI( dataSynchUrl + "category");
 							    result = restTemplate.exchange(uri, HttpMethod.GET, request3, String.class );
-								LOG.info( "Pull Category result: " + result.getStatusCodeValue() );
+								LOG.info( "Pull Category result: " + result.getStatusCode() );
 							    if( result.getStatusCode() == HttpStatus.OK ) {
 							    	final ObjectMapper objectMapper = new ObjectMapper();
 							    	Category[] categoriesRemote = objectMapper.readValue( result.getBody(), Category[].class);

@@ -37,6 +37,7 @@ import com.domain.core.DataSynchThread;
 import com.domain.model.Batch;
 import com.domain.model.DbSync;
 import com.domain.model.Domain;
+import com.domain.model.DomainMeasureType;
 import com.domain.model.GraphTypes;
 import com.domain.model.MeasureType;
 import com.domain.model.Measurement;
@@ -109,6 +110,8 @@ class DataSynchThreadTest {
         	); 		
 
 		Domain testDomain = new Domain( 0L, 0, "Brewery", "sports_bar_white_48dp.svg", "Home Brewery", "Style", "Brewery", DbSync.ADD, null);
+    	List<Domain> domains = new ArrayList<Domain>();
+    	domains.add( testDomain );
 		
 		Category testCategory = new Category( "IPA", "18a", "Hoppy" );
     	List<Category> categories = new ArrayList<Category>();
@@ -164,6 +167,10 @@ class DataSynchThreadTest {
 		Mockito.when( dataService.getMeasureTypesToSynchronize()).thenReturn( measureTypes );
         Mockito.when(dataService.getMeasureType( "TMP" )).thenReturn( measureType );
 		
+        DomainMeasureType domainMeasureType = new DomainMeasureType( testDomain, measureType, new Date(), DbSync.ADD, "test" );
+        List<DomainMeasureType> domainMeasureTypes = new ArrayList<DomainMeasureType>();
+        domainMeasureTypes.add( domainMeasureType );
+        
 		mockServer.expect( requestTo("http://localhost:8080/api/measureType") )
  		.andExpect(method(HttpMethod.POST))
 		.andRespond(withStatus(HttpStatus.OK  )
@@ -325,6 +332,13 @@ class DataSynchThreadTest {
 		//
 		//	Test for pulling configuration data
 		//
+		mockServer.expect( requestTo("http://localhost:8080/api/domain") )
+ 		.andExpect(method(HttpMethod.GET))
+		.andRespond(withStatus(HttpStatus.OK  )
+		.contentType(MediaType.APPLICATION_JSON )
+		.body(objectMapper.writeValueAsString(domains))
+		); 		
+		
 		mockServer.expect( requestTo("http://localhost:8080/api/measureType") )
  		.andExpect(method(HttpMethod.GET))
 		.andRespond(withStatus(HttpStatus.OK  )
@@ -332,6 +346,13 @@ class DataSynchThreadTest {
 		.body(objectMapper.writeValueAsString(measureTypes))
 		); 		
 		
+		mockServer.expect( requestTo("http://localhost:8080/api/domainMeasureType") )
+ 		.andExpect(method(HttpMethod.GET))
+		.andRespond(withStatus(HttpStatus.OK  )
+		.contentType(MediaType.APPLICATION_JSON )
+		.body(objectMapper.writeValueAsString(domainMeasureTypes))
+		); 		
+	
 		mockServer.expect( requestTo("http://localhost:8080/api/process") )
  		.andExpect(method(HttpMethod.GET))
 		.andRespond(withStatus(HttpStatus.OK  )
