@@ -37,7 +37,9 @@ import com.domain.core.DataSynchThread;
 import com.domain.model.Batch;
 import com.domain.model.DbSync;
 import com.domain.model.Domain;
+import com.domain.model.DomainCategory;
 import com.domain.model.DomainMeasureType;
+import com.domain.model.DomainProcess;
 import com.domain.model.GraphTypes;
 import com.domain.model.MeasureType;
 import com.domain.model.Measurement;
@@ -128,7 +130,11 @@ class DataSynchThreadTest {
     	categories.add( testCategory2 );
 		Mockito.when(dataService.getCategoriesToSynchronize( )).thenReturn( categories );
         Mockito.when(dataService.getCategory( "TestToken2" )).thenReturn( testCategory2 );
-		
+
+		DomainCategory testDomainCategory = new DomainCategory( testDomain, testCategory, new Date(), DbSync.ADD,  "TestToken2" );
+    	List<DomainCategory> domainCategories = new ArrayList<DomainCategory>();
+    	domainCategories.add( testDomainCategory );
+		        
 		mockServer.expect( requestTo("http://localhost:8080/api/category") )
  		.andExpect(method(HttpMethod.POST))
 		.andRespond(withStatus(HttpStatus.OK  )
@@ -148,6 +154,10 @@ class DataSynchThreadTest {
 		Mockito.when(dataService.getProcessesToSynchronize()).thenReturn( processes );
         Mockito.when(dataService.getProcess( "FRM" )).thenReturn( process );
 		
+        DomainProcess domainProcess = new DomainProcess( testDomain, process, new Date(), DbSync.ADD, "test");
+        List<DomainProcess> domainProcesses = new ArrayList<DomainProcess>();
+        domainProcesses.add( domainProcess );
+        
 		mockServer.expect( requestTo("http://localhost:8080/api/process") )
  		.andExpect(method(HttpMethod.POST))
 		.andRespond(withStatus(HttpStatus.OK  )
@@ -360,11 +370,25 @@ class DataSynchThreadTest {
 		.body(objectMapper.writeValueAsString(processes))
 		); 		
 		
+		mockServer.expect( requestTo("http://localhost:8080/api/domainProcess") )
+ 		.andExpect(method(HttpMethod.GET))
+		.andRespond(withStatus(HttpStatus.OK  )
+		.contentType(MediaType.APPLICATION_JSON )
+		.body(objectMapper.writeValueAsString(domainProcesses))
+		); 		
+		
 		mockServer.expect( requestTo("http://localhost:8080/api/category") )
  		.andExpect(method(HttpMethod.GET))
 		.andRespond(withStatus(HttpStatus.OK  )
 		.contentType(MediaType.APPLICATION_JSON )
 		.body(objectMapper.writeValueAsString(categories))
+		); 		
+		
+		mockServer.expect( requestTo("http://localhost:8080/api/domainCategory") )
+ 		.andExpect(method(HttpMethod.GET))
+		.andRespond(withStatus(HttpStatus.OK  )
+		.contentType(MediaType.APPLICATION_JSON )
+		.body(objectMapper.writeValueAsString( testDomainCategory ))
 		); 		
 		
 		//

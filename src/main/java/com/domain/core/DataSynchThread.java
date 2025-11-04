@@ -863,7 +863,7 @@ public class DataSynchThread implements Runnable {
 								
 							    URI uri = new URI( dataSynchUrl + "process/" + process.getCode() );
 							    ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.DELETE, request, String.class );
-								LOG.info( "Synchronize result: " + result.getStatusCodeValue() + " : "  + result.toString() );
+								LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
 							    if( result.getStatusCode() == HttpStatus.OK ) {
 							    	LOG.info( "Synchronize Process local delete" );
 							    	dataService.deleteProcess( process.getCode() );
@@ -884,7 +884,7 @@ public class DataSynchThread implements Runnable {
 									
 								    URI uri = new URI( dataSynchUrl + "category/synchToken/" + category.getDbSynchToken() );
 								    ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.DELETE, request, String.class );
-									LOG.info( "Synchronize result: " + result.getStatusCodeValue() + " : "  + result.toString() );
+									LOG.info( "Synchronize result: " + result.getStatusCode() + " : "  + result.toString() );
 								    if( result.getStatusCode() == HttpStatus.OK ) {
 								    	LOG.info( "Synchronize Category local update" );
 								    	dataService.deleteCategory( category.getId() );
@@ -977,6 +977,9 @@ public class DataSynchThread implements Runnable {
 									}
 							    }
 							    							    
+							    //
+							    //	Pull Process Configuration
+							    //
 								headers = new HttpHeaders();
 								headers.setBearerAuth(token);
 							    HttpEntity<Process[]> request2 = new HttpEntity<>( headers );
@@ -1000,7 +1003,37 @@ public class DataSynchThread implements Runnable {
 								        }								    	
 									}
 							    }
+
+							    //
+							    //	Pull Domain Process Configuration
+							    //
+								headers = new HttpHeaders();
+								headers.setBearerAuth(token);
+							    HttpEntity<DomainProcess[]> request4 = new HttpEntity<>( headers );
+							    uri = new URI( dataSynchUrl + "domainProcess");
+							    result = restTemplate.exchange(uri, HttpMethod.GET, request4, String.class );
+								LOG.info( "Pull DomainProcess result: " + result.getStatusCode() );
+							    if( result.getStatusCode() == HttpStatus.OK ) {
+							    	final ObjectMapper objectMapper = new ObjectMapper();
+							    	DomainProcess[] domainProcessRemote = objectMapper.readValue( result.getBody(), DomainProcess[].class);
+
+									for( DomainProcess domainProcess: domainProcessRemote ) {
+								    	LOG.info( "Pull DomainProcess: " + domainProcess );
+								    	domainProcess.setDbSynch( DbSync.SYNCHED );
+								    	DomainProcess tempDomainProcess = dataService.getDomainProcess( domainProcess.getDomain().getId(), domainProcess.getProcess().getCode() );
+								        if( tempDomainProcess !=null ) {
+									    	LOG.info( "Pull Update Process: " );
+									    	dataService.updateDomainProcess( domainProcess );
+								        } else {
+									    	LOG.info( "Pull Save Process: " );
+									    	dataService.saveDomainProcess( domainProcess );
+								        }								    	
+									}
+							    }
 							    
+							    //
+							    //	Pull Category Configuration
+							    //
 								headers = new HttpHeaders();
 								headers.setBearerAuth(token);
 							    HttpEntity<Category[]> request3 = new HttpEntity<>( headers );
@@ -1029,6 +1062,41 @@ public class DataSynchThread implements Runnable {
 											LOG.error( "ERROR: Synchronize Pull Category: Invalid DbSynchToken: " + category );
 											dataSynchStatus.setUp( false ); 
 											statusMessage = statusMessage +  " Synchronize Pull Category: Invalid DbSynchToken: " + category;
+										}
+									}
+							    }
+							    
+							    //
+							    //	Pull Domain Category Configuration
+							    //
+								headers = new HttpHeaders();
+								headers.setBearerAuth(token);
+							    HttpEntity<DomainCategory[]> request5 = new HttpEntity<>( headers );
+							    uri = new URI( dataSynchUrl + "domainCategory");
+							    result = restTemplate.exchange(uri, HttpMethod.GET, request5, String.class );
+								LOG.info( "Pull DomainCategory result: " + result.getStatusCode() );
+							    if( result.getStatusCode() == HttpStatus.OK ) {
+							    	final ObjectMapper objectMapper = new ObjectMapper();
+							    	DomainCategory[] domainCategoriesRemote = objectMapper.readValue( result.getBody(), DomainCategory[].class);
+
+									for( DomainCategory domainCategory: domainCategoriesRemote ) {
+								    	LOG.info( "Pull DomainCategory: " + domainCategory );
+										if( domainCategory.getDbSynchToken() != null && domainCategory.getDbSynchToken().length() > 0 ) {
+											DomainCategory tempDomainCategory = dataService.getDomainCategory( domainCategory.getDbSynchToken() );
+											domainCategory.setDbSynch( DbSync.SYNCHED );
+									        if(tempDomainCategory !=null ) {
+									        	domainCategory.setId( tempDomainCategory.getId() );
+										    	LOG.info( "Pull Update DomainCategory: " );
+										    	dataService.updateDomainCategory( domainCategory );
+									        } else {
+										    	LOG.info( "Pull Save Category: " );
+										    	dataService.saveDomainCategory( domainCategory );
+									        }	
+										}
+										else{
+											LOG.error( "ERROR: Synchronize Pull Category: Invalid DbSynchToken: " + domainCategory );
+											dataSynchStatus.setUp( false ); 
+											statusMessage = statusMessage +  " Synchronize Pull Category: Invalid DbSynchToken: " + domainCategory;
 										}
 									}
 							    }
