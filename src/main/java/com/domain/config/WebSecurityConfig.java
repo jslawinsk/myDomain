@@ -89,6 +89,7 @@ public class WebSecurityConfig{
     			.authorizeHttpRequests( auth -> auth 
         			.requestMatchers( "/h2/**" ).permitAll()
     				.requestMatchers( "/css/**", "/js/**", "/webjars/**", "/images/**", "/validate/**", "/password/**", "/passwordReset/**" ).permitAll()	
+    				.requestMatchers( HttpMethod.GET, "/swagger-ui/**" ).permitAll()
     				.requestMatchers( "/category/**", "/process/**", "/measureType/**", "/batch/**", "/measurement/**", "/sensor/**", "/domain/**", "/user/**"  ).hasRole( "ADMIN" )
     				.requestMatchers( "/**", "/profile/**" ).hasAnyRole( "ADMIN", "USER" )
     			)
@@ -104,13 +105,7 @@ public class WebSecurityConfig{
     		http.cors();
     		return http.build();
     	}        
-             
-        @Bean
-        public WebSecurityCustomizer webSecurityCustomizer() {
-            return (web) -> web.ignoring().requestMatchers( "/swagger-ui**" );
-        }    	
-        
-        
+                    
     }
     
 }
